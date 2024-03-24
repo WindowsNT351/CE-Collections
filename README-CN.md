@@ -6,7 +6,7 @@ CE Collections 2.0集合了几乎所有的CE镜像和模拟器，包括使用Loa
 注意，在这里只能打开以DeviceEmulator或ShellEmulator为基础的模拟器，若想引导x86Loadcepc，请在虚拟机内引导iso，进入到引导菜单后，选择想要的版本（用鼠标单击或使用键盘）。<br />
 在引导早期的CE时，菜单可能会询问是否使用高分辨率模式，这是因为现代虚拟机无法正常模拟当时的显卡，导致早期CE只能用低分辨率模式，如果想使用高分辨率模式，请使用PCEM或者86Box等可以模拟当时的硬件的模拟器，推荐使用PCEM中的S3 ViRGE<br />
 
-## 以下是本项目继承的CE镜像和模拟器
+## 以下是本项目集成的CE镜像和模拟器
 CEPC:<br />
 ? Windows CE 2.11<br />
 √ Windows CE 2.12<br />
