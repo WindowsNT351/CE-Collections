@@ -62,5 +62,8 @@
     <Image Include="E:\Desktop\background2.bmp">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="res\background.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

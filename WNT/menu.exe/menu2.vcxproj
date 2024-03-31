@@ -213,6 +213,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="E:\Desktop\background2.bmp" />
+    <Image Include="res\background.bmp" />
     <Image Include="res\menu2.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
