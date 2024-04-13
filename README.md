@@ -15,28 +15,32 @@ CEPC:<br />
 √ Windows CE 4.1(Thin Client)<br />
 √ Windows CE 4.2(Thin Client)<br />
 √ Windows CE 5(Thin Client,IP Phone)<br />
-√ Windows CE 6 R3(Thin Client,IP Phone)<br />
+√ Windows CE 6 [R3](Thin Client,IP Phone)<br />
 √ Windows EC 7(Thin Client,Silverlight)<br />
 √ Windows EC 2013(Thin Client,Silverlight)<br />
 √ Windows HPC 2000<br />
-√ Windows Mobile 2002 PPC - CN<br />
+√ Windows Mobile 2002 PPC<br />
 √ Windows Mobile 2002 SP<br />
 √ Windows Mobile 2003 PPC<br />
-√ Windows Mobile 2003 SP - CN<br />
+√ Windows Mobile 2003 SP<br />
 √ Windows Mobile 2003 PPC SE<br />
-√ Windows Mobile 2003 SP SE - CN<br />
+√ Windows Mobile 2003 SP SE<br />
 <br />
 ARM Emulator:<br />
-√ Windows Mobile 5 PPC - CN<br />
+√ Windows Mobile 5.0 PPC<br />
+√ Windows Mobile 5.0 SP<br />
+√ Windows Mobile 6.0 PPC<br />
 √ Windows Mobile 6.0 SP<br />
 √ Windows Mobile 6.1 PPC<br />
-√ Windows Mobile 6.5 PPC - CN<br />
-
+√ Windows Mobile 6.1 SP<br />
+√ Windows Mobile 6.5 PPC<br />
+√ Windows Mobile 6.5 SP<br />
+<br />
 Shell Emulator:<br />
 √ Windows CE 1.0 Beta 2<br />
 √ Windows CE 1.0 Beta 3<br />
 √ Windows CE 1.0 RTM<br />
 √ Windows CE 2.00<br />
-√ Windows CE 2.11 Plam<br />
+√ Windows CE 2.11 Palm<br />
 √ Windows CE HPC 3<br />
 √ Windows PPC 2000<br />
