@@ -1,8 +1,0 @@
-﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Platforms\Win32\PlatformToolsets\v141_xp\Toolset.targets(39,5): warning MSB8051: 面向 Windows XP 的支持已被弃用，将来的 Visual Studio 版本不再提供该支持。请访问 https://go.microsoft.com/fwlink/?linkid=2023588，获取详细信息。
-  pch.cpp
-  menu2.cpp
-  menu2Dlg.cpp
-  正在生成代码
-  All 233 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
-  已完成代码的生成
-  menu2.vcxproj -> C:\Users\351\Documents\Visual Studio 2017\Projects\cec20\Release\menu2.exe
