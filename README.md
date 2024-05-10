@@ -14,7 +14,8 @@ Q:在CEPC引导器中，选择完系统后显示Error image section doesn't fit 
 Q:Windows EC 2013引导后黑屏  A:创建虚拟机时不要使用VMware的DOS，换用Windows XP。<br />
 Q:Windows Mobile分辨率太抽象了  A:换另一个分辨率选项试试。<br />
 Q:Shell Emulator无法多个一起启动  A:不要多个Shell Emulator一起启动，若不小心一起启动，请注销或重启，并运行[CDROM]:\WNT\200HPC\ceu.reg。<br />
-Q:我的Windows CE/Mobile实体机不起动了，你能帮帮我吗  A:9<br />
+Q:Windows PPC 2000没法在Windows Vista及以上系统工作  A:没办法，Windows API不兼容，所以最好的体验Shell Emulator的系统是Windows XP。
+Q:我的Windows CE/Mobile实体机不起动了，你能帮帮我吗  A:6<br />
 
 
 ## 以下是本项目集成的CE镜像和模拟器
