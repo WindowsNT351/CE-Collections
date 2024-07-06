@@ -24,4 +24,5 @@ public:
 	afx_msg void OnBnClickedOk();
 	virtual BOOL OnInitDialog();
 	CStatic m_textver;
+	afx_msg void OnStnClicked65535();
 };

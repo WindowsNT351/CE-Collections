@@ -8,6 +8,14 @@
 #define PCH_H
 
 // 添加要在此处预编译的标头
+#ifndef WINVER
+#define WINVER 0x0501
+#endif
+
+#ifndef _WIN32_WINNT   // Specifies that the minimum required platform is Windows XP.
+#define _WIN32_WINNT 0x0501
+#endif
+
 #include "framework.h"
 #include <afxcontrolbars.h>
 #include <afxcontrolbars.h>
