@@ -41,4 +41,5 @@ public:
 	afx_msg void OnNMClickSyslink1(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnNMClickSyslink2(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnNMClickSyslink3(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnNMDblclkTree1(NMHDR *pNMHDR, LRESULT *pResult);
 };

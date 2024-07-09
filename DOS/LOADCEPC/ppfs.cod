@@ -1,0 +1,2143 @@
+;	Static Name Aliases
+;
+	TITLE   ppfs.c
+	.286p
+	.287
+INCLUDELIB      SLIBCE
+INCLUDELIB	OLDNAMES.LIB
+_TEXT	SEGMENT  WORD PUBLIC 'CODE'
+_TEXT	ENDS
+_DATA	SEGMENT  WORD PUBLIC 'DATA'
+_DATA	ENDS
+CONST	SEGMENT  WORD PUBLIC 'CONST'
+CONST	ENDS
+_BSS	SEGMENT  WORD PUBLIC 'BSS'
+_BSS	ENDS
+$$SYMBOLS	SEGMENT  BYTE PUBLIC 'DEBSYM'
+$$SYMBOLS	ENDS
+$$TYPES	SEGMENT  BYTE PUBLIC 'DEBTYP'
+$$TYPES	ENDS
+DGROUP	GROUP	CONST, _BSS, _DATA
+	ASSUME DS: DGROUP, SS: DGROUP
+EXTRN	_OEMParallelPortSendByte:NEAR
+EXTRN	_strncpy:NEAR
+EXTRN	_printf:NEAR
+EXTRN	_OEMParallelPortGetByte:NEAR
+_BSS      SEGMENT
+COMM NEAR	_ppfscs:	BYTE:	 2
+_BSS      ENDS
+EXTRN	_NoPPFS:DWORD
+_DATA      SEGMENT
+$SG562	DB	'NKDBG: RegGet. hKey=%lu, Name=%a',  0dH,  0aH,  00H
+$SG564	DB	'NKDBG: RegGet. Type=%lu, Size=%lu',  0dH,  0aH,  00H
+$SG580	DB	'NKDBG: RegEnum. hKey=%lu, Index=%u',  0dH,  0aH,  00H
+$SG582	DB	'NKDBG: RegEnum. Return=%lu, Size=%lu',  0dH,  0aH,  00H
+_DATA      ENDS
+_TEXT      SEGMENT
+	ASSUME	CS: _TEXT
+	PUBLIC	_read_value
+_read_value	PROC NEAR
+;|*** //
+;|*** // Copyright (c) Microsoft Corporation.  All rights reserved.
+;|*** //
+;|*** //
+;|*** // Use of this sample source code is subject to the terms of the Microsoft
+;|*** // license agreement under which you licensed this sample source code. If
+;|*** // you did not accept the terms of the license agreement, you are not
+;|*** // authorized to use this sample source code. For the terms of the license,
+;|*** // please see the license agreement between you and Microsoft or, if applicable,
+;|*** // see the LICENSE.RTF on your install media or the root of your tools installation.
+;|*** // THE SAMPLE SOURCE CODE IS PROVIDED "AS IS", WITH NO WARRANTIES.
+;|*** //
+;|*** /*++
+;|*** THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
+;|*** ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+;|*** THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+;|*** PARTICULAR PURPOSE.
+;|*** 
+;|*** Module Name:  
+;|***    ppfs.c
+;|***    
+;|*** Abstract:  
+;|***    This file implements the NK kernel ppfs client side interface
+;|***    
+;|*** Notes: 
+;|*** --*/
+;|*** 
+;|*** #include "kernel.h"
+;|*** 
+;|*** /* All strings must be <= 128 bytes including the null termination */
+;|*** 
+;|*** /* Message format: (assume little endians, lower address first>
+;|***  * -4      0       4     N-1       N       N+4
+;|***  * AA5555AA<header><data><checksum>5AA50A1A
+;|***  *
+;|***  * Header format:
+;|***  * 0       2       4
+;|***  * <opcode><length>
+;|***  * lsb          msb
+;|***  *
+;|***  * Length is 16 bit value. It includes all fields (== N)
+;|***  * Opcode is 16 bit value.  Current values are:
+;|***  * 0x0000 - boot (AA5555AA00000500FA5AA50A1A)
+;|***  * 0x0001 - init (AA5555AA01000500F95AA50A1A)
+;|***  * 0x0002 - open
+;|***  * 0x0003 - close
+;|***  * 0x0004 - read
+;|***  * 0x0005 - write
+;|***  * 0x0006 - seek
+;|***  * 0x0007 - delete
+;|***  * 0x0008 - findfirst
+;|***  * 0x0009 - findnext
+;|***  * 0x000A - rRegGet
+;|***  * 0x000B - rRegOpen
+;|***  * 0x000C - rRegClose
+;|***  * 0x000D - rRegEnum
+;|***  *
+;|***  *
+;|***  * Reply to a message will have the same opcode.  Bit15 is set to
+;|***  * indicate transmission failure.
+;|***  *
+;|***  * Data is stream of bytes
+;|***  *
+;|***  * Checksum is ~(sum of preceding N-1 bytes)
+;|***  *
+;|***  * Length of data is <length> - 5
+;|***  *
+;|***  */
+;|*** 
+;|*** CRITICAL_SECTION ppfscs;
+;|*** extern int NoPPFS;                      // parallel port not present flag
+;|*** 
+;|*** int read_value(int *chksum) {
+; Line 73
+	*** 000000	c8 06 00 00 		enter	6,0
+	*** 000004	57 			push	di
+	*** 000005	56 			push	si
+;	chksum = 4
+;	loop = -4
+;	result = -6
+;	ch = -1
+	*** 000006	8d 76 fa 		lea	si,WORD PTR [bp-6]	;result
+	*** 000009	8b 7e 04 		mov	di,WORD PTR [bp+4]	;chksum
+;|***     int loop;
+;|***     int result;
+;|***     BYTE ch;
+;|***     for (loop = 0; loop < sizeof(int); loop++ ) {
+; Line 77
+					$F331:
+;|***         ch = (BYTE)OEMParallelPortGetByte();
+;|***         *chksum += ch;
+; Line 79
+	*** 00000c	e8 00 00 		call	_OEMParallelPortGetByte
+	*** 00000f	88 46 ff 		mov	BYTE PTR [bp-1],al	;ch
+	*** 000012	2a e4 			sub	ah,ah
+	*** 000014	2b d2 			sub	dx,dx
+	*** 000016	01 05 			add	WORD PTR [di],ax
+	*** 000018	11 55 02 		adc	WORD PTR [di+2],dx
+;|***         ((LPBYTE)&result)[loop] = ch;
+; Line 80
+	*** 00001b	8a 46 ff 		mov	al,BYTE PTR [bp-1]	;ch
+	*** 00001e	88 04 			mov	BYTE PTR [si],al
+	*** 000020	46 			inc	si
+	*** 000021	8d 46 fe 		lea	ax,WORD PTR [bp-2]
+	*** 000024	3b f0 			cmp	si,ax
+	*** 000026	72 e4 			jb	$F331
+;|***     }
+;|***     return result;
+; Line 82
+	*** 000028	8b 46 fa 		mov	ax,WORD PTR [bp-6]	;result
+	*** 00002b	8b 56 fc 		mov	dx,WORD PTR [bp-4]	;loop
+;|*** }
+; Line 83
+	*** 00002e	5e 			pop	si
+	*** 00002f	5f 			pop	di
+	*** 000030	c9 			leave	
+	*** 000031	c3 			ret	
+
+_read_value	ENDP
+	PUBLIC	_write_value
+_write_value	PROC NEAR
+;|*** 
+;|*** void write_value(int val, int *chksum) {
+; Line 85
+	*** 000032	c8 02 00 00 		enter	2,0
+	*** 000036	57 			push	di
+	*** 000037	56 			push	si
+;	val = 4
+;	chksum = 8
+;	loop = -4
+;	ch = -1
+	*** 000038	8d 76 04 		lea	si,WORD PTR [bp+4]	;val
+	*** 00003b	8b 7e 08 		mov	di,WORD PTR [bp+8]	;chksum
+;|***     int loop;
+;|***     BYTE ch;
+;|***     for (loop = 0; loop < 4; loop++) {
+; Line 88
+					$F342:
+;|***         ch = ((LPBYTE)&val)[loop];
+;|***         *chksum += ch;
+; Line 90
+	*** 00003e	8a 04 			mov	al,BYTE PTR [si]
+	*** 000040	88 46 ff 		mov	BYTE PTR [bp-1],al	;ch
+	*** 000043	2a e4 			sub	ah,ah
+	*** 000045	2b d2 			sub	dx,dx
+	*** 000047	01 05 			add	WORD PTR [di],ax
+	*** 000049	11 55 02 		adc	WORD PTR [di+2],dx
+;|***         OEMParallelPortSendByte(ch);
+; Line 91
+	*** 00004c	8a 46 ff 		mov	al,BYTE PTR [bp-1]	;ch
+	*** 00004f	50 			push	ax
+	*** 000050	e8 00 00 		call	_OEMParallelPortSendByte
+	*** 000053	83 c4 02 		add	sp,2
+	*** 000056	46 			inc	si
+	*** 000057	8d 46 08 		lea	ax,WORD PTR [bp+8]	;chksum
+	*** 00005a	3b f0 			cmp	si,ax
+	*** 00005c	72 e0 			jb	$F342
+;|***     }
+;|*** }
+; Line 93
+	*** 00005e	5e 			pop	si
+	*** 00005f	5f 			pop	di
+	*** 000060	c9 			leave	
+	*** 000061	c3 			ret	
+
+_write_value	ENDP
+	PUBLIC	_read_header
+_read_header	PROC NEAR
+;|*** 
+;|*** int read_header(int *chksum) {
+; Line 95
+	*** 000062	55 			push	bp
+	*** 000063	8b ec 			mov	bp,sp
+	*** 000065	56 			push	si
+;	chksum = 4
+	*** 000066	8b 76 04 		mov	si,WORD PTR [bp+4]	;chksum
+;|***     if (read_value(chksum) != 0xaa5555aa)
+; Line 96
+	*** 000069	56 			push	si
+	*** 00006a	e8 93 ff 		call	_read_value
+	*** 00006d	83 c4 02 		add	sp,2
+	*** 000070	3d aa 55 		cmp	ax,21930	;55aaH
+	*** 000073	75 06 			jne	$L588
+	*** 000075	81 fa 55 aa 		cmp	dx,-21931	;aa55H
+	*** 000079	74 07 			je	$I349
+					$L588:
+;|***         return -1;
+; Line 97
+	*** 00007b	b8 ff ff 		mov	ax,-1	;ffffH
+	*** 00007e	99 			cwd	
+	*** 00007f	5e 			pop	si
+	*** 000080	c9 			leave	
+	*** 000081	c3 			ret	
+;|***     *chksum = 0;
+; Line 98
+					$I349:
+	*** 000082	2b c0 			sub	ax,ax
+	*** 000084	89 44 02 		mov	WORD PTR [si+2],ax
+	*** 000087	89 04 			mov	WORD PTR [si],ax
+;|***     return read_value(chksum);
+; Line 99
+	*** 000089	56 			push	si
+	*** 00008a	e8 73 ff 		call	_read_value
+	*** 00008d	83 c4 02 		add	sp,2
+;|*** }
+; Line 100
+	*** 000090	5e 			pop	si
+	*** 000091	c9 			leave	
+	*** 000092	c3 			ret	
+	*** 000093	90 			nop	
+
+_read_header	ENDP
+	PUBLIC	_write_header
+_write_header	PROC NEAR
+;|*** 
+;|*** void write_header(int cmd, int *chksum) {
+; Line 102
+	*** 000094	55 			push	bp
+	*** 000095	8b ec 			mov	bp,sp
+	*** 000097	56 			push	si
+;	cmd = 4
+;	chksum = 8
+	*** 000098	8b 76 08 		mov	si,WORD PTR [bp+8]	;chksum
+;|***     write_value(0xaa5555aa,chksum);
+; Line 103
+	*** 00009b	56 			push	si
+	*** 00009c	68 55 aa 		push	-21931	;aa55H
+	*** 00009f	68 aa 55 		push	21930	;55aaH
+	*** 0000a2	e8 8d ff 		call	_write_value
+	*** 0000a5	83 c4 06 		add	sp,6
+;|***     *chksum = 0;
+; Line 104
+	*** 0000a8	2b c0 			sub	ax,ax
+	*** 0000aa	89 44 02 		mov	WORD PTR [si+2],ax
+	*** 0000ad	89 04 			mov	WORD PTR [si],ax
+;|***     write_value(cmd,chksum);
+; Line 105
+	*** 0000af	56 			push	si
+	*** 0000b0	ff 76 06 		push	WORD PTR [bp+6]
+	*** 0000b3	ff 76 04 		push	WORD PTR [bp+4]	;cmd
+	*** 0000b6	e8 79 ff 		call	_write_value
+	*** 0000b9	83 c4 06 		add	sp,6
+;|*** }
+; Line 106
+	*** 0000bc	5e 			pop	si
+	*** 0000bd	c9 			leave	
+	*** 0000be	c3 			ret	
+	*** 0000bf	90 			nop	
+
+_write_header	ENDP
+	PUBLIC	_read_data
+_read_data	PROC NEAR
+;|*** 
+;|*** void read_data(LPBYTE buf, int cnt, int *chksum) {
+; Line 108
+	*** 0000c0	c8 02 00 00 		enter	2,0
+	*** 0000c4	57 			push	di
+	*** 0000c5	56 			push	si
+;	buf = 4
+;	cnt = 6
+;	chksum = 10
+;	ch = -1
+	*** 0000c6	8b 76 04 		mov	si,WORD PTR [bp+4]	;buf
+	*** 0000c9	8b 7e 0a 		mov	di,WORD PTR [bp+10]	;chksum
+;|***     BYTE ch;
+;|***     while (cnt--) {
+; Line 110
+					$FC366:
+	*** 0000cc	8b 46 06 		mov	ax,WORD PTR [bp+6]	;cnt
+	*** 0000cf	8b 56 08 		mov	dx,WORD PTR [bp+8]
+	*** 0000d2	83 6e 06 01 		sub	WORD PTR [bp+6],1	;cnt
+	*** 0000d6	83 5e 08 00 		sbb	WORD PTR [bp+8],0
+	*** 0000da	0b d0 			or	dx,ax
+	*** 0000dc	74 18 			je	$EX363
+;|***         ch = (BYTE)OEMParallelPortGetByte();
+;|***         *chksum += ch;
+; Line 112
+	*** 0000de	e8 00 00 		call	_OEMParallelPortGetByte
+	*** 0000e1	88 46 ff 		mov	BYTE PTR [bp-1],al	;ch
+	*** 0000e4	2a e4 			sub	ah,ah
+	*** 0000e6	2b d2 			sub	dx,dx
+	*** 0000e8	01 05 			add	WORD PTR [di],ax
+	*** 0000ea	11 55 02 		adc	WORD PTR [di+2],dx
+;|***         *buf++ = ch;
+; Line 113
+	*** 0000ed	8a 46 ff 		mov	al,BYTE PTR [bp-1]	;ch
+	*** 0000f0	88 04 			mov	BYTE PTR [si],al
+	*** 0000f2	46 			inc	si
+;|***     }
+; Line 114
+	*** 0000f3	eb d7 			jmp	SHORT $FC366
+	*** 0000f5	90 			nop	
+;|*** }
+; Line 115
+					$EX363:
+	*** 0000f6	5e 			pop	si
+	*** 0000f7	5f 			pop	di
+	*** 0000f8	c9 			leave	
+	*** 0000f9	c3 			ret	
+
+_read_data	ENDP
+	PUBLIC	_write_data
+_write_data	PROC NEAR
+;|*** 
+;|*** void write_data(LPBYTE buf, int cnt, int *chksum) {
+; Line 117
+	*** 0000fa	55 			push	bp
+	*** 0000fb	8b ec 			mov	bp,sp
+	*** 0000fd	57 			push	di
+	*** 0000fe	56 			push	si
+;	buf = 4
+;	cnt = 6
+;	chksum = 10
+	*** 0000ff	8b 76 04 		mov	si,WORD PTR [bp+4]	;buf
+;|***     while (cnt--) {
+; Line 118
+					$FC377:
+	*** 000102	8b 46 06 		mov	ax,WORD PTR [bp+6]	;cnt
+	*** 000105	8b 56 08 		mov	dx,WORD PTR [bp+8]
+	*** 000108	83 6e 06 01 		sub	WORD PTR [bp+6],1	;cnt
+	*** 00010c	83 5e 08 00 		sbb	WORD PTR [bp+8],0
+	*** 000110	0b d0 			or	dx,ax
+	*** 000112	74 1c 			je	$EX375
+;|***         *chksum += *buf;
+; Line 119
+	*** 000114	8a 04 			mov	al,BYTE PTR [si]
+	*** 000116	2a e4 			sub	ah,ah
+	*** 000118	8b 5e 0a 		mov	bx,WORD PTR [bp+10]	;chksum
+	*** 00011b	2b d2 			sub	dx,dx
+	*** 00011d	01 07 			add	WORD PTR [bx],ax
+	*** 00011f	11 57 02 		adc	WORD PTR [bx+2],dx
+;|***         OEMParallelPortSendByte(*buf++);
+; Line 120
+	*** 000122	8b fe 			mov	di,si
+	*** 000124	46 			inc	si
+	*** 000125	8a 05 			mov	al,BYTE PTR [di]
+	*** 000127	50 			push	ax
+	*** 000128	e8 00 00 		call	_OEMParallelPortSendByte
+	*** 00012b	83 c4 02 		add	sp,2
+;|***     }
+; Line 121
+	*** 00012e	eb d2 			jmp	SHORT $FC377
+;|*** }
+; Line 122
+					$EX375:
+	*** 000130	5e 			pop	si
+	*** 000131	5f 			pop	di
+	*** 000132	c9 			leave	
+	*** 000133	c3 			ret	
+
+_write_data	ENDP
+	PUBLIC	_read_end
+_read_end	PROC NEAR
+;|*** 
+;|*** /* returns TRUE if success, FALSE if failure */
+;|*** BOOL read_end(int checksum) {
+; Line 125
+	*** 000134	c8 04 00 00 		enter	4,0
+;	tmp = -4
+;	checksum = 4
+;	b = -2
+;|***     BYTE b;
+;|***     int tmp;
+;|***     b = (BYTE)OEMParallelPortGetByte();
+;|***     if (((checksum & 0xff) != b) ||
+;|***         (read_value(&tmp) != 0x1a0aa55a))
+; Line 130
+	*** 000138	e8 00 00 		call	_OEMParallelPortGetByte
+	*** 00013b	2a e4 			sub	ah,ah
+	*** 00013d	8a 4e 04 		mov	cl,BYTE PTR [bp+4]	;checksum
+	*** 000140	2a ed 			sub	ch,ch
+	*** 000142	3b c1 			cmp	ax,cx
+	*** 000144	75 1c 			jne	$I386
+	*** 000146	8d 46 fc 		lea	ax,WORD PTR [bp-4]	;tmp
+	*** 000149	50 			push	ax
+	*** 00014a	e8 b3 fe 		call	_read_value
+	*** 00014d	83 c4 02 		add	sp,2
+	*** 000150	3d 5a a5 		cmp	ax,-23206	;a55aH
+	*** 000153	75 0d 			jne	$I386
+	*** 000155	81 fa 0a 1a 		cmp	dx,6666	;1a0aH
+	*** 000159	75 07 			jne	$I386
+;|***         return FALSE;
+;|***     return TRUE;
+; Line 132
+	*** 00015b	b8 01 00 		mov	ax,1
+	*** 00015e	33 d2 			xor	dx,dx
+	*** 000160	c9 			leave	
+	*** 000161	c3 			ret	
+;|***         (read_value(&tmp) != 0x1a0aa55a))
+; Line 130
+					$I386:
+;|***         return FALSE;
+; Line 131
+	*** 000162	33 c0 			xor	ax,ax
+	*** 000164	33 d2 			xor	dx,dx
+;|***     return TRUE;
+;|*** }
+; Line 133
+	*** 000166	c9 			leave	
+	*** 000167	c3 			ret	
+
+_read_end	ENDP
+	PUBLIC	_write_end
+_write_end	PROC NEAR
+;|*** 
+;|*** void write_end(int checksum) {
+; Line 135
+	*** 000168	c8 04 00 00 		enter	4,0
+;	checksum = 4
+;	tmp = -4
+;	ch = -6
+;|***     int tmp;
+;|***     BYTE ch = (BYTE)((checksum & 0xff) ^ 0xff);
+;|***     OEMParallelPortSendByte(ch);
+; Line 138
+	*** 00016c	8a 46 04 		mov	al,BYTE PTR [bp+4]	;checksum
+	*** 00016f	f6 d0 			not	al
+	*** 000171	50 			push	ax
+	*** 000172	e8 00 00 		call	_OEMParallelPortSendByte
+	*** 000175	83 c4 02 		add	sp,2
+;|***     write_value(0x1a0aa55a,&tmp); /* Write out end of message signature */
+; Line 139
+	*** 000178	8d 46 fc 		lea	ax,WORD PTR [bp-4]	;tmp
+	*** 00017b	50 			push	ax
+	*** 00017c	68 0a 1a 		push	6666	;1a0aH
+	*** 00017f	68 5a a5 		push	-23206	;a55aH
+	*** 000182	e8 ad fe 		call	_write_value
+;|*** }
+; Line 140
+	*** 000185	c9 			leave	
+	*** 000186	c3 			ret	
+	*** 000187	90 			nop	
+
+_write_end	ENDP
+	PUBLIC	_rlseek
+_rlseek	PROC NEAR
+;|*** 
+;|*** int rlseek(int fd, int off, int mode) {
+; Line 142
+	*** 000188	c8 08 00 00 		enter	8,0
+;	fd = 4
+;	off = 8
+;	mode = 12
+;	chksum = -8
+;	result = -4
+;|***     int chksum, result;
+;|*** 
+;|***     EnterCriticalSection(&ppfscs);
+;|***     if (NoPPFS)
+; Line 146
+	*** 00018c	a1 02 00 		mov	ax,WORD PTR _NoPPFS+2
+	*** 00018f	0b 06 00 00 		or	ax,WORD PTR _NoPPFS
+	*** 000193	74 07 			je	$I403
+;|***     {
+;|***         LeaveCriticalSection(&ppfscs);
+;|***         return -1;
+; Line 149
+					$L620:
+	*** 000195	b8 ff ff 		mov	ax,-1	;ffffH
+	*** 000198	99 			cwd	
+	*** 000199	c9 			leave	
+	*** 00019a	c3 			ret	
+	*** 00019b	90 			nop	
+;|***     }
+;|***     write_header(0x00110006,&chksum);   /* opcode = 0x0006, length = 17 */
+; Line 151
+					$I403:
+	*** 00019c	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 00019f	50 			push	ax
+	*** 0001a0	6a 11 			push	17	;0011H
+	*** 0001a2	6a 06 			push	6
+	*** 0001a4	e8 ed fe 		call	_write_header
+	*** 0001a7	83 c4 06 		add	sp,6
+;|***     write_value(fd,&chksum);
+; Line 152
+	*** 0001aa	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 0001ad	50 			push	ax
+	*** 0001ae	ff 76 06 		push	WORD PTR [bp+6]
+	*** 0001b1	ff 76 04 		push	WORD PTR [bp+4]	;fd
+	*** 0001b4	e8 7b fe 		call	_write_value
+	*** 0001b7	83 c4 06 		add	sp,6
+;|***     write_value(off,&chksum);
+; Line 153
+	*** 0001ba	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 0001bd	50 			push	ax
+	*** 0001be	ff 76 0a 		push	WORD PTR [bp+10]
+	*** 0001c1	ff 76 08 		push	WORD PTR [bp+8]	;off
+	*** 0001c4	e8 6b fe 		call	_write_value
+	*** 0001c7	83 c4 06 		add	sp,6
+;|***     write_value(mode,&chksum);
+; Line 154
+	*** 0001ca	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 0001cd	50 			push	ax
+	*** 0001ce	ff 76 0e 		push	WORD PTR [bp+14]
+	*** 0001d1	ff 76 0c 		push	WORD PTR [bp+12]	;mode
+	*** 0001d4	e8 5b fe 		call	_write_value
+	*** 0001d7	83 c4 06 		add	sp,6
+;|***     write_end(chksum);
+; Line 155
+	*** 0001da	ff 76 fa 		push	WORD PTR [bp-6]
+	*** 0001dd	ff 76 f8 		push	WORD PTR [bp-8]	;chksum
+	*** 0001e0	e8 85 ff 		call	_write_end
+	*** 0001e3	83 c4 04 		add	sp,4
+;|***     if (read_header(&chksum) != 0x00090006) { /* opcode = 0x0006, length = 9 */
+; Line 156
+	*** 0001e6	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 0001e9	50 			push	ax
+	*** 0001ea	e8 75 fe 		call	_read_header
+	*** 0001ed	83 c4 02 		add	sp,2
+	*** 0001f0	3d 06 00 		cmp	ax,6
+	*** 0001f3	75 a0 			jne	$L620
+	*** 0001f5	83 fa 09 		cmp	dx,9
+	*** 0001f8	75 9b 			jne	$L620
+;|***         LeaveCriticalSection(&ppfscs);
+;|***         return -1;
+;|***     }
+;|***     result = read_value(&chksum);
+; Line 160
+	*** 0001fa	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 0001fd	50 			push	ax
+	*** 0001fe	e8 ff fd 		call	_read_value
+	*** 000201	83 c4 02 		add	sp,2
+	*** 000204	89 46 fc 		mov	WORD PTR [bp-4],ax	;result
+	*** 000207	89 56 fe 		mov	WORD PTR [bp-2],dx
+;|***     if (!read_end(chksum)) {
+; Line 161
+	*** 00020a	ff 76 fa 		push	WORD PTR [bp-6]
+	*** 00020d	ff 76 f8 		push	WORD PTR [bp-8]	;chksum
+	*** 000210	e8 21 ff 		call	_read_end
+	*** 000213	83 c4 04 		add	sp,4
+	*** 000216	0b d0 			or	dx,ax
+	*** 000218	75 03 			jne	$JCC536
+	*** 00021a	e9 78 ff 		jmp	$L620
+					$JCC536:
+	*** 00021d	8b 46 fc 		mov	ax,WORD PTR [bp-4]	;result
+	*** 000220	8b 56 fe 		mov	dx,WORD PTR [bp-2]
+;|***         LeaveCriticalSection(&ppfscs);
+;|***         return -1;
+;|***     }
+;|***     LeaveCriticalSection(&ppfscs);
+;|***     return result;
+;|*** }
+; Line 167
+	*** 000223	c9 			leave	
+	*** 000224	c3 			ret	
+	*** 000225	90 			nop	
+
+_rlseek	ENDP
+	PUBLIC	_rwriteshort
+_rwriteshort	PROC NEAR
+;|*** 
+;|*** int rwriteshort(int fd, char *buf, int cnt) {
+; Line 169
+	*** 000226	c8 08 00 00 		enter	8,0
+;	fd = 4
+;	buf = 8
+;	cnt = 10
+;	chksum = -8
+;	result = -4
+;|***     int chksum, result;
+;|*** 
+;|***     write_header(0x000d0005+(cnt<<16), &chksum); /* opcode = 0x0005, length = 13 + cnt */
+; Line 172
+	*** 00022a	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 00022d	50 			push	ax
+	*** 00022e	8b 4e 0a 		mov	cx,WORD PTR [bp+10]	;cnt
+	*** 000231	8b d9 			mov	bx,cx
+	*** 000233	2b d2 			sub	dx,dx
+	*** 000235	83 c2 05 		add	dx,5
+	*** 000238	83 d3 0d 		adc	bx,13	;000dH
+	*** 00023b	53 			push	bx
+	*** 00023c	52 			push	dx
+	*** 00023d	e8 54 fe 		call	_write_header
+	*** 000240	83 c4 06 		add	sp,6
+;|***     write_value(fd,&chksum);
+; Line 173
+	*** 000243	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 000246	50 			push	ax
+	*** 000247	ff 76 06 		push	WORD PTR [bp+6]
+	*** 00024a	ff 76 04 		push	WORD PTR [bp+4]	;fd
+	*** 00024d	e8 e2 fd 		call	_write_value
+	*** 000250	83 c4 06 		add	sp,6
+;|***     write_value(cnt,&chksum);
+; Line 174
+	*** 000253	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 000256	50 			push	ax
+	*** 000257	ff 76 0c 		push	WORD PTR [bp+12]
+	*** 00025a	ff 76 0a 		push	WORD PTR [bp+10]	;cnt
+	*** 00025d	e8 d2 fd 		call	_write_value
+	*** 000260	83 c4 06 		add	sp,6
+;|***     write_data(buf,cnt,&chksum);
+; Line 175
+	*** 000263	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 000266	50 			push	ax
+	*** 000267	ff 76 0c 		push	WORD PTR [bp+12]
+	*** 00026a	ff 76 0a 		push	WORD PTR [bp+10]	;cnt
+	*** 00026d	ff 76 08 		push	WORD PTR [bp+8]	;buf
+	*** 000270	e8 87 fe 		call	_write_data
+	*** 000273	83 c4 08 		add	sp,8
+;|***     write_end(chksum);
+; Line 176
+	*** 000276	ff 76 fa 		push	WORD PTR [bp-6]
+	*** 000279	ff 76 f8 		push	WORD PTR [bp-8]	;chksum
+	*** 00027c	e8 e9 fe 		call	_write_end
+	*** 00027f	83 c4 04 		add	sp,4
+;|***     if (read_header(&chksum) != 0x00090005) /* opcode = 0x0005, length = 9        */
+; Line 177
+	*** 000282	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 000285	50 			push	ax
+	*** 000286	e8 d9 fd 		call	_read_header
+	*** 000289	83 c4 02 		add	sp,2
+	*** 00028c	3d 05 00 		cmp	ax,5
+	*** 00028f	75 05 			jne	$L594
+	*** 000291	83 fa 09 		cmp	dx,9
+	*** 000294	74 06 			je	$I416
+					$L594:
+;|***         return -1;
+; Line 178
+	*** 000296	b8 ff ff 		mov	ax,-1	;ffffH
+	*** 000299	99 			cwd	
+	*** 00029a	c9 			leave	
+	*** 00029b	c3 			ret	
+;|***     result = read_value(&chksum);
+; Line 179
+					$I416:
+	*** 00029c	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 00029f	50 			push	ax
+	*** 0002a0	e8 5d fd 		call	_read_value
+	*** 0002a3	83 c4 02 		add	sp,2
+	*** 0002a6	89 46 fc 		mov	WORD PTR [bp-4],ax	;result
+	*** 0002a9	89 56 fe 		mov	WORD PTR [bp-2],dx
+;|***     if (!read_end(chksum))
+; Line 180
+	*** 0002ac	ff 76 fa 		push	WORD PTR [bp-6]
+	*** 0002af	ff 76 f8 		push	WORD PTR [bp-8]	;chksum
+	*** 0002b2	e8 7f fe 		call	_read_end
+	*** 0002b5	83 c4 04 		add	sp,4
+	*** 0002b8	0b d0 			or	dx,ax
+	*** 0002ba	74 da 			je	$L594
+	*** 0002bc	8b 46 fc 		mov	ax,WORD PTR [bp-4]	;result
+	*** 0002bf	8b 56 fe 		mov	dx,WORD PTR [bp-2]
+;|***         return -1;
+;|***     return result;
+;|*** }
+; Line 183
+	*** 0002c2	c9 			leave	
+	*** 0002c3	c3 			ret	
+
+_rwriteshort	ENDP
+	PUBLIC	_rwrite
+_rwrite	PROC NEAR
+;|*** 
+;|*** int rwrite(int fd, char *buf, int cnt) {
+; Line 185
+	*** 0002c4	c8 0c 00 00 		enter	12,0
+	*** 0002c8	56 			push	si
+;	fd = 4
+;	buf = 8
+;	cnt = 10
+;	csize = -4
+;	fullsize = -8
+;	result = -8
+;	result2 = -12
+;	register si = buf2
+;|***     int csize, fullsize;
+;|***     int result, result2;
+;|***     char *buf2 = buf;
+; Line 188
+	*** 0002c9	8b 76 08 		mov	si,WORD PTR [bp+8]	;buf
+;|***     if (NoPPFS)
+; Line 189
+	*** 0002cc	a1 02 00 		mov	ax,WORD PTR _NoPPFS+2
+	*** 0002cf	0b 06 00 00 		or	ax,WORD PTR _NoPPFS
+	*** 0002d3	74 07 			je	$I431
+;|***         return -1;
+; Line 190
+	*** 0002d5	b8 ff ff 		mov	ax,-1	;ffffH
+	*** 0002d8	99 			cwd	
+	*** 0002d9	5e 			pop	si
+	*** 0002da	c9 			leave	
+	*** 0002db	c3 			ret	
+;|***     fullsize = cnt;
+; Line 191
+					$I431:
+;|***     LockPages(buf,fullsize,0,0);
+;|***     EnterCriticalSection(&ppfscs);
+;|***     result2 = 0;
+; Line 194
+	*** 0002dc	2b c0 			sub	ax,ax
+	*** 0002de	89 46 f6 		mov	WORD PTR [bp-10],ax
+	*** 0002e1	89 46 f4 		mov	WORD PTR [bp-12],ax	;result2
+;|***     while (cnt) {
+; Line 195
+	*** 0002e4	8b 46 0c 		mov	ax,WORD PTR [bp+12]
+	*** 0002e7	0b 46 0a 		or	ax,WORD PTR [bp+10]	;cnt
+	*** 0002ea	74 5c 			je	$FB434
+					$FC433:
+;|***         csize = ( cnt > 32*1024L ? 32*1024L : cnt);
+;|***         if ((result = rwriteshort(fd,buf2,csize)) == -1) {
+; Line 197
+	*** 0002ec	8b 46 0a 		mov	ax,WORD PTR [bp+10]	;cnt
+	*** 0002ef	8b 56 0c 		mov	dx,WORD PTR [bp+12]
+	*** 0002f2	0b d2 			or	dx,dx
+	*** 0002f4	7c 0c 			jl	$L598
+	*** 0002f6	7f 05 			jg	$L599
+	*** 0002f8	3d 00 80 		cmp	ax,-32768	;8000H
+	*** 0002fb	76 05 			jbe	$L598
+					$L599:
+	*** 0002fd	33 d2 			xor	dx,dx
+	*** 0002ff	b8 00 80 		mov	ax,-32768	;8000H
+					$L598:
+	*** 000302	89 46 fc 		mov	WORD PTR [bp-4],ax	;csize
+	*** 000305	89 56 fe 		mov	WORD PTR [bp-2],dx
+	*** 000308	52 			push	dx
+	*** 000309	50 			push	ax
+	*** 00030a	56 			push	si
+	*** 00030b	ff 76 06 		push	WORD PTR [bp+6]
+	*** 00030e	ff 76 04 		push	WORD PTR [bp+4]	;fd
+	*** 000311	e8 12 ff 		call	_rwriteshort
+	*** 000314	83 c4 0a 		add	sp,10	;000aH
+	*** 000317	3d ff ff 		cmp	ax,-1	;ffffH
+	*** 00031a	75 04 			jne	$L600
+	*** 00031c	3b d0 			cmp	dx,ax
+	*** 00031e	74 1e 			je	$L596
+					$L600:
+;|***             result2 = -1;
+;|***             break;
+;|***         }
+;|***         result2 += result;
+; Line 201
+	*** 000320	01 46 f4 		add	WORD PTR [bp-12],ax	;result2
+	*** 000323	11 56 f6 		adc	WORD PTR [bp-10],dx
+;|***         cnt -= csize;
+;|***         buf2 += csize;
+; Line 203
+	*** 000326	8b 46 fc 		mov	ax,WORD PTR [bp-4]	;csize
+	*** 000329	03 f0 			add	si,ax
+;|***     }
+; Line 204
+	*** 00032b	8b 56 fe 		mov	dx,WORD PTR [bp-2]
+	*** 00032e	29 46 0a 		sub	WORD PTR [bp+10],ax	;cnt
+	*** 000331	19 56 0c 		sbb	WORD PTR [bp+12],dx
+	*** 000334	8b 46 0c 		mov	ax,WORD PTR [bp+12]
+	*** 000337	0b 46 0a 		or	ax,WORD PTR [bp+10]	;cnt
+	*** 00033a	75 b0 			jne	$FC433
+	*** 00033c	eb 0a 			jmp	SHORT $FB434
+					$L596:
+;|***             result2 = -1;
+; Line 198
+	*** 00033e	c7 46 f4 ff ff 		mov	WORD PTR [bp-12],-1	;ffffH	;result2
+	*** 000343	c7 46 f6 ff ff 		mov	WORD PTR [bp-10],-1	;ffffH
+;|***             break;
+;|***         }
+;|***         result2 += result;
+;|***         cnt -= csize;
+;|***         buf2 += csize;
+;|***     }
+; Line 204
+					$FB434:
+;|***     LeaveCriticalSection(&ppfscs);
+;|***     UnlockPages(buf,fullsize);
+;|***     return result2;
+; Line 207
+	*** 000348	8b 46 f4 		mov	ax,WORD PTR [bp-12]	;result2
+	*** 00034b	8b 56 f6 		mov	dx,WORD PTR [bp-10]
+;|*** }
+; Line 208
+	*** 00034e	5e 			pop	si
+	*** 00034f	c9 			leave	
+	*** 000350	c3 			ret	
+	*** 000351	90 			nop	
+
+_rwrite	ENDP
+	PUBLIC	_rreadshort
+_rreadshort	PROC NEAR
+;|*** 
+;|*** int rreadshort(int fd, char *buf, int cnt) {
+; Line 210
+	*** 000352	c8 0c 00 00 		enter	12,0
+;	fd = 4
+;	buf = 8
+;	cnt = 10
+;	chksum = -12
+;	result = -4
+;	size = -8
+;|***     int chksum, result, size;
+;|***     write_header(0x000d0004, &chksum); /* opcode = 0x0004, length = 13 */
+; Line 212
+	*** 000356	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 000359	50 			push	ax
+	*** 00035a	6a 0d 			push	13	;000dH
+	*** 00035c	6a 04 			push	4
+	*** 00035e	e8 33 fd 		call	_write_header
+	*** 000361	83 c4 06 		add	sp,6
+;|***     write_value(fd, &chksum);
+; Line 213
+	*** 000364	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 000367	50 			push	ax
+	*** 000368	ff 76 06 		push	WORD PTR [bp+6]
+	*** 00036b	ff 76 04 		push	WORD PTR [bp+4]	;fd
+	*** 00036e	e8 c1 fc 		call	_write_value
+	*** 000371	83 c4 06 		add	sp,6
+;|***     write_value(cnt,&chksum);
+; Line 214
+	*** 000374	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 000377	50 			push	ax
+	*** 000378	ff 76 0c 		push	WORD PTR [bp+12]
+	*** 00037b	ff 76 0a 		push	WORD PTR [bp+10]	;cnt
+	*** 00037e	e8 b1 fc 		call	_write_value
+	*** 000381	83 c4 06 		add	sp,6
+;|***     write_end(chksum);
+; Line 215
+	*** 000384	ff 76 f6 		push	WORD PTR [bp-10]
+	*** 000387	ff 76 f4 		push	WORD PTR [bp-12]	;chksum
+	*** 00038a	e8 db fd 		call	_write_end
+	*** 00038d	83 c4 04 		add	sp,4
+;|***     result = read_header(&chksum);
+;|***     if ((result & 0xffff) != 0x0004)
+; Line 217
+	*** 000390	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 000393	50 			push	ax
+	*** 000394	e8 cb fc 		call	_read_header
+	*** 000397	83 c4 02 		add	sp,2
+	*** 00039a	89 46 fc 		mov	WORD PTR [bp-4],ax	;result
+	*** 00039d	89 56 fe 		mov	WORD PTR [bp-2],dx
+	*** 0003a0	3d 04 00 		cmp	ax,4
+	*** 0003a3	74 07 			je	$I447
+;|***         return -1;
+; Line 218
+					$L622:
+	*** 0003a5	b8 ff ff 		mov	ax,-1	;ffffH
+	*** 0003a8	99 			cwd	
+	*** 0003a9	c9 			leave	
+	*** 0003aa	c3 			ret	
+	*** 0003ab	90 			nop	
+;|***     size = ((result >> 16) & 0xffff) - 9; /* subtract header & chksum */
+; Line 219
+					$I447:
+	*** 0003ac	8b c2 			mov	ax,dx
+	*** 0003ae	2b d2 			sub	dx,dx
+	*** 0003b0	2d 09 00 		sub	ax,9
+	*** 0003b3	1b d2 			sbb	dx,dx
+	*** 0003b5	89 46 f8 		mov	WORD PTR [bp-8],ax	;size
+	*** 0003b8	89 56 fa 		mov	WORD PTR [bp-6],dx
+;|***     result = read_value(&chksum);
+; Line 220
+	*** 0003bb	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 0003be	50 			push	ax
+	*** 0003bf	e8 3e fc 		call	_read_value
+	*** 0003c2	83 c4 02 		add	sp,2
+	*** 0003c5	89 46 fc 		mov	WORD PTR [bp-4],ax	;result
+	*** 0003c8	89 56 fe 		mov	WORD PTR [bp-2],dx
+;|***     read_data(buf,size,&chksum);
+; Line 221
+	*** 0003cb	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 0003ce	50 			push	ax
+	*** 0003cf	ff 76 fa 		push	WORD PTR [bp-6]
+	*** 0003d2	ff 76 f8 		push	WORD PTR [bp-8]	;size
+	*** 0003d5	ff 76 08 		push	WORD PTR [bp+8]	;buf
+	*** 0003d8	e8 e5 fc 		call	_read_data
+	*** 0003db	83 c4 08 		add	sp,8
+;|***     if (!read_end(chksum))
+; Line 222
+	*** 0003de	ff 76 f6 		push	WORD PTR [bp-10]
+	*** 0003e1	ff 76 f4 		push	WORD PTR [bp-12]	;chksum
+	*** 0003e4	e8 4d fd 		call	_read_end
+	*** 0003e7	83 c4 04 		add	sp,4
+	*** 0003ea	0b d0 			or	dx,ax
+	*** 0003ec	74 b7 			je	$L622
+	*** 0003ee	8b 46 fc 		mov	ax,WORD PTR [bp-4]	;result
+	*** 0003f1	8b 56 fe 		mov	dx,WORD PTR [bp-2]
+;|***         return -1;
+;|***     return result;
+;|*** }
+; Line 225
+	*** 0003f4	c9 			leave	
+	*** 0003f5	c3 			ret	
+
+_rreadshort	ENDP
+	PUBLIC	_rread
+_rread	PROC NEAR
+;|*** 
+;|*** int rread(int fd, char *buf, int cnt) {
+; Line 227
+	*** 0003f6	c8 0c 00 00 		enter	12,0
+	*** 0003fa	56 			push	si
+;	fd = 4
+;	buf = 8
+;	cnt = 10
+;	csize = -4
+;	fullsize = -8
+;	result = -8
+;	result2 = -12
+;	register si = buf2
+;|***     int csize, fullsize;
+;|***     int result, result2;
+;|***     char *buf2 = buf;
+; Line 230
+	*** 0003fb	8b 76 08 		mov	si,WORD PTR [bp+8]	;buf
+;|***     if (NoPPFS)
+; Line 231
+	*** 0003fe	a1 02 00 		mov	ax,WORD PTR _NoPPFS+2
+	*** 000401	0b 06 00 00 		or	ax,WORD PTR _NoPPFS
+	*** 000405	74 07 			je	$I462
+;|***         return -1;
+; Line 232
+	*** 000407	b8 ff ff 		mov	ax,-1	;ffffH
+	*** 00040a	99 			cwd	
+	*** 00040b	5e 			pop	si
+	*** 00040c	c9 			leave	
+	*** 00040d	c3 			ret	
+;|***     fullsize = cnt;
+; Line 233
+					$I462:
+;|***     LockPages(buf,fullsize,0,LOCKFLAG_WRITE);
+;|***     EnterCriticalSection(&ppfscs);
+;|***     result2 = 0;
+; Line 236
+	*** 00040e	2b c0 			sub	ax,ax
+	*** 000410	89 46 f6 		mov	WORD PTR [bp-10],ax
+	*** 000413	89 46 f4 		mov	WORD PTR [bp-12],ax	;result2
+;|***     while (cnt) {
+; Line 237
+	*** 000416	8b 46 0c 		mov	ax,WORD PTR [bp+12]
+	*** 000419	0b 46 0a 		or	ax,WORD PTR [bp+10]	;cnt
+	*** 00041c	74 5c 			je	$FB465
+					$FC464:
+;|***         csize = ( cnt > 32*1024L ? 32*1024L : cnt);
+;|***         if ((result = rreadshort(fd,buf2,csize)) == -1) {
+; Line 239
+	*** 00041e	8b 46 0a 		mov	ax,WORD PTR [bp+10]	;cnt
+	*** 000421	8b 56 0c 		mov	dx,WORD PTR [bp+12]
+	*** 000424	0b d2 			or	dx,dx
+	*** 000426	7c 0c 			jl	$L605
+	*** 000428	7f 05 			jg	$L606
+	*** 00042a	3d 00 80 		cmp	ax,-32768	;8000H
+	*** 00042d	76 05 			jbe	$L605
+					$L606:
+	*** 00042f	33 d2 			xor	dx,dx
+	*** 000431	b8 00 80 		mov	ax,-32768	;8000H
+					$L605:
+	*** 000434	89 46 fc 		mov	WORD PTR [bp-4],ax	;csize
+	*** 000437	89 56 fe 		mov	WORD PTR [bp-2],dx
+	*** 00043a	52 			push	dx
+	*** 00043b	50 			push	ax
+	*** 00043c	56 			push	si
+	*** 00043d	ff 76 06 		push	WORD PTR [bp+6]
+	*** 000440	ff 76 04 		push	WORD PTR [bp+4]	;fd
+	*** 000443	e8 0c ff 		call	_rreadshort
+	*** 000446	83 c4 0a 		add	sp,10	;000aH
+	*** 000449	3d ff ff 		cmp	ax,-1	;ffffH
+	*** 00044c	75 04 			jne	$L607
+	*** 00044e	3b d0 			cmp	dx,ax
+	*** 000450	74 1e 			je	$L603
+					$L607:
+;|***             result2 = -1;
+;|***             break;
+;|***         }
+;|***         result2 += result;
+; Line 243
+	*** 000452	01 46 f4 		add	WORD PTR [bp-12],ax	;result2
+	*** 000455	11 56 f6 		adc	WORD PTR [bp-10],dx
+;|***         cnt -= csize;
+;|***         buf2 += csize;
+; Line 245
+	*** 000458	8b 46 fc 		mov	ax,WORD PTR [bp-4]	;csize
+	*** 00045b	03 f0 			add	si,ax
+;|***     }
+; Line 246
+	*** 00045d	8b 56 fe 		mov	dx,WORD PTR [bp-2]
+	*** 000460	29 46 0a 		sub	WORD PTR [bp+10],ax	;cnt
+	*** 000463	19 56 0c 		sbb	WORD PTR [bp+12],dx
+	*** 000466	8b 46 0c 		mov	ax,WORD PTR [bp+12]
+	*** 000469	0b 46 0a 		or	ax,WORD PTR [bp+10]	;cnt
+	*** 00046c	75 b0 			jne	$FC464
+	*** 00046e	eb 0a 			jmp	SHORT $FB465
+					$L603:
+;|***             result2 = -1;
+; Line 240
+	*** 000470	c7 46 f4 ff ff 		mov	WORD PTR [bp-12],-1	;ffffH	;result2
+	*** 000475	c7 46 f6 ff ff 		mov	WORD PTR [bp-10],-1	;ffffH
+;|***             break;
+;|***         }
+;|***         result2 += result;
+;|***         cnt -= csize;
+;|***         buf2 += csize;
+;|***     }
+; Line 246
+					$FB465:
+;|***     LeaveCriticalSection(&ppfscs);
+;|***     UnlockPages(buf,fullsize);
+;|***     return result2;
+; Line 249
+	*** 00047a	8b 46 f4 		mov	ax,WORD PTR [bp-12]	;result2
+	*** 00047d	8b 56 f6 		mov	dx,WORD PTR [bp-10]
+;|*** }   
+; Line 250
+	*** 000480	5e 			pop	si
+	*** 000481	c9 			leave	
+	*** 000482	c3 			ret	
+	*** 000483	90 			nop	
+
+_rread	ENDP
+	PUBLIC	_rclose
+_rclose	PROC NEAR
+;|*** 
+;|*** int rclose(int fd) {
+; Line 252
+	*** 000484	c8 08 00 00 		enter	8,0
+;	fd = 4
+;	chksum = -8
+;	result = -4
+;|***     int chksum, result;
+;|*** 
+;|***     EnterCriticalSection(&ppfscs);
+;|***     if (NoPPFS) {
+; Line 256
+	*** 000488	a1 02 00 		mov	ax,WORD PTR _NoPPFS+2
+	*** 00048b	0b 06 00 00 		or	ax,WORD PTR _NoPPFS
+	*** 00048f	74 07 			je	$I473
+;|***         LeaveCriticalSection(&ppfscs);
+;|***         return -1;
+; Line 258
+					$L623:
+	*** 000491	b8 ff ff 		mov	ax,-1	;ffffH
+	*** 000494	99 			cwd	
+	*** 000495	c9 			leave	
+	*** 000496	c3 			ret	
+	*** 000497	90 			nop	
+;|***     }
+;|***     write_header(0x00090003, &chksum); /* opcode = 0x0003, length = 9 */
+; Line 260
+					$I473:
+	*** 000498	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 00049b	50 			push	ax
+	*** 00049c	6a 09 			push	9
+	*** 00049e	6a 03 			push	3
+	*** 0004a0	e8 f1 fb 		call	_write_header
+	*** 0004a3	83 c4 06 		add	sp,6
+;|***     write_value(fd,&chksum);
+; Line 261
+	*** 0004a6	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 0004a9	50 			push	ax
+	*** 0004aa	ff 76 06 		push	WORD PTR [bp+6]
+	*** 0004ad	ff 76 04 		push	WORD PTR [bp+4]	;fd
+	*** 0004b0	e8 7f fb 		call	_write_value
+	*** 0004b3	83 c4 06 		add	sp,6
+;|***     write_end(chksum);
+; Line 262
+	*** 0004b6	ff 76 fa 		push	WORD PTR [bp-6]
+	*** 0004b9	ff 76 f8 		push	WORD PTR [bp-8]	;chksum
+	*** 0004bc	e8 a9 fc 		call	_write_end
+	*** 0004bf	83 c4 04 		add	sp,4
+;|***     if (read_header(&chksum) != 0x00090003) {
+; Line 263
+	*** 0004c2	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 0004c5	50 			push	ax
+	*** 0004c6	e8 99 fb 		call	_read_header
+	*** 0004c9	83 c4 02 		add	sp,2
+	*** 0004cc	3d 03 00 		cmp	ax,3
+	*** 0004cf	75 c0 			jne	$L623
+	*** 0004d1	83 fa 09 		cmp	dx,9
+	*** 0004d4	75 bb 			jne	$L623
+;|***         LeaveCriticalSection(&ppfscs);
+;|***         return -1;
+;|***     }
+;|***     result = read_value(&chksum);
+; Line 267
+	*** 0004d6	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 0004d9	50 			push	ax
+	*** 0004da	e8 23 fb 		call	_read_value
+	*** 0004dd	83 c4 02 		add	sp,2
+	*** 0004e0	89 46 fc 		mov	WORD PTR [bp-4],ax	;result
+	*** 0004e3	89 56 fe 		mov	WORD PTR [bp-2],dx
+;|***     if (!read_end(chksum)) {
+; Line 268
+	*** 0004e6	ff 76 fa 		push	WORD PTR [bp-6]
+	*** 0004e9	ff 76 f8 		push	WORD PTR [bp-8]	;chksum
+	*** 0004ec	e8 45 fc 		call	_read_end
+	*** 0004ef	83 c4 04 		add	sp,4
+	*** 0004f2	0b d0 			or	dx,ax
+	*** 0004f4	74 9b 			je	$L623
+	*** 0004f6	8b 46 fc 		mov	ax,WORD PTR [bp-4]	;result
+	*** 0004f9	8b 56 fe 		mov	dx,WORD PTR [bp-2]
+;|***         LeaveCriticalSection(&ppfscs);
+;|***         return -1;
+;|***     }
+;|***     LeaveCriticalSection(&ppfscs);
+;|***     return result;
+;|*** }
+; Line 274
+	*** 0004fc	c9 			leave	
+	*** 0004fd	c3 			ret	
+
+_rclose	ENDP
+	PUBLIC	_SC_PPSHRestart
+_SC_PPSHRestart	PROC NEAR
+;|*** 
+;|*** #define MAX_FILENAME_LEN 256
+;|*** 
+;|*** void SC_PPSHRestart(void) {
+;|***     NoPPFS = 0;
+; Line 279
+	*** 0004fe	2b c0 			sub	ax,ax
+	*** 000500	a3 02 00 		mov	WORD PTR _NoPPFS+2,ax
+	*** 000503	a3 00 00 		mov	WORD PTR _NoPPFS,ax
+;|*** }
+; Line 280
+	*** 000506	c3 			ret	
+	*** 000507	90 			nop	
+
+_SC_PPSHRestart	ENDP
+	PUBLIC	_ropen
+_ropen	PROC NEAR
+;|*** 
+;|*** int ropen(WCHAR *name, int mode) {
+; Line 282
+	*** 000508	c8 08 01 00 		enter	264,0
+	*** 00050c	57 			push	di
+	*** 00050d	56 			push	si
+;	name = 4
+;	mode = 6
+;	chksum = -8
+;	result = -4
+;	len = -4
+;	fname = -264
+	*** 00050e	8b 76 04 		mov	si,WORD PTR [bp+4]	;name
+;|***     int chksum, result, len;
+;|***     char fname[MAX_FILENAME_LEN];
+;|***     len = strlenW(name)+1;
+; Line 285
+	*** 000511	8b fe 			mov	di,si
+	*** 000513	8c d8 			mov	ax,ds
+	*** 000515	8e c0 			mov	es,ax
+	*** 000517	b9 ff ff 		mov	cx,-1	;ffffH
+	*** 00051a	33 c0 			xor	ax,ax
+	*** 00051c	f2 			repnz
+	*** 00051d	ae 			scasb
+	*** 00051e	f7 d1 			not	cx
+	*** 000520	89 4e fc 		mov	WORD PTR [bp-4],cx	;result
+	*** 000523	89 46 fe 		mov	WORD PTR [bp-2],ax
+;|***     KUnicodeToAscii(fname,name,MAX_FILENAME_LEN);
+; Line 286
+	*** 000526	68 00 01 		push	256	;0100H
+	*** 000529	56 			push	si
+	*** 00052a	8d 86 f8 fe 		lea	ax,WORD PTR [bp-264]	;fname
+	*** 00052e	50 			push	ax
+	*** 00052f	e8 00 00 		call	_strncpy
+	*** 000532	83 c4 06 		add	sp,6
+;|***     if (NoPPFS)
+; Line 287
+	*** 000535	a1 02 00 		mov	ax,WORD PTR _NoPPFS+2
+	*** 000538	0b 06 00 00 		or	ax,WORD PTR _NoPPFS
+	*** 00053c	74 08 			je	$I488
+;|***         return -1;
+; Line 288
+					$L624:
+	*** 00053e	b8 ff ff 		mov	ax,-1	;ffffH
+	*** 000541	99 			cwd	
+	*** 000542	5e 			pop	si
+	*** 000543	5f 			pop	di
+	*** 000544	c9 			leave	
+	*** 000545	c3 			ret	
+;|***     EnterCriticalSection(&ppfscs);
+; Line 289
+					$I488:
+;|***     write_header(0x00090002 + (len<<16), &chksum); /* opcode = 0x0002, length = 9 + strlen + 1 */
+; Line 290
+	*** 000546	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 000549	50 			push	ax
+	*** 00054a	8b 4e fc 		mov	cx,WORD PTR [bp-4]	;result
+	*** 00054d	8b d9 			mov	bx,cx
+	*** 00054f	2b d2 			sub	dx,dx
+	*** 000551	83 c2 02 		add	dx,2
+	*** 000554	83 d3 09 		adc	bx,9
+	*** 000557	53 			push	bx
+	*** 000558	52 			push	dx
+	*** 000559	e8 38 fb 		call	_write_header
+	*** 00055c	83 c4 06 		add	sp,6
+;|***     write_value(mode,&chksum);
+; Line 291
+	*** 00055f	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 000562	50 			push	ax
+	*** 000563	ff 76 08 		push	WORD PTR [bp+8]
+	*** 000566	ff 76 06 		push	WORD PTR [bp+6]	;mode
+	*** 000569	e8 c6 fa 		call	_write_value
+	*** 00056c	83 c4 06 		add	sp,6
+;|***     write_data(fname,len,&chksum);
+; Line 292
+	*** 00056f	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 000572	50 			push	ax
+	*** 000573	ff 76 fe 		push	WORD PTR [bp-2]
+	*** 000576	ff 76 fc 		push	WORD PTR [bp-4]	;result
+	*** 000579	8d 8e f8 fe 		lea	cx,WORD PTR [bp-264]	;fname
+	*** 00057d	51 			push	cx
+	*** 00057e	e8 79 fb 		call	_write_data
+	*** 000581	83 c4 08 		add	sp,8
+;|***     write_end(chksum);
+; Line 293
+	*** 000584	ff 76 fa 		push	WORD PTR [bp-6]
+	*** 000587	ff 76 f8 		push	WORD PTR [bp-8]	;chksum
+	*** 00058a	e8 db fb 		call	_write_end
+	*** 00058d	83 c4 04 		add	sp,4
+;|***     if (read_header(&chksum) != 0x00090002) {
+; Line 294
+	*** 000590	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 000593	50 			push	ax
+	*** 000594	e8 cb fa 		call	_read_header
+	*** 000597	83 c4 02 		add	sp,2
+	*** 00059a	3d 02 00 		cmp	ax,2
+	*** 00059d	75 9f 			jne	$L624
+	*** 00059f	83 fa 09 		cmp	dx,9
+	*** 0005a2	75 9a 			jne	$L624
+;|***         LeaveCriticalSection(&ppfscs);
+;|***         return -1;
+;|***     }
+;|***     result = read_value(&chksum);
+; Line 298
+	*** 0005a4	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 0005a7	50 			push	ax
+	*** 0005a8	e8 55 fa 		call	_read_value
+	*** 0005ab	83 c4 02 		add	sp,2
+	*** 0005ae	89 46 fc 		mov	WORD PTR [bp-4],ax	;result
+	*** 0005b1	89 56 fe 		mov	WORD PTR [bp-2],dx
+;|***     if (!read_end(chksum)) {
+; Line 299
+	*** 0005b4	ff 76 fa 		push	WORD PTR [bp-6]
+	*** 0005b7	ff 76 f8 		push	WORD PTR [bp-8]	;chksum
+	*** 0005ba	e8 77 fb 		call	_read_end
+	*** 0005bd	83 c4 04 		add	sp,4
+	*** 0005c0	0b d0 			or	dx,ax
+	*** 0005c2	75 03 			jne	$JCC1474
+	*** 0005c4	e9 77 ff 		jmp	$L624
+					$JCC1474:
+	*** 0005c7	8b 46 fc 		mov	ax,WORD PTR [bp-4]	;result
+	*** 0005ca	8b 56 fe 		mov	dx,WORD PTR [bp-2]
+;|***         LeaveCriticalSection(&ppfscs);
+;|***         return -1;
+;|***     }
+;|***     LeaveCriticalSection(&ppfscs);
+;|***     return result;
+;|*** }
+; Line 305
+	*** 0005cd	5e 			pop	si
+	*** 0005ce	5f 			pop	di
+	*** 0005cf	c9 			leave	
+	*** 0005d0	c3 			ret	
+	*** 0005d1	90 			nop	
+
+_ropen	ENDP
+	PUBLIC	_rfindfirst
+_rfindfirst	PROC NEAR
+;|*** 
+;|*** int rfindfirst(DWORD hFind, WCHAR *pattern, struct _finddata_t *fd) {
+; Line 307
+	*** 0005d2	c8 0c 01 00 		enter	268,0
+	*** 0005d6	57 			push	di
+	*** 0005d7	56 			push	si
+;	hFind = 4
+;	pattern = 8
+;	fd = 10
+;	chksum = -12
+;	result = -8
+;	len = -4
+;	fname = -268
+;|***     int chksum, result, len;
+;|***     char fname[MAX_FILENAME_LEN];
+;|*** 
+;|***     if (NoPPFS)
+; Line 311
+	*** 0005d8	a1 02 00 		mov	ax,WORD PTR _NoPPFS+2
+	*** 0005db	0b 06 00 00 		or	ax,WORD PTR _NoPPFS
+	*** 0005df	74 09 			je	$I504
+;|***         return -1;
+; Line 312
+					$L625:
+	*** 0005e1	b8 ff ff 		mov	ax,-1	;ffffH
+	*** 0005e4	99 			cwd	
+	*** 0005e5	5e 			pop	si
+	*** 0005e6	5f 			pop	di
+	*** 0005e7	c9 			leave	
+	*** 0005e8	c3 			ret	
+	*** 0005e9	90 			nop	
+;|***     if (pattern != NULL) {
+; Line 313
+					$I504:
+	*** 0005ea	8b 76 08 		mov	si,WORD PTR [bp+8]	;pattern
+	*** 0005ed	0b f6 			or	si,si
+	*** 0005ef	74 27 			je	$I505
+;|***         len = strlenW(pattern)+1;
+; Line 314
+	*** 0005f1	8b fe 			mov	di,si
+	*** 0005f3	8c d8 			mov	ax,ds
+	*** 0005f5	8e c0 			mov	es,ax
+	*** 0005f7	b9 ff ff 		mov	cx,-1	;ffffH
+	*** 0005fa	33 c0 			xor	ax,ax
+	*** 0005fc	f2 			repnz
+	*** 0005fd	ae 			scasb
+	*** 0005fe	f7 d1 			not	cx
+	*** 000600	89 4e fc 		mov	WORD PTR [bp-4],cx	;len
+	*** 000603	89 46 fe 		mov	WORD PTR [bp-2],ax
+;|***         KUnicodeToAscii(fname,pattern,MAX_FILENAME_LEN);
+; Line 315
+	*** 000606	68 00 01 		push	256	;0100H
+	*** 000609	56 			push	si
+	*** 00060a	8d 86 f4 fe 		lea	ax,WORD PTR [bp-268]	;fname
+	*** 00060e	50 			push	ax
+	*** 00060f	e8 00 00 		call	_strncpy
+	*** 000612	83 c4 06 		add	sp,6
+;|***     } else {
+; Line 316
+	*** 000615	eb 09 			jmp	SHORT $I506
+	*** 000617	90 			nop	
+					$I505:
+;|***         len = 0;
+; Line 317
+	*** 000618	2b c0 			sub	ax,ax
+	*** 00061a	89 46 fe 		mov	WORD PTR [bp-2],ax
+	*** 00061d	89 46 fc 		mov	WORD PTR [bp-4],ax	;len
+;|***     }
+; Line 318
+					$I506:
+;|***     EnterCriticalSection(&ppfscs);
+;|***     write_header(0x00090008 + (len<<16), &chksum); /* opcode = 0x0002, length = 9 + strlen + 1 */
+; Line 320
+	*** 000620	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 000623	50 			push	ax
+	*** 000624	8b 4e fc 		mov	cx,WORD PTR [bp-4]	;len
+	*** 000627	8b d9 			mov	bx,cx
+	*** 000629	2b d2 			sub	dx,dx
+	*** 00062b	83 c2 08 		add	dx,8
+	*** 00062e	83 d3 09 		adc	bx,9
+	*** 000631	53 			push	bx
+	*** 000632	52 			push	dx
+	*** 000633	e8 5e fa 		call	_write_header
+	*** 000636	83 c4 06 		add	sp,6
+;|***     write_value(hFind,&chksum);
+; Line 321
+	*** 000639	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 00063c	50 			push	ax
+	*** 00063d	ff 76 06 		push	WORD PTR [bp+6]
+	*** 000640	ff 76 04 		push	WORD PTR [bp+4]	;hFind
+	*** 000643	e8 ec f9 		call	_write_value
+	*** 000646	83 c4 06 		add	sp,6
+;|***     if (len != 0) {
+; Line 322
+	*** 000649	8b 46 fe 		mov	ax,WORD PTR [bp-2]
+	*** 00064c	0b 46 fc 		or	ax,WORD PTR [bp-4]	;len
+	*** 00064f	74 15 			je	$I507
+;|***         write_data(fname,len,&chksum);
+; Line 323
+	*** 000651	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 000654	50 			push	ax
+	*** 000655	ff 76 fe 		push	WORD PTR [bp-2]
+	*** 000658	ff 76 fc 		push	WORD PTR [bp-4]	;len
+	*** 00065b	8d 86 f4 fe 		lea	ax,WORD PTR [bp-268]	;fname
+	*** 00065f	50 			push	ax
+	*** 000660	e8 97 fa 		call	_write_data
+	*** 000663	83 c4 08 		add	sp,8
+;|***     }
+;|***     write_end(chksum);
+; Line 325
+					$I507:
+	*** 000666	ff 76 f6 		push	WORD PTR [bp-10]
+	*** 000669	ff 76 f4 		push	WORD PTR [bp-12]	;chksum
+	*** 00066c	e8 f9 fa 		call	_write_end
+	*** 00066f	83 c4 04 		add	sp,4
+;|***     result = read_header(&chksum);
+;|***     if ((result & 0xffff) != 0x0008)
+; Line 327
+	*** 000672	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 000675	50 			push	ax
+	*** 000676	e8 e9 f9 		call	_read_header
+	*** 000679	83 c4 02 		add	sp,2
+	*** 00067c	89 46 f8 		mov	WORD PTR [bp-8],ax	;result
+	*** 00067f	89 56 fa 		mov	WORD PTR [bp-6],dx
+	*** 000682	3d 08 00 		cmp	ax,8
+	*** 000685	74 03 			je	$JCC1669
+	*** 000687	e9 57 ff 		jmp	$L625
+					$JCC1669:
+;|***         return -1;
+;|***     len = ((result >> 16) & 0xffff) - 9; /* subtract header & chksum */
+; Line 329
+	*** 00068a	8b c2 			mov	ax,dx
+	*** 00068c	2b d2 			sub	dx,dx
+	*** 00068e	2d 09 00 		sub	ax,9
+	*** 000691	1b d2 			sbb	dx,dx
+	*** 000693	89 46 fc 		mov	WORD PTR [bp-4],ax	;len
+	*** 000696	89 56 fe 		mov	WORD PTR [bp-2],dx
+;|***     result = read_value(&chksum);
+; Line 330
+	*** 000699	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 00069c	50 			push	ax
+	*** 00069d	e8 60 f9 		call	_read_value
+	*** 0006a0	83 c4 02 		add	sp,2
+	*** 0006a3	89 46 f8 		mov	WORD PTR [bp-8],ax	;result
+	*** 0006a6	89 56 fa 		mov	WORD PTR [bp-6],dx
+;|***     if (len != 0) {
+; Line 331
+	*** 0006a9	8b 46 fe 		mov	ax,WORD PTR [bp-2]
+	*** 0006ac	0b 46 fc 		or	ax,WORD PTR [bp-4]	;len
+	*** 0006af	74 13 			je	$I509
+;|***         read_data((LPBYTE)fd,len,&chksum);
+; Line 332
+	*** 0006b1	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 0006b4	50 			push	ax
+	*** 0006b5	ff 76 fe 		push	WORD PTR [bp-2]
+	*** 0006b8	ff 76 fc 		push	WORD PTR [bp-4]	;len
+	*** 0006bb	ff 76 0a 		push	WORD PTR [bp+10]	;fd
+	*** 0006be	e8 ff f9 		call	_read_data
+	*** 0006c1	83 c4 08 		add	sp,8
+;|***     }
+;|***     if (!read_end(chksum)) {
+; Line 334
+					$I509:
+	*** 0006c4	ff 76 f6 		push	WORD PTR [bp-10]
+	*** 0006c7	ff 76 f4 		push	WORD PTR [bp-12]	;chksum
+	*** 0006ca	e8 67 fa 		call	_read_end
+	*** 0006cd	83 c4 04 		add	sp,4
+	*** 0006d0	0b d0 			or	dx,ax
+	*** 0006d2	75 03 			jne	$JCC1746
+	*** 0006d4	e9 0a ff 		jmp	$L625
+					$JCC1746:
+	*** 0006d7	8b 46 f8 		mov	ax,WORD PTR [bp-8]	;result
+	*** 0006da	8b 56 fa 		mov	dx,WORD PTR [bp-6]
+;|***         LeaveCriticalSection(&ppfscs);
+;|***         return -1;
+;|***     }
+;|***     LeaveCriticalSection(&ppfscs);
+;|***     return result;
+;|*** }
+; Line 340
+	*** 0006dd	5e 			pop	si
+	*** 0006de	5f 			pop	di
+	*** 0006df	c9 			leave	
+	*** 0006e0	c3 			ret	
+	*** 0006e1	90 			nop	
+
+_rfindfirst	ENDP
+	PUBLIC	_rfindnext
+_rfindnext	PROC NEAR
+;|*** 
+;|*** int rfindnext(DWORD hFind, struct _finddata_t *fd) {
+; Line 342
+	*** 0006e2	c8 0c 00 00 		enter	12,0
+;	hFind = 4
+;	fd = 8
+;	chksum = -12
+;	result = -8
+;	len = -4
+;|***     int chksum, result, len;
+;|***     
+;|***     if (NoPPFS)
+; Line 345
+	*** 0006e6	a1 02 00 		mov	ax,WORD PTR _NoPPFS+2
+	*** 0006e9	0b 06 00 00 		or	ax,WORD PTR _NoPPFS
+	*** 0006ed	74 07 			je	$I520
+;|***         return -1;
+; Line 346
+					$L626:
+	*** 0006ef	b8 ff ff 		mov	ax,-1	;ffffH
+	*** 0006f2	99 			cwd	
+	*** 0006f3	c9 			leave	
+	*** 0006f4	c3 			ret	
+	*** 0006f5	90 			nop	
+;|***     EnterCriticalSection(&ppfscs);
+; Line 347
+					$I520:
+;|***     write_header(0x00090009, &chksum); /* opcode = 0x0009, length = 9 */
+; Line 348
+	*** 0006f6	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 0006f9	50 			push	ax
+	*** 0006fa	6a 09 			push	9
+	*** 0006fc	6a 09 			push	9
+	*** 0006fe	e8 93 f9 		call	_write_header
+	*** 000701	83 c4 06 		add	sp,6
+;|***     write_value(hFind,&chksum);
+; Line 349
+	*** 000704	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 000707	50 			push	ax
+	*** 000708	ff 76 06 		push	WORD PTR [bp+6]
+	*** 00070b	ff 76 04 		push	WORD PTR [bp+4]	;hFind
+	*** 00070e	e8 21 f9 		call	_write_value
+	*** 000711	83 c4 06 		add	sp,6
+;|***     write_end(chksum);
+; Line 350
+	*** 000714	ff 76 f6 		push	WORD PTR [bp-10]
+	*** 000717	ff 76 f4 		push	WORD PTR [bp-12]	;chksum
+	*** 00071a	e8 4b fa 		call	_write_end
+	*** 00071d	83 c4 04 		add	sp,4
+;|***     result = read_header(&chksum);
+;|***     if ((result & 0xffff) != 0x0009)
+; Line 352
+	*** 000720	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 000723	50 			push	ax
+	*** 000724	e8 3b f9 		call	_read_header
+	*** 000727	83 c4 02 		add	sp,2
+	*** 00072a	89 46 f8 		mov	WORD PTR [bp-8],ax	;result
+	*** 00072d	89 56 fa 		mov	WORD PTR [bp-6],dx
+	*** 000730	3d 09 00 		cmp	ax,9
+	*** 000733	75 ba 			jne	$L626
+;|***         return -1;
+;|***     len = ((result >> 16) & 0xffff) - 9; /* subtract header & chksum */
+; Line 354
+	*** 000735	8b c2 			mov	ax,dx
+	*** 000737	2b d2 			sub	dx,dx
+	*** 000739	2d 09 00 		sub	ax,9
+	*** 00073c	1b d2 			sbb	dx,dx
+	*** 00073e	89 46 fc 		mov	WORD PTR [bp-4],ax	;len
+	*** 000741	89 56 fe 		mov	WORD PTR [bp-2],dx
+;|***     result = read_value(&chksum);
+; Line 355
+	*** 000744	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 000747	50 			push	ax
+	*** 000748	e8 b5 f8 		call	_read_value
+	*** 00074b	83 c4 02 		add	sp,2
+	*** 00074e	89 46 f8 		mov	WORD PTR [bp-8],ax	;result
+	*** 000751	89 56 fa 		mov	WORD PTR [bp-6],dx
+;|***     if (len != 0) {
+; Line 356
+	*** 000754	8b 46 fe 		mov	ax,WORD PTR [bp-2]
+	*** 000757	0b 46 fc 		or	ax,WORD PTR [bp-4]	;len
+	*** 00075a	74 13 			je	$I522
+;|***         read_data((LPBYTE)fd,len,&chksum);
+; Line 357
+	*** 00075c	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 00075f	50 			push	ax
+	*** 000760	ff 76 fe 		push	WORD PTR [bp-2]
+	*** 000763	ff 76 fc 		push	WORD PTR [bp-4]	;len
+	*** 000766	ff 76 08 		push	WORD PTR [bp+8]	;fd
+	*** 000769	e8 54 f9 		call	_read_data
+	*** 00076c	83 c4 08 		add	sp,8
+;|***     }
+;|***     if (!read_end(chksum)) {
+; Line 359
+					$I522:
+	*** 00076f	ff 76 f6 		push	WORD PTR [bp-10]
+	*** 000772	ff 76 f4 		push	WORD PTR [bp-12]	;chksum
+	*** 000775	e8 bc f9 		call	_read_end
+	*** 000778	83 c4 04 		add	sp,4
+	*** 00077b	0b d0 			or	dx,ax
+	*** 00077d	75 03 			jne	$JCC1917
+	*** 00077f	e9 6d ff 		jmp	$L626
+					$JCC1917:
+	*** 000782	8b 46 f8 		mov	ax,WORD PTR [bp-8]	;result
+	*** 000785	8b 56 fa 		mov	dx,WORD PTR [bp-6]
+;|***         LeaveCriticalSection(&ppfscs);
+;|***         return -1;
+;|***     }
+;|***     LeaveCriticalSection(&ppfscs);
+;|***     return result;
+;|*** }
+; Line 365
+	*** 000788	c9 			leave	
+	*** 000789	c3 			ret	
+
+_rfindnext	ENDP
+	PUBLIC	_rRegOpen
+_rRegOpen	PROC NEAR
+;|*** 
+;|*** // Registration database access functions for kernel debug support initialization
+;|*** int rRegOpen(DWORD hKey, CHAR *szName, LPDWORD lphKey) {
+; Line 368
+	*** 00078a	c8 08 00 00 		enter	8,0
+	*** 00078e	57 			push	di
+	*** 00078f	56 			push	si
+;	hKey = 4
+;	szName = 8
+;	lphKey = 10
+;	chksum = -8
+;	len = -4
+;|***     int chksum, len;
+;|***     if (NoPPFS)
+; Line 370
+	*** 000790	a1 02 00 		mov	ax,WORD PTR _NoPPFS+2
+	*** 000793	0b 06 00 00 		or	ax,WORD PTR _NoPPFS
+	*** 000797	74 03 			je	$JCC1943
+	*** 000799	e9 8f 00 		jmp	$L629
+					$JCC1943:
+;|***         return -1;
+;|***     len = strlen(szName)+1;
+; Line 372
+	*** 00079c	8b 76 08 		mov	si,WORD PTR [bp+8]	;szName
+;|***     EnterCriticalSection(&ppfscs);
+;|***     write_header(0x0009000B + (len<<16), &chksum); /* opcode = 0x000B, length = 9 + strlen + 1 */
+; Line 374
+	*** 00079f	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 0007a2	50 			push	ax
+	*** 0007a3	8b fe 			mov	di,si
+	*** 0007a5	8c d8 			mov	ax,ds
+	*** 0007a7	8e c0 			mov	es,ax
+	*** 0007a9	b9 ff ff 		mov	cx,-1	;ffffH
+	*** 0007ac	33 c0 			xor	ax,ax
+	*** 0007ae	f2 			repnz
+	*** 0007af	ae 			scasb
+	*** 0007b0	f7 d1 			not	cx
+	*** 0007b2	89 4e fc 		mov	WORD PTR [bp-4],cx	;len
+	*** 0007b5	89 46 fe 		mov	WORD PTR [bp-2],ax
+	*** 0007b8	8b d1 			mov	dx,cx
+	*** 0007ba	05 0b 00 		add	ax,11	;000bH
+	*** 0007bd	83 d2 09 		adc	dx,9
+	*** 0007c0	52 			push	dx
+	*** 0007c1	50 			push	ax
+	*** 0007c2	e8 cf f8 		call	_write_header
+	*** 0007c5	83 c4 06 		add	sp,6
+;|***     write_value(hKey,&chksum);
+; Line 375
+	*** 0007c8	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 0007cb	50 			push	ax
+	*** 0007cc	ff 76 06 		push	WORD PTR [bp+6]
+	*** 0007cf	ff 76 04 		push	WORD PTR [bp+4]	;hKey
+	*** 0007d2	e8 5d f8 		call	_write_value
+	*** 0007d5	83 c4 06 		add	sp,6
+;|***     write_data(szName,len,&chksum);
+; Line 376
+	*** 0007d8	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 0007db	50 			push	ax
+	*** 0007dc	ff 76 fe 		push	WORD PTR [bp-2]
+	*** 0007df	ff 76 fc 		push	WORD PTR [bp-4]	;len
+	*** 0007e2	56 			push	si
+	*** 0007e3	e8 14 f9 		call	_write_data
+	*** 0007e6	83 c4 08 		add	sp,8
+;|***     write_end(chksum);
+; Line 377
+	*** 0007e9	ff 76 fa 		push	WORD PTR [bp-6]
+	*** 0007ec	ff 76 f8 		push	WORD PTR [bp-8]	;chksum
+	*** 0007ef	e8 76 f9 		call	_write_end
+	*** 0007f2	83 c4 04 		add	sp,4
+;|***     if (read_header(&chksum) != 0x0009000B) {
+; Line 378
+	*** 0007f5	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 0007f8	50 			push	ax
+	*** 0007f9	e8 66 f8 		call	_read_header
+	*** 0007fc	83 c4 02 		add	sp,2
+	*** 0007ff	3d 0b 00 		cmp	ax,11	;000bH
+	*** 000802	75 27 			jne	$L629
+	*** 000804	83 fa 09 		cmp	dx,9
+	*** 000807	75 22 			jne	$L629
+;|***         LeaveCriticalSection(&ppfscs);
+;|***         return -1;
+;|***     }
+;|***     *lphKey = read_value(&chksum);
+; Line 382
+	*** 000809	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 00080c	50 			push	ax
+	*** 00080d	e8 f0 f7 		call	_read_value
+	*** 000810	8b 5e 0a 		mov	bx,WORD PTR [bp+10]	;lphKey
+	*** 000813	83 c4 02 		add	sp,2
+	*** 000816	89 07 			mov	WORD PTR [bx],ax
+	*** 000818	89 57 02 		mov	WORD PTR [bx+2],dx
+;|***     if (!read_end(chksum)) {
+; Line 383
+	*** 00081b	ff 76 fa 		push	WORD PTR [bp-6]
+	*** 00081e	ff 76 f8 		push	WORD PTR [bp-8]	;chksum
+	*** 000821	e8 10 f9 		call	_read_end
+	*** 000824	83 c4 04 		add	sp,4
+	*** 000827	0b d0 			or	dx,ax
+	*** 000829	75 09 			jne	$I536
+					$L629:
+	*** 00082b	b8 ff ff 		mov	ax,-1	;ffffH
+	*** 00082e	99 			cwd	
+	*** 00082f	5e 			pop	si
+	*** 000830	5f 			pop	di
+	*** 000831	c9 			leave	
+	*** 000832	c3 			ret	
+	*** 000833	90 			nop	
+					$I536:
+	*** 000834	33 c0 			xor	ax,ax
+	*** 000836	99 			cwd	
+;|***         LeaveCriticalSection(&ppfscs);
+;|***         return -1;
+;|***     }
+;|***     LeaveCriticalSection(&ppfscs);
+;|***     return 0;
+;|*** }
+; Line 389
+	*** 000837	5e 			pop	si
+	*** 000838	5f 			pop	di
+	*** 000839	c9 			leave	
+	*** 00083a	c3 			ret	
+	*** 00083b	90 			nop	
+
+_rRegOpen	ENDP
+	PUBLIC	_rRegClose
+_rRegClose	PROC NEAR
+;|*** 
+;|*** int rRegClose(DWORD hKey) {
+; Line 391
+	*** 00083c	c8 08 00 00 		enter	8,0
+;	hKey = 4
+;	chksum = -8
+;	result = -4
+;|***     int chksum, result;
+;|***     if (NoPPFS)
+; Line 393
+	*** 000840	a1 02 00 		mov	ax,WORD PTR _NoPPFS+2
+	*** 000843	0b 06 00 00 		or	ax,WORD PTR _NoPPFS
+	*** 000847	74 07 			je	$I543
+;|***         return -1;
+; Line 394
+					$L630:
+	*** 000849	b8 ff ff 		mov	ax,-1	;ffffH
+	*** 00084c	99 			cwd	
+	*** 00084d	c9 			leave	
+	*** 00084e	c3 			ret	
+	*** 00084f	90 			nop	
+;|***     EnterCriticalSection(&ppfscs);
+; Line 395
+					$I543:
+;|***     write_header(0x0009000C, &chksum); /* opcode = 0x000C, length = 9 */
+; Line 396
+	*** 000850	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 000853	50 			push	ax
+	*** 000854	6a 09 			push	9
+	*** 000856	6a 0c 			push	12	;000cH
+	*** 000858	e8 39 f8 		call	_write_header
+	*** 00085b	83 c4 06 		add	sp,6
+;|***     write_value(hKey,&chksum);
+; Line 397
+	*** 00085e	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 000861	50 			push	ax
+	*** 000862	ff 76 06 		push	WORD PTR [bp+6]
+	*** 000865	ff 76 04 		push	WORD PTR [bp+4]	;hKey
+	*** 000868	e8 c7 f7 		call	_write_value
+	*** 00086b	83 c4 06 		add	sp,6
+;|***     write_end(chksum);
+; Line 398
+	*** 00086e	ff 76 fa 		push	WORD PTR [bp-6]
+	*** 000871	ff 76 f8 		push	WORD PTR [bp-8]	;chksum
+	*** 000874	e8 f1 f8 		call	_write_end
+	*** 000877	83 c4 04 		add	sp,4
+;|***     if (read_header(&chksum) != 0x0009000C) {
+; Line 399
+	*** 00087a	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 00087d	50 			push	ax
+	*** 00087e	e8 e1 f7 		call	_read_header
+	*** 000881	83 c4 02 		add	sp,2
+	*** 000884	3d 0c 00 		cmp	ax,12	;000cH
+	*** 000887	75 c0 			jne	$L630
+	*** 000889	83 fa 09 		cmp	dx,9
+	*** 00088c	75 bb 			jne	$L630
+;|***         LeaveCriticalSection(&ppfscs);
+;|***         return -1;
+;|***     }
+;|***     result = read_value(&chksum);
+; Line 403
+	*** 00088e	8d 46 f8 		lea	ax,WORD PTR [bp-8]	;chksum
+	*** 000891	50 			push	ax
+	*** 000892	e8 6b f7 		call	_read_value
+	*** 000895	83 c4 02 		add	sp,2
+	*** 000898	89 46 fc 		mov	WORD PTR [bp-4],ax	;result
+	*** 00089b	89 56 fe 		mov	WORD PTR [bp-2],dx
+;|***     if (!read_end(chksum)) {
+; Line 404
+	*** 00089e	ff 76 fa 		push	WORD PTR [bp-6]
+	*** 0008a1	ff 76 f8 		push	WORD PTR [bp-8]	;chksum
+	*** 0008a4	e8 8d f8 		call	_read_end
+	*** 0008a7	83 c4 04 		add	sp,4
+	*** 0008aa	0b d0 			or	dx,ax
+	*** 0008ac	74 9b 			je	$L630
+	*** 0008ae	8b 46 fc 		mov	ax,WORD PTR [bp-4]	;result
+	*** 0008b1	8b 56 fe 		mov	dx,WORD PTR [bp-2]
+;|***         LeaveCriticalSection(&ppfscs);
+;|***         return -1;
+;|***     }
+;|***     LeaveCriticalSection(&ppfscs);
+;|***     return result;
+;|*** }
+; Line 410
+	*** 0008b4	c9 			leave	
+	*** 0008b5	c3 			ret	
+
+_rRegClose	ENDP
+	PUBLIC	_rRegGet
+_rRegGet	PROC NEAR
+;|*** 
+;|*** int rRegGet(DWORD hKey, CHAR *szName, LPDWORD lpdwType,
+;|***                 LPBYTE lpbData, LPDWORD lpdwSize) {
+; Line 413
+	*** 0008b6	c8 0c 00 00 		enter	12,0
+	*** 0008ba	57 			push	di
+	*** 0008bb	56 			push	si
+;	hKey = 4
+;	szName = 8
+;	lpdwType = 10
+;	lpbData = 12
+;	lpdwSize = 14
+;	chksum = -12
+;	result = -4
+;	len = -8
+;|***     int chksum, result, len;
+;|***     if (NoPPFS)
+; Line 415
+	*** 0008bc	a1 02 00 		mov	ax,WORD PTR _NoPPFS+2
+	*** 0008bf	0b 06 00 00 		or	ax,WORD PTR _NoPPFS
+	*** 0008c3	74 09 			je	$I561
+;|***         return -1;
+; Line 416
+	*** 0008c5	b8 ff ff 		mov	ax,-1	;ffffH
+					$L632:
+	*** 0008c8	99 			cwd	
+	*** 0008c9	5e 			pop	si
+	*** 0008ca	5f 			pop	di
+	*** 0008cb	c9 			leave	
+	*** 0008cc	c3 			ret	
+	*** 0008cd	90 			nop	
+;|***     len = strlen(szName)+1;
+; Line 417
+					$I561:
+	*** 0008ce	8b 76 08 		mov	si,WORD PTR [bp+8]	;szName
+;|***     EnterCriticalSection(&ppfscs);
+;|***     write_header(0x0009000A + (len<<16), &chksum); /* opcode = 0x000A, length = 9 + strlen + 1 */
+; Line 419
+	*** 0008d1	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 0008d4	50 			push	ax
+	*** 0008d5	8b fe 			mov	di,si
+	*** 0008d7	8c d8 			mov	ax,ds
+	*** 0008d9	8e c0 			mov	es,ax
+	*** 0008db	b9 ff ff 		mov	cx,-1	;ffffH
+	*** 0008de	33 c0 			xor	ax,ax
+	*** 0008e0	f2 			repnz
+	*** 0008e1	ae 			scasb
+	*** 0008e2	f7 d1 			not	cx
+	*** 0008e4	89 4e f8 		mov	WORD PTR [bp-8],cx	;len
+	*** 0008e7	89 46 fa 		mov	WORD PTR [bp-6],ax
+	*** 0008ea	8b d1 			mov	dx,cx
+	*** 0008ec	05 0a 00 		add	ax,10	;000aH
+	*** 0008ef	83 d2 09 		adc	dx,9
+	*** 0008f2	52 			push	dx
+	*** 0008f3	50 			push	ax
+	*** 0008f4	e8 9d f7 		call	_write_header
+	*** 0008f7	83 c4 06 		add	sp,6
+;|***     write_value(hKey,&chksum);
+; Line 420
+	*** 0008fa	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 0008fd	50 			push	ax
+	*** 0008fe	ff 76 06 		push	WORD PTR [bp+6]
+	*** 000901	ff 76 04 		push	WORD PTR [bp+4]	;hKey
+	*** 000904	e8 2b f7 		call	_write_value
+	*** 000907	83 c4 06 		add	sp,6
+;|***     write_data(szName,len,&chksum);
+; Line 421
+	*** 00090a	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 00090d	50 			push	ax
+	*** 00090e	ff 76 fa 		push	WORD PTR [bp-6]
+	*** 000911	ff 76 f8 		push	WORD PTR [bp-8]	;len
+	*** 000914	56 			push	si
+	*** 000915	e8 e2 f7 		call	_write_data
+	*** 000918	83 c4 08 		add	sp,8
+;|***     write_end(chksum);
+; Line 422
+	*** 00091b	ff 76 f6 		push	WORD PTR [bp-10]
+	*** 00091e	ff 76 f4 		push	WORD PTR [bp-12]	;chksum
+	*** 000921	e8 44 f8 		call	_write_end
+	*** 000924	83 c4 04 		add	sp,4
+;|***     DEBUGMSG(ZONE_DEBUG,(TEXT("NKDBG: RegGet. hKey=%lu, Name=%a\r\n"), hKey, szName));
+; Line 423
+	*** 000927	56 			push	si
+	*** 000928	ff 76 06 		push	WORD PTR [bp+6]
+	*** 00092b	ff 76 04 		push	WORD PTR [bp+4]	;hKey
+	*** 00092e	68 00 00 		push	OFFSET DGROUP:$SG562
+	*** 000931	e8 00 00 		call	_printf
+	*** 000934	83 c4 08 		add	sp,8
+;|***     result = read_header(&chksum);
+;|***     if ((result & 0xffff) != 0x000A)
+; Line 425
+	*** 000937	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 00093a	50 			push	ax
+	*** 00093b	e8 24 f7 		call	_read_header
+	*** 00093e	83 c4 02 		add	sp,2
+	*** 000941	89 46 fc 		mov	WORD PTR [bp-4],ax	;result
+	*** 000944	89 56 fe 		mov	WORD PTR [bp-2],dx
+	*** 000947	3d 0a 00 		cmp	ax,10	;000aH
+	*** 00094a	74 06 			je	$I563
+;|***     {
+;|***         LeaveCriticalSection(&ppfscs);
+;|***         return 0;
+; Line 428
+	*** 00094c	33 c0 			xor	ax,ax
+	*** 00094e	e9 77 ff 		jmp	$L632
+	*** 000951	90 			nop	
+;|***     }       
+;|***     len = ((result >> 16) & 0xffff) - 9; /* subtract header & chksum */
+; Line 430
+					$I563:
+	*** 000952	8b 76 0a 		mov	si,WORD PTR [bp+10]	;lpdwType
+;|***     *lpdwType = read_value(&chksum);
+; Line 431
+	*** 000955	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 000958	50 			push	ax
+	*** 000959	e8 a4 f6 		call	_read_value
+	*** 00095c	83 c4 02 		add	sp,2
+	*** 00095f	89 04 			mov	WORD PTR [si],ax
+	*** 000961	89 54 02 		mov	WORD PTR [si+2],dx
+;|***     *lpdwSize = len;
+; Line 432
+	*** 000964	8b 46 fe 		mov	ax,WORD PTR [bp-2]
+	*** 000967	2b d2 			sub	dx,dx
+	*** 000969	2d 09 00 		sub	ax,9
+	*** 00096c	1b d2 			sbb	dx,dx
+	*** 00096e	8b 5e 0e 		mov	bx,WORD PTR [bp+14]	;lpdwSize
+	*** 000971	89 07 			mov	WORD PTR [bx],ax
+	*** 000973	89 57 02 		mov	WORD PTR [bx+2],dx
+;|***     DEBUGMSG(ZONE_DEBUG,(TEXT("NKDBG: RegGet. Type=%lu, Size=%lu\r\n"), *lpdwType, *lpdwSize));
+; Line 433
+	*** 000976	52 			push	dx
+	*** 000977	50 			push	ax
+	*** 000978	ff 74 02 		push	WORD PTR [si+2]
+	*** 00097b	ff 34 			push	WORD PTR [si]
+	*** 00097d	68 00 00 		push	OFFSET DGROUP:$SG564
+	*** 000980	8b f0 			mov	si,ax
+	*** 000982	8b fa 			mov	di,dx
+	*** 000984	e8 00 00 		call	_printf
+	*** 000987	83 c4 0a 		add	sp,10	;000aH
+;|***     read_data(lpbData,len,&chksum);
+; Line 434
+	*** 00098a	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 00098d	50 			push	ax
+	*** 00098e	57 			push	di
+	*** 00098f	56 			push	si
+	*** 000990	ff 76 0c 		push	WORD PTR [bp+12]	;lpbData
+	*** 000993	e8 2a f7 		call	_read_data
+	*** 000996	83 c4 08 		add	sp,8
+;|***     if (!read_end(chksum)) {
+; Line 435
+	*** 000999	ff 76 f6 		push	WORD PTR [bp-10]
+	*** 00099c	ff 76 f4 		push	WORD PTR [bp-12]	;chksum
+	*** 00099f	e8 92 f7 		call	_read_end
+	*** 0009a2	83 c4 04 		add	sp,4
+	*** 0009a5	0b d0 			or	dx,ax
+	*** 0009a7	75 05 			jne	$I565
+	*** 0009a9	33 c0 			xor	ax,ax
+	*** 0009ab	eb 04 			jmp	SHORT $L631
+	*** 0009ad	90 			nop	
+					$I565:
+	*** 0009ae	b8 01 00 		mov	ax,1
+					$L631:
+	*** 0009b1	33 d2 			xor	dx,dx
+;|***         LeaveCriticalSection(&ppfscs);
+;|***         return 0;
+;|***     }
+;|***     LeaveCriticalSection(&ppfscs);
+;|***     return 1;
+;|*** }
+; Line 441
+	*** 0009b3	5e 			pop	si
+	*** 0009b4	5f 			pop	di
+	*** 0009b5	c9 			leave	
+	*** 0009b6	c3 			ret	
+	*** 0009b7	90 			nop	
+
+_rRegGet	ENDP
+	PUBLIC	_rRegEnum
+_rRegEnum	PROC NEAR
+;|*** 
+;|*** int rRegEnum(DWORD hKey, DWORD dwIndex, LPBYTE lpbData, LPDWORD lpdwSize) {
+; Line 443
+	*** 0009b8	c8 0c 00 00 		enter	12,0
+;	chksum = -12
+;	result = -8
+;	len = -4
+;	hKey = 4
+;	dwIndex = 8
+;	lpbData = 12
+;	lpdwSize = 14
+;|***     int chksum, result, len;
+;|***     if (NoPPFS)
+; Line 445
+	*** 0009bc	a1 02 00 		mov	ax,WORD PTR _NoPPFS+2
+	*** 0009bf	0b 06 00 00 		or	ax,WORD PTR _NoPPFS
+	*** 0009c3	74 07 			je	$I579
+;|***         return -1;
+; Line 446
+					$L633:
+	*** 0009c5	b8 ff ff 		mov	ax,-1	;ffffH
+	*** 0009c8	99 			cwd	
+	*** 0009c9	c9 			leave	
+	*** 0009ca	c3 			ret	
+	*** 0009cb	90 			nop	
+;|***     EnterCriticalSection(&ppfscs);
+; Line 447
+					$I579:
+;|***     write_header(0x000D000D, &chksum); /* opcode = 0x000A, length = 13 */
+; Line 448
+	*** 0009cc	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 0009cf	50 			push	ax
+	*** 0009d0	6a 0d 			push	13	;000dH
+	*** 0009d2	6a 0d 			push	13	;000dH
+	*** 0009d4	e8 bd f6 		call	_write_header
+	*** 0009d7	83 c4 06 		add	sp,6
+;|***     write_value(hKey,&chksum);
+; Line 449
+	*** 0009da	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 0009dd	50 			push	ax
+	*** 0009de	ff 76 06 		push	WORD PTR [bp+6]
+	*** 0009e1	ff 76 04 		push	WORD PTR [bp+4]	;hKey
+	*** 0009e4	e8 4b f6 		call	_write_value
+	*** 0009e7	83 c4 06 		add	sp,6
+;|***     write_value(dwIndex,&chksum);
+; Line 450
+	*** 0009ea	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 0009ed	50 			push	ax
+	*** 0009ee	ff 76 0a 		push	WORD PTR [bp+10]
+	*** 0009f1	ff 76 08 		push	WORD PTR [bp+8]	;dwIndex
+	*** 0009f4	e8 3b f6 		call	_write_value
+	*** 0009f7	83 c4 06 		add	sp,6
+;|***     write_end(chksum);
+; Line 451
+	*** 0009fa	ff 76 f6 		push	WORD PTR [bp-10]
+	*** 0009fd	ff 76 f4 		push	WORD PTR [bp-12]	;chksum
+	*** 000a00	e8 65 f7 		call	_write_end
+	*** 000a03	83 c4 04 		add	sp,4
+;|***     DEBUGMSG(ZONE_DEBUG,(TEXT("NKDBG: RegEnum. hKey=%lu, Index=%u\r\n"), hKey, dwIndex));
+; Line 452
+	*** 000a06	ff 76 0a 		push	WORD PTR [bp+10]
+	*** 000a09	ff 76 08 		push	WORD PTR [bp+8]	;dwIndex
+	*** 000a0c	ff 76 06 		push	WORD PTR [bp+6]
+	*** 000a0f	ff 76 04 		push	WORD PTR [bp+4]	;hKey
+	*** 000a12	68 00 00 		push	OFFSET DGROUP:$SG580
+	*** 000a15	e8 00 00 		call	_printf
+	*** 000a18	83 c4 0a 		add	sp,10	;000aH
+;|***     result = read_header(&chksum);
+;|***     if ((result & 0xffff) != 0x000D)
+; Line 454
+	*** 000a1b	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 000a1e	50 			push	ax
+	*** 000a1f	e8 40 f6 		call	_read_header
+	*** 000a22	83 c4 02 		add	sp,2
+	*** 000a25	89 46 f8 		mov	WORD PTR [bp-8],ax	;result
+	*** 000a28	89 56 fa 		mov	WORD PTR [bp-6],dx
+	*** 000a2b	3d 0d 00 		cmp	ax,13	;000dH
+	*** 000a2e	75 95 			jne	$L633
+;|***     {
+;|***         LeaveCriticalSection(&ppfscs);
+;|***         return -1;
+;|***     }       
+;|***     len = ((result >> 16) & 0xffff) - 9; /* subtract header & chksum */
+; Line 459
+	*** 000a30	8b c2 			mov	ax,dx
+	*** 000a32	2b d2 			sub	dx,dx
+	*** 000a34	2d 09 00 		sub	ax,9
+	*** 000a37	1b d2 			sbb	dx,dx
+	*** 000a39	89 46 fc 		mov	WORD PTR [bp-4],ax	;len
+	*** 000a3c	89 56 fe 		mov	WORD PTR [bp-2],dx
+;|***     result = read_value(&chksum);
+; Line 460
+	*** 000a3f	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 000a42	50 			push	ax
+	*** 000a43	e8 ba f5 		call	_read_value
+	*** 000a46	83 c4 02 		add	sp,2
+	*** 000a49	89 46 f8 		mov	WORD PTR [bp-8],ax	;result
+	*** 000a4c	89 56 fa 		mov	WORD PTR [bp-6],dx
+;|***     *lpdwSize = len;
+; Line 461
+	*** 000a4f	8b 46 fc 		mov	ax,WORD PTR [bp-4]	;len
+	*** 000a52	8b 5e 0e 		mov	bx,WORD PTR [bp+14]	;lpdwSize
+	*** 000a55	8b 56 fe 		mov	dx,WORD PTR [bp-2]
+	*** 000a58	89 07 			mov	WORD PTR [bx],ax
+	*** 000a5a	89 57 02 		mov	WORD PTR [bx+2],dx
+;|***     DEBUGMSG(ZONE_DEBUG,(TEXT("NKDBG: RegEnum. Return=%lu, Size=%lu\r\n"), result, *lpdwSize));
+; Line 462
+	*** 000a5d	52 			push	dx
+	*** 000a5e	50 			push	ax
+	*** 000a5f	ff 76 fa 		push	WORD PTR [bp-6]
+	*** 000a62	ff 76 f8 		push	WORD PTR [bp-8]	;result
+	*** 000a65	68 00 00 		push	OFFSET DGROUP:$SG582
+	*** 000a68	e8 00 00 		call	_printf
+	*** 000a6b	83 c4 0a 		add	sp,10	;000aH
+;|***     read_data(lpbData,len,&chksum);
+; Line 463
+	*** 000a6e	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;chksum
+	*** 000a71	50 			push	ax
+	*** 000a72	ff 76 fe 		push	WORD PTR [bp-2]
+	*** 000a75	ff 76 fc 		push	WORD PTR [bp-4]	;len
+	*** 000a78	ff 76 0c 		push	WORD PTR [bp+12]	;lpbData
+	*** 000a7b	e8 42 f6 		call	_read_data
+	*** 000a7e	83 c4 08 		add	sp,8
+;|***     if (!read_end(chksum)) {
+; Line 464
+	*** 000a81	ff 76 f6 		push	WORD PTR [bp-10]
+	*** 000a84	ff 76 f4 		push	WORD PTR [bp-12]	;chksum
+	*** 000a87	e8 aa f6 		call	_read_end
+	*** 000a8a	83 c4 04 		add	sp,4
+	*** 000a8d	0b d0 			or	dx,ax
+	*** 000a8f	75 03 			jne	$JCC2703
+	*** 000a91	e9 31 ff 		jmp	$L633
+					$JCC2703:
+;|***         LeaveCriticalSection(&ppfscs);
+;|***         return -1;
+;|***     }
+;|***     LeaveCriticalSection(&ppfscs);
+;|***     return result;
+; Line 469
+	*** 000a94	8b 46 f8 		mov	ax,WORD PTR [bp-8]	;result
+	*** 000a97	8b 56 fa 		mov	dx,WORD PTR [bp-6]
+;|*** }
+; Line 470
+	*** 000a9a	c9 			leave	
+	*** 000a9b	c3 			ret	
+
+_rRegEnum	ENDP
+_TEXT	ENDS
+END
+;|*** 

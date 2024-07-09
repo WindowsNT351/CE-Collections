@@ -1,0 +1,894 @@
+;	Static Name Aliases
+;
+;	$S477_pbEthernetBase	EQU	pbEthernetBase
+	TITLE   ethmain.c
+	.286p
+	.287
+INCLUDELIB      SLIBCE
+INCLUDELIB	OLDNAMES.LIB
+_TEXT	SEGMENT  WORD PUBLIC 'CODE'
+_TEXT	ENDS
+_DATA	SEGMENT  WORD PUBLIC 'DATA'
+_DATA	ENDS
+CONST	SEGMENT  WORD PUBLIC 'CONST'
+CONST	ENDS
+_BSS	SEGMENT  WORD PUBLIC 'BSS'
+_BSS	ENDS
+$$SYMBOLS	SEGMENT  BYTE PUBLIC 'DEBSYM'
+$$SYMBOLS	ENDS
+$$TYPES	SEGMENT  BYTE PUBLIC 'DEBTYP'
+$$TYPES	ENDS
+DGROUP	GROUP	CONST, _BSS, _DATA
+	ASSUME DS: DGROUP, SS: DGROUP
+EXTRN	_atol:NEAR
+EXTRN	_printf:NEAR
+EXTRN	_strncpy:NEAR
+EXTRN	_tolower:NEAR
+_BSS      SEGMENT
+COMM NEAR	_BootArgs:	BYTE:	 170
+_BSS      ENDS
+_DATA      SEGMENT
+$SG555	DB	'Using IP address %u.%u.%u.%u',  0aH,  00H
+$SG557	DB	'Invalid IP address %s',  0aH,  00H
+$SG559	DB	'Using debug zone mask 0x%X',  0aH,  00H
+$SG562	DB	'Debug network card at I/O port 0x%x, IRQ 0x%x',  0aH,  00H
+_DATA      ENDS
+_BSS      SEGMENT
+$S477_pbEthernetBase	DW 01H DUP (?)
+_BSS      ENDS
+_TEXT      SEGMENT
+	ASSUME	CS: _TEXT
+	PUBLIC	_hex_atoi
+_hex_atoi	PROC NEAR
+;|*** //
+;|*** // Copyright (c) Microsoft Corporation.  All rights reserved.
+;|*** //
+;|*** //
+;|*** // Use of this sample source code is subject to the terms of the Microsoft
+;|*** // license agreement under which you licensed this sample source code. If
+;|*** // you did not accept the terms of the license agreement, you are not
+;|*** // authorized to use this sample source code. For the terms of the license,
+;|*** // please see the license agreement between you and Microsoft or, if applicable,
+;|*** // see the LICENSE.RTF on your install media or the root of your tools installation.
+;|*** // THE SAMPLE SOURCE CODE IS PROVIDED "AS IS", WITH NO WARRANTIES.
+;|*** //
+;|*** /*++
+;|*** THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
+;|*** ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+;|*** THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+;|*** PARTICULAR PURPOSE.
+;|*** 
+;|*** Module Name:
+;|*** 
+;|*** Abstract:
+;|***     Loadcepc Ethernet routines.
+;|*** 
+;|*** Functions:
+;|*** 
+;|*** 
+;|*** Notes:
+;|*** 
+;|*** --*/
+;|*** 
+;|*** 
+;|*** #include <conio.h>
+;|*** #include <fcntl.h>
+;|*** #include <io.h>
+;|*** #include <stdio.h>
+;|*** #include <stdlib.h>
+;|*** #include <string.h>
+;|*** 
+;|*** 
+;|*** #include "loadcepc.h"
+;|*** #include "smchw.h"
+;|*** #include "wdm.h"
+;|*** 
+;|*** #include "ethernet.h"
+;|*** #include "bootarg.h"
+;|*** 
+;|*** BOOT_ARGS BootArgs;
+;|*** 
+;|*** // The base address for the card
+;|*** static BYTE volatile *pbEthernetBase;
+;|*** #define ReadWord( wOffset ) _inpw((USHORT)(pbEthernetBase + wOffset))
+;|*** #define WriteWord( wOffset, Value ) _outpw((USHORT)(pbEthernetBase + wOffset), (USHORT)Value)
+;|*** 
+;|*** 
+;|*** WORD
+;|*** hex_atoi(char * hexstr)
+;|*** {
+; Line 57
+	*** 000000	c8 02 00 00 		enter	2,0
+	*** 000004	57 			push	di
+	*** 000005	56 			push	si
+;	hexstr = 4
+;	register di = wRet
+	*** 000006	8b 76 04 		mov	si,WORD PTR [bp+4]	;hexstr
+;|***     WORD wRet = 0;
+; Line 58
+	*** 000009	33 ff 			xor	di,di
+;|***     while (*hexstr) {
+; Line 59
+	*** 00000b	80 3c 00 		cmp	BYTE PTR [si],0
+	*** 00000e	74 4a 			je	$FB485
+					$FC484:
+;|***         wRet <<= 4;
+; Line 60
+	*** 000010	c1 e7 04 		shl	di,4
+;|***         switch (*hexstr) {
+; Line 61
+	*** 000013	8a 04 			mov	al,BYTE PTR [si]
+	*** 000015	98 			cbw	
+	*** 000016	89 46 fe 		mov	WORD PTR [bp-2],ax
+;|***         case '1':
+;|***         case '2':
+;|***         case '3':
+;|***         case '4':
+;|***         case '5':
+;|***         case '6':
+;|***         case '7':
+;|***         case '8':
+;|***         case '9':
+;|***             wRet += (WORD)(*hexstr - '0');
+;|***             break;
+;|*** 
+;|***         case 'a':
+;|***         case 'b':
+;|***         case 'c':
+;|***         case 'd':
+;|***         case 'e':
+;|***         case 'f':
+;|***             wRet += (WORD)(*hexstr - 'a');
+;|***             wRet += 10;
+;|***             break;
+;|*** 
+;|***         case 'A':
+;|***         case 'B':
+;|***         case 'C':
+;|***         case 'D':
+;|***         case 'E':
+;|***         case 'F':
+;|***             wRet += (WORD)(*hexstr - 'A');
+;|***             wRet += 10;
+;|***             break;
+;|***         }
+; Line 93
+	*** 000019	2d 31 00 		sub	ax,49	;0031H
+	*** 00001c	7c 36 			jl	$SB487
+	*** 00001e	70 34 			jo	$SB487
+	*** 000020	2d 08 00 		sub	ax,8
+	*** 000023	7e 17 			jle	$SC490
+	*** 000025	2d 08 00 		sub	ax,8
+	*** 000028	7c 2a 			jl	$SB487
+	*** 00002a	2d 05 00 		sub	ax,5
+	*** 00002d	7e 15 			jle	$SC492
+	*** 00002f	2d 1b 00 		sub	ax,27	;001bH
+	*** 000032	7c 20 			jl	$SB487
+	*** 000034	2d 05 00 		sub	ax,5
+	*** 000037	7e 13 			jle	$SC491
+	*** 000039	eb 19 			jmp	SHORT $SB487
+	*** 00003b	90 			nop	
+;|***         case '1':
+; Line 62
+					$SC490:
+;|***         case '2':
+;|***         case '3':
+;|***         case '4':
+;|***         case '5':
+;|***         case '6':
+;|***         case '7':
+;|***         case '8':
+;|***         case '9':
+;|***             wRet += (WORD)(*hexstr - '0');
+; Line 71
+	*** 00003c	8b 46 fe 		mov	ax,WORD PTR [bp-2]
+	*** 00003f	2d 30 00 		sub	ax,48	;0030H
+	*** 000042	eb 0e 			jmp	SHORT $L586
+;|***             break;
+;|*** 
+;|***         case 'a':
+;|***         case 'b':
+;|***         case 'c':
+;|***         case 'd':
+;|***         case 'e':
+;|***         case 'f':
+;|***             wRet += (WORD)(*hexstr - 'a');
+;|***             wRet += 10;
+;|***             break;
+;|*** 
+;|***         case 'A':
+; Line 84
+					$SC492:
+;|***         case 'B':
+;|***         case 'C':
+;|***         case 'D':
+;|***         case 'E':
+;|***         case 'F':
+;|***             wRet += (WORD)(*hexstr - 'A');
+;|***             wRet += 10;
+; Line 91
+	*** 000044	8b 46 fe 		mov	ax,WORD PTR [bp-2]
+	*** 000047	2d 37 00 		sub	ax,55	;0037H
+	*** 00004a	eb 06 			jmp	SHORT $L586
+;|***         case 'a':
+; Line 74
+					$SC491:
+;|***         case 'b':
+;|***         case 'c':
+;|***         case 'd':
+;|***         case 'e':
+;|***         case 'f':
+;|***             wRet += (WORD)(*hexstr - 'a');
+;|***             wRet += 10;
+; Line 81
+	*** 00004c	8b 46 fe 		mov	ax,WORD PTR [bp-2]
+	*** 00004f	2d 57 00 		sub	ax,87	;0057H
+					$L586:
+	*** 000052	03 f8 			add	di,ax
+;|***             break;
+;|*** 
+;|***         case 'A':
+;|***         case 'B':
+;|***         case 'C':
+;|***         case 'D':
+;|***         case 'E':
+;|***         case 'F':
+;|***             wRet += (WORD)(*hexstr - 'A');
+;|***             wRet += 10;
+;|***             break;
+;|***         }
+; Line 93
+					$SB487:
+;|***         hexstr++;
+;|***     }
+; Line 95
+	*** 000054	46 			inc	si
+	*** 000055	80 3c 00 		cmp	BYTE PTR [si],0
+	*** 000058	75 b6 			jne	$FC484
+					$FB485:
+;|***     return wRet;
+; Line 96
+	*** 00005a	8b c7 			mov	ax,di
+;|*** }   // hex_atoi
+; Line 97
+	*** 00005c	5e 			pop	si
+	*** 00005d	5f 			pop	di
+	*** 00005e	c9 			leave	
+	*** 00005f	c3 			ret	
+
+_hex_atoi	ENDP
+	PUBLIC	_inet_addr
+_inet_addr	PROC NEAR
+;|*** 
+;|*** 
+;|*** // This routine will take a dotted decimal IP address as represent here and return a binary version of it
+;|*** DWORD inet_addr( char *pszDottedD ) {
+; Line 101
+	*** 000060	c8 0a 00 00 		enter	10,0
+	*** 000064	57 			push	di
+	*** 000065	56 			push	si
+;	pszDottedD = 4
+;	dwIP = -8
+;	cBytes = -4
+;	pszLastNum = -10
+	*** 000066	8b 76 04 		mov	si,WORD PTR [bp+4]	;pszDottedD
+;|*** 
+;|***     DWORD dwIP = 0;
+; Line 103
+	*** 000069	2b c0 			sub	ax,ax
+	*** 00006b	89 46 fa 		mov	WORD PTR [bp-6],ax
+	*** 00006e	89 46 f8 		mov	WORD PTR [bp-8],ax	;dwIP
+;|***     DWORD cBytes;
+;|***     char *pszLastNum;
+;|*** 
+;|***     // Replace the dots with NULL terminators
+;|***     pszLastNum = pszDottedD;
+; Line 108
+	*** 000071	8b fe 			mov	di,si
+;|***     for( cBytes = 0; cBytes < 4; cBytes++ ) {
+; Line 109
+	*** 000073	89 46 fe 		mov	WORD PTR [bp-2],ax
+	*** 000076	89 46 fc 		mov	WORD PTR [bp-4],ax	;cBytes
+					$F500:
+	*** 000079	83 7e fe 00 		cmp	WORD PTR [bp-2],0
+	*** 00007d	75 5b 			jne	$L567
+	*** 00007f	83 7e fc 04 		cmp	WORD PTR [bp-4],4	;cBytes
+	*** 000083	73 55 			jae	$L567
+;|***         while(*pszDottedD != '.' && *pszDottedD != '\0')
+; Line 110
+	*** 000085	80 3c 2e 		cmp	BYTE PTR [si],46	;002eH
+	*** 000088	74 0b 			je	$FB505
+					$FC504:
+	*** 00008a	80 3c 00 		cmp	BYTE PTR [si],0
+	*** 00008d	74 06 			je	$FB505
+;|***             pszDottedD++;
+; Line 111
+	*** 00008f	46 			inc	si
+	*** 000090	80 3c 2e 		cmp	BYTE PTR [si],46	;002eH
+	*** 000093	75 f5 			jne	$FC504
+					$FB505:
+;|***         if (*pszDottedD == '\0' && cBytes != 3)
+; Line 112
+	*** 000095	80 3c 00 		cmp	BYTE PTR [si],0
+	*** 000098	75 0c 			jne	$I506
+	*** 00009a	83 7e fc 03 		cmp	WORD PTR [bp-4],3	;cBytes
+	*** 00009e	75 44 			jne	$L568
+	*** 0000a0	83 7e fe 00 		cmp	WORD PTR [bp-2],0
+	*** 0000a4	75 3e 			jne	$L568
+;|***             return 0;
+;|***         *pszDottedD = '\0';
+; Line 114
+					$I506:
+	*** 0000a6	c6 04 00 		mov	BYTE PTR [si],0
+;|***         dwIP |= (atol(pszLastNum) & 0xFF) << (8*cBytes);
+; Line 115
+	*** 0000a9	57 			push	di
+	*** 0000aa	e8 00 00 		call	_atol
+	*** 0000ad	83 c4 02 		add	sp,2
+	*** 0000b0	2a e4 			sub	ah,ah
+	*** 0000b2	2b d2 			sub	dx,dx
+	*** 0000b4	8a 4e fc 		mov	cl,BYTE PTR [bp-4]	;cBytes
+	*** 0000b7	c0 e1 03 		shl	cl,3
+	*** 0000ba	0a c9 			or	cl,cl
+	*** 0000bc	74 08 			je	$L573
+					$L572:
+	*** 0000be	03 c0 			add	ax,ax
+	*** 0000c0	13 d2 			adc	dx,dx
+	*** 0000c2	fe c9 			dec	cl
+	*** 0000c4	75 f8 			jne	$L572
+					$L573:
+	*** 0000c6	09 46 f8 		or	WORD PTR [bp-8],ax	;dwIP
+	*** 0000c9	09 56 fa 		or	WORD PTR [bp-6],dx
+;|***         pszLastNum = ++pszDottedD;
+; Line 116
+	*** 0000cc	46 			inc	si
+	*** 0000cd	8b fe 			mov	di,si
+;|***     for( cBytes = 0; cBytes < 4; cBytes++ ) {
+; Line 109
+	*** 0000cf	83 46 fc 01 		add	WORD PTR [bp-4],1	;cBytes
+	*** 0000d3	83 56 fe 00 		adc	WORD PTR [bp-2],0
+	*** 0000d7	eb a0 			jmp	SHORT $F500
+	*** 0000d9	90 			nop	
+					$L567:
+;|***         while(*pszDottedD != '.' && *pszDottedD != '\0')
+;|***             pszDottedD++;
+;|***         if (*pszDottedD == '\0' && cBytes != 3)
+;|***             return 0;
+;|***         *pszDottedD = '\0';
+;|***         dwIP |= (atol(pszLastNum) & 0xFF) << (8*cBytes);
+;|***         pszLastNum = ++pszDottedD;
+;|***     }
+;|*** 
+;|***     return dwIP;
+; Line 119
+	*** 0000da	8b 46 f8 		mov	ax,WORD PTR [bp-8]	;dwIP
+	*** 0000dd	8b 56 fa 		mov	dx,WORD PTR [bp-6]
+	*** 0000e0	5e 			pop	si
+	*** 0000e1	5f 			pop	di
+	*** 0000e2	c9 			leave	
+	*** 0000e3	c3 			ret	
+					$L568:
+;|***             return 0;
+; Line 113
+	*** 0000e4	33 c0 			xor	ax,ax
+	*** 0000e6	99 			cwd	
+;|***         *pszDottedD = '\0';
+;|***         dwIP |= (atol(pszLastNum) & 0xFF) << (8*cBytes);
+;|***         pszLastNum = ++pszDottedD;
+;|***     }
+;|*** 
+;|***     return dwIP;
+;|*** 
+;|*** } // inet_ntoa()
+; Line 121
+	*** 0000e7	5e 			pop	si
+	*** 0000e8	5f 			pop	di
+	*** 0000e9	c9 			leave	
+	*** 0000ea	c3 			ret	
+	*** 0000eb	90 			nop	
+
+_inet_addr	ENDP
+	PUBLIC	_ParseDeviceName
+_ParseDeviceName	PROC NEAR
+;|*** 
+;|*** 
+;|*** //
+;|*** // Function to extract the device name from the command line.
+;|*** //
+;|*** // Expect argstr = "/N:name
+;|*** //
+;|*** // Return FALSE for failure
+;|*** //
+;|*** BOOL
+;|*** ParseDeviceName(char * argstr)
+;|*** {
+; Line 133
+	*** 0000ec	c8 02 00 00 		enter	2,0
+	*** 0000f0	56 			push	si
+;	register bx = pEnd
+;	argstr = 4
+;	pStart = -2
+	*** 0000f1	8b 56 04 		mov	dx,WORD PTR [bp+4]	;argstr
+;|***     UCHAR *pStart = NULL;
+;|***     UCHAR *pEnd   = NULL;
+;|*** 
+;|***     if (argstr == NULL)
+; Line 137
+	*** 0000f4	0b d2 			or	dx,dx
+	*** 0000f6	74 44 			je	$L577
+;|***         return(FALSE);
+;|*** 
+;|***     pStart = (argstr + 2);
+; Line 140
+	*** 0000f8	8b f2 			mov	si,dx
+	*** 0000fa	83 c6 02 		add	si,2
+;|***     while ((*pStart == ':') || (*pStart == '"'))
+; Line 141
+					$FC515:
+	*** 0000fd	80 3c 3a 		cmp	BYTE PTR [si],58	;003aH
+	*** 000100	74 05 			je	$FB517
+	*** 000102	80 3c 22 		cmp	BYTE PTR [si],34	;0022H
+	*** 000105	75 09 			jne	$L576
+					$FB517:
+;|***     {
+;|***         if (*pStart == '\0')
+; Line 143
+	*** 000107	80 3c 00 		cmp	BYTE PTR [si],0
+	*** 00010a	74 30 			je	$L577
+;|***             return(FALSE);
+;|*** 
+;|***         ++pStart;
+; Line 146
+	*** 00010c	46 			inc	si
+;|***     }
+; Line 147
+	*** 00010d	eb ee 			jmp	SHORT $FC515
+	*** 00010f	90 			nop	
+					$L576:
+;|*** 
+;|***     pEnd = pStart;
+;|***     while ((*pEnd != '"') && (*pEnd != '\0'))
+; Line 150
+	*** 000110	8b de 			mov	bx,si
+	*** 000112	80 3f 22 		cmp	BYTE PTR [bx],34	;0022H
+	*** 000115	74 0b 			je	$FB521
+					$FC520:
+	*** 000117	80 3f 00 		cmp	BYTE PTR [bx],0
+	*** 00011a	74 06 			je	$FB521
+;|***     {
+;|***         ++pEnd;
+;|***     } 
+; Line 153
+	*** 00011c	43 			inc	bx
+	*** 00011d	80 3f 22 		cmp	BYTE PTR [bx],34	;0022H
+	*** 000120	75 f5 			jne	$FC520
+					$FB521:
+;|***     *pEnd = '\0';
+; Line 154
+	*** 000122	c6 07 00 		mov	BYTE PTR [bx],0
+;|*** 
+;|***     if (pStart == pEnd)
+; Line 156
+	*** 000125	3b de 			cmp	bx,si
+	*** 000127	74 13 			je	$L577
+;|***         return(FALSE);
+;|***   
+;|***     // Leave enough room for two character Ethernet controller type and
+;|***     // a numeric value derived from the MAC address, hence the 7.
+;|***     // 
+;|***     strncpy(BootArgs.szDeviceNameRoot, pStart, (MAX_DEV_NAMELEN - 7));
+; Line 162
+	*** 000129	6a 09 			push	9
+	*** 00012b	56 			push	si
+	*** 00012c	68 88 00 		push	OFFSET DGROUP:_BootArgs+136
+	*** 00012f	e8 00 00 		call	_strncpy
+	*** 000132	83 c4 06 		add	sp,6
+;|*** 
+;|***     return(TRUE);
+; Line 164
+	*** 000135	b8 01 00 		mov	ax,1
+	*** 000138	5e 			pop	si
+	*** 000139	c9 			leave	
+	*** 00013a	c3 			ret	
+	*** 00013b	90 			nop	
+					$L577:
+;|***             return(FALSE);
+; Line 144
+	*** 00013c	33 c0 			xor	ax,ax
+;|*** 
+;|***         ++pStart;
+;|***     }
+;|*** 
+;|***     pEnd = pStart;
+;|***     while ((*pEnd != '"') && (*pEnd != '\0'))
+;|***     {
+;|***         ++pEnd;
+;|***     } 
+;|***     *pEnd = '\0';
+;|*** 
+;|***     if (pStart == pEnd)
+;|***         return(FALSE);
+;|***   
+;|***     // Leave enough room for two character Ethernet controller type and
+;|***     // a numeric value derived from the MAC address, hence the 7.
+;|***     // 
+;|***     strncpy(BootArgs.szDeviceNameRoot, pStart, (MAX_DEV_NAMELEN - 7));
+;|*** 
+;|***     return(TRUE);
+;|*** }
+; Line 165
+	*** 00013e	5e 			pop	si
+	*** 00013f	c9 			leave	
+	*** 000140	c3 			ret	
+	*** 000141	90 			nop	
+
+_ParseDeviceName	ENDP
+	PUBLIC	_ParseEthernetOptions
+_ParseEthernetOptions	PROC NEAR
+;|*** 
+;|*** 
+;|*** //
+;|*** // Function to extract the debug ethernet adapter options from the command line
+;|*** //
+;|*** // Expect argstr = "/E:<io addr>:<irq>:<debug zone mask>"
+;|*** //
+;|*** // Return FALSE for failure
+;|*** //
+;|*** BOOL
+;|*** ParseEthernetOptions(char * argstr)
+;|*** {
+; Line 177
+	*** 000142	c8 0c 00 00 		enter	12,0
+	*** 000146	57 			push	di
+	*** 000147	56 			push	si
+;	argstr = 4
+;	bRet = -10
+;	begin = -6
+;	end = -2
+;	endch = -3
+;	pBase = -12
+;	ucIRQ = -4
+;	a = -8
+	*** 000148	8b 76 04 		mov	si,WORD PTR [bp+4]	;argstr
+;|***     BOOL bRet;
+;|***     char * begin;
+;|***     char * end;
+;|***     char endch;
+;|***     BYTE   *pBase = NULL;
+; Line 182
+	*** 00014b	c7 46 f4 00 00 		mov	WORD PTR [bp-12],0	;pBase
+;|***     UCHAR ucIRQ = 0;
+; Line 183
+	*** 000150	c6 46 fc 00 		mov	BYTE PTR [bp-4],0	;ucIRQ
+;|***     int a;  // argument counter 0 = I/O Base Address, 1 = IRQ, etc.
+;|*** 
+;|***     bRet = FALSE;
+; Line 186
+	*** 000154	c7 46 f6 00 00 		mov	WORD PTR [bp-10],0	;bRet
+;|*** 
+;|***     if (strlen(argstr) < 6) {       // "/E:0:1" or "/K:0:1" at minimum.
+; Line 188
+	*** 000159	8b fe 			mov	di,si
+	*** 00015b	8c d8 			mov	ax,ds
+	*** 00015d	8e c0 			mov	es,ax
+	*** 00015f	b9 ff ff 		mov	cx,-1	;ffffH
+	*** 000162	33 c0 			xor	ax,ax
+	*** 000164	f2 			repnz
+	*** 000165	ae 			scasb
+	*** 000166	f7 d1 			not	cx
+	*** 000168	49 			dec	cx
+	*** 000169	83 f9 06 		cmp	cx,6
+	*** 00016c	73 03 			jae	$JCC364
+	*** 00016e	e9 3f 01 		jmp	$peo_exit535
+					$JCC364:
+;|***         goto peo_exit;
+;|***     }
+;|*** 
+;|***     // If the user wishes to use an RNDIS adapter, check for that here.
+;|***     // otherwise, just set it to default and let xBoot.bin change it if necessary.
+;|***     if (tolower(*(argstr + 1)) == 'k')
+; Line 194
+	*** 000171	8a 44 01 		mov	al,BYTE PTR [si+1]
+	*** 000174	98 			cbw	
+	*** 000175	50 			push	ax
+	*** 000176	e8 00 00 		call	_tolower
+	*** 000179	83 c4 02 		add	sp,2
+	*** 00017c	3d 6b 00 		cmp	ax,107	;006bH
+	*** 00017f	75 05 			jne	$I536
+	*** 000181	b0 52 			mov	al,82	;0052H
+	*** 000183	eb 03 			jmp	SHORT $I537
+	*** 000185	90 			nop	
+					$I536:
+	*** 000186	b0 02 			mov	al,2
+					$I537:
+	*** 000188	a2 0e 00 		mov	BYTE PTR _BootArgs+14,al
+;|***         BootArgs.ucEdbgAdapterType = 'R';
+;|***     else
+;|***         BootArgs.ucEdbgAdapterType = EDBG_ADAPTER_DEFAULT;
+;|*** 
+;|***     end = argstr + 2;
+; Line 199
+	*** 00018b	8d 44 02 		lea	ax,WORD PTR [si+2]
+;|*** 
+;|***     //
+;|***     // Extract the I/O Base address and IRQ from the command line
+;|***     // (and super secret EDBG debug zone mask)
+;|***     //
+;|***     for (a = 0; a < 4; a++) {
+; Line 205
+	*** 00018e	c7 46 f8 00 00 		mov	WORD PTR [bp-8],0	;a
+	*** 000193	8b f0 			mov	si,ax
+					$F538:
+;|***         begin = end;
+;|***         //
+;|***         // Colon delimited list
+;|***         //
+;|***         if (*begin != ':') {
+; Line 210
+	*** 000195	8b fe 			mov	di,si
+	*** 000197	80 3d 3a 		cmp	BYTE PTR [di],58	;003aH
+	*** 00019a	74 03 			je	$JCC410
+	*** 00019c	e9 e1 00 		jmp	$FB540
+					$JCC410:
+;|***             break;
+;|***         }
+;|***         begin++;    // skip colon
+;|***         end = begin;
+; Line 214
+	*** 00019f	47 			inc	di
+	*** 0001a0	8b f7 			mov	si,di
+	*** 0001a2	89 7e fa 		mov	WORD PTR [bp-6],di	;begin
+;|***         while ((*end) && (*end != ':') && (*end != ' ')) {
+; Line 215
+	*** 0001a5	80 3c 00 		cmp	BYTE PTR [si],0
+	*** 0001a8	74 10 			je	$FB544
+					$FC543:
+	*** 0001aa	80 3c 3a 		cmp	BYTE PTR [si],58	;003aH
+	*** 0001ad	74 0b 			je	$FB544
+	*** 0001af	80 3c 20 		cmp	BYTE PTR [si],32	;0020H
+	*** 0001b2	74 06 			je	$FB544
+;|***             end++;
+;|***         }
+; Line 217
+	*** 0001b4	46 			inc	si
+	*** 0001b5	80 3c 00 		cmp	BYTE PTR [si],0
+	*** 0001b8	75 f0 			jne	$FC543
+					$FB544:
+;|*** 
+;|***         if (begin == end) {
+; Line 219
+	*** 0001ba	39 76 fa 		cmp	WORD PTR [bp-6],si	;begin
+	*** 0001bd	75 03 			jne	$JCC445
+	*** 0001bf	e9 be 00 		jmp	$FB540
+					$JCC445:
+;|***             break;
+;|***         }
+;|*** 
+;|***         endch = *end;
+; Line 223
+	*** 0001c2	8a 04 			mov	al,BYTE PTR [si]
+	*** 0001c4	88 46 fd 		mov	BYTE PTR [bp-3],al	;endch
+;|***         *end = 0;       // temporarily zero terminate the option string
+; Line 224
+	*** 0001c7	c6 04 00 		mov	BYTE PTR [si],0
+;|*** 
+;|***         switch (a) {
+; Line 226
+	*** 0001ca	8b 46 f8 		mov	ax,WORD PTR [bp-8]	;a
+;|***         case 0: // I/O base address
+;|***             pBase = (BYTE *)hex_atoi(begin);
+;|***             break;
+;|*** 
+;|***         case 1: // IRQ
+;|***             ucIRQ = (UCHAR)hex_atoi(begin);
+;|***             if (ucIRQ >= 0x10)       // check for decimal value instead of hex value
+;|***             {
+;|***                 ucIRQ -= 6;
+;|***             }
+;|***             break;
+;|*** 
+;|***         case 2: // IP address
+;|***             if ((BootArgs.EdbgAddr.dwIP = inet_addr(begin)) != 0) {
+;|***                 printf("Using IP address %u.%u.%u.%u\n",
+;|***                        (BYTE)(BootArgs.EdbgAddr.dwIP),
+;|***                        (BYTE)(BootArgs.EdbgAddr.dwIP >> 8),
+;|***                        (BYTE)(BootArgs.EdbgAddr.dwIP >> 16),
+;|***                        (BYTE)(BootArgs.EdbgAddr.dwIP >> 24));
+;|***             }
+;|***             else
+;|***                 printf("Invalid IP address %s\n",begin);
+;|***             break;
+;|*** 
+;|***         case 3: // EDBG Debug zone mask (defined in oak\inc\ethdbg.h)
+;|***             BootArgs.dwEdbgDebugZone = (DWORD)hex_atoi(begin);
+;|***             BootArgs.dwEdbgDebugZone |= 0x10000; // Add DHCP zones
+;|***             printf("Using debug zone mask 0x%X\n",BootArgs.dwEdbgDebugZone);
+;|***             break;
+;|*** 
+;|***         default:    // error!
+;|***             goto peo_exit;
+;|***         }
+; Line 259
+	*** 0001cd	0b c0 			or	ax,ax
+	*** 0001cf	74 0d 			je	$SC550
+	*** 0001d1	48 			dec	ax
+	*** 0001d2	74 1a 			je	$SC551
+	*** 0001d4	48 			dec	ax
+	*** 0001d5	74 2d 			je	$SC553
+	*** 0001d7	48 			dec	ax
+	*** 0001d8	74 70 			je	$SC558
+	*** 0001da	e9 d3 00 		jmp	$peo_exit535
+	*** 0001dd	90 			nop	
+;|***         case 0: // I/O base address
+; Line 227
+					$SC550:
+;|***             pBase = (BYTE *)hex_atoi(begin);
+; Line 228
+	*** 0001de	ff 76 fa 		push	WORD PTR [bp-6]	;begin
+	*** 0001e1	e8 1c fe 		call	_hex_atoi
+	*** 0001e4	83 c4 02 		add	sp,2
+	*** 0001e7	89 46 f4 		mov	WORD PTR [bp-12],ax	;pBase
+;|***             break;
+; Line 229
+	*** 0001ea	e9 82 00 		jmp	$SB547
+	*** 0001ed	90 			nop	
+;|*** 
+;|***         case 1: // IRQ
+; Line 231
+					$SC551:
+;|***             ucIRQ = (UCHAR)hex_atoi(begin);
+;|***             if (ucIRQ >= 0x10)       // check for decimal value instead of hex value
+; Line 233
+	*** 0001ee	ff 76 fa 		push	WORD PTR [bp-6]	;begin
+	*** 0001f1	e8 0c fe 		call	_hex_atoi
+	*** 0001f4	83 c4 02 		add	sp,2
+	*** 0001f7	88 46 fc 		mov	BYTE PTR [bp-4],al	;ucIRQ
+	*** 0001fa	3c 10 			cmp	al,16	;0010H
+	*** 0001fc	72 71 			jb	$SB547
+;|***             {
+;|***                 ucIRQ -= 6;
+; Line 235
+	*** 0001fe	80 6e fc 06 		sub	BYTE PTR [bp-4],6	;ucIRQ
+;|***             }
+;|***             break;
+; Line 237
+	*** 000202	eb 6b 			jmp	SHORT $SB547
+;|*** 
+;|***         case 2: // IP address
+; Line 239
+					$SC553:
+	*** 000204	8b 7e fa 		mov	di,WORD PTR [bp-6]	;begin
+;|***             if ((BootArgs.EdbgAddr.dwIP = inet_addr(begin)) != 0) {
+; Line 240
+	*** 000207	57 			push	di
+	*** 000208	e8 55 fe 		call	_inet_addr
+	*** 00020b	83 c4 02 		add	sp,2
+	*** 00020e	a3 18 00 		mov	WORD PTR _BootArgs+24,ax
+	*** 000211	89 16 1a 00 		mov	WORD PTR _BootArgs+26,dx
+	*** 000215	8b c2 			mov	ax,dx
+	*** 000217	0b 06 18 00 		or	ax,WORD PTR _BootArgs+24
+	*** 00021b	74 21 			je	$I554
+;|***                 printf("Using IP address %u.%u.%u.%u\n",
+;|***                        (BYTE)(BootArgs.EdbgAddr.dwIP),
+;|***                        (BYTE)(BootArgs.EdbgAddr.dwIP >> 8),
+;|***                        (BYTE)(BootArgs.EdbgAddr.dwIP >> 16),
+;|***                        (BYTE)(BootArgs.EdbgAddr.dwIP >> 24));
+; Line 245
+	*** 00021d	a0 1b 00 		mov	al,BYTE PTR _BootArgs+27
+	*** 000220	2a e4 			sub	ah,ah
+	*** 000222	50 			push	ax
+	*** 000223	a0 1a 00 		mov	al,BYTE PTR _BootArgs+26
+	*** 000226	50 			push	ax
+	*** 000227	a1 18 00 		mov	ax,WORD PTR _BootArgs+24
+	*** 00022a	8a c4 			mov	al,ah
+	*** 00022c	2a e4 			sub	ah,ah
+	*** 00022e	50 			push	ax
+	*** 00022f	a0 18 00 		mov	al,BYTE PTR _BootArgs+24
+	*** 000232	50 			push	ax
+	*** 000233	68 00 00 		push	OFFSET DGROUP:$SG555
+	*** 000236	e8 00 00 		call	_printf
+	*** 000239	83 c4 0a 		add	sp,10	;000aH
+;|***             }
+;|***             else
+; Line 247
+	*** 00023c	eb 31 			jmp	SHORT $SB547
+					$I554:
+;|***                 printf("Invalid IP address %s\n",begin);
+; Line 248
+	*** 00023e	57 			push	di
+	*** 00023f	68 00 00 		push	OFFSET DGROUP:$SG557
+	*** 000242	e8 00 00 		call	_printf
+	*** 000245	83 c4 04 		add	sp,4
+;|***             break;
+; Line 249
+	*** 000248	eb 25 			jmp	SHORT $SB547
+;|*** 
+;|***         case 3: // EDBG Debug zone mask (defined in oak\inc\ethdbg.h)
+; Line 251
+					$SC558:
+;|***             BootArgs.dwEdbgDebugZone = (DWORD)hex_atoi(begin);
+; Line 252
+	*** 00024a	ff 76 fa 		push	WORD PTR [bp-6]	;begin
+	*** 00024d	e8 b0 fd 		call	_hex_atoi
+	*** 000250	83 c4 02 		add	sp,2
+	*** 000253	a3 14 00 		mov	WORD PTR _BootArgs+20,ax
+	*** 000256	c7 06 16 00 00 00 	mov	WORD PTR _BootArgs+22,0
+;|***             BootArgs.dwEdbgDebugZone |= 0x10000; // Add DHCP zones
+;|***             printf("Using debug zone mask 0x%X\n",BootArgs.dwEdbgDebugZone);
+; Line 254
+	*** 00025c	80 0e 16 00 01 		or	BYTE PTR _BootArgs+22,1
+	*** 000261	ff 36 16 00 		push	WORD PTR _BootArgs+22
+	*** 000265	50 			push	ax
+	*** 000266	68 00 00 		push	OFFSET DGROUP:$SG559
+	*** 000269	e8 00 00 		call	_printf
+	*** 00026c	83 c4 06 		add	sp,6
+;|***             break;
+;|*** 
+;|***         default:    // error!
+;|***             goto peo_exit;
+;|***         }
+; Line 259
+					$SB547:
+;|*** 
+;|***         *end = endch;   // un-zero-terminate if need be.
+; Line 261
+	*** 00026f	8a 46 fd 		mov	al,BYTE PTR [bp-3]	;endch
+	*** 000272	88 04 			mov	BYTE PTR [si],al
+	*** 000274	ff 46 f8 		inc	WORD PTR [bp-8]	;a
+	*** 000277	83 7e f8 04 		cmp	WORD PTR [bp-8],4	;a
+	*** 00027b	7d 03 			jge	$JCC635
+	*** 00027d	e9 15 ff 		jmp	$F538
+					$JCC635:
+;|***     }
+; Line 262
+					$FB540:
+;|*** 
+;|***     if (a < 2) {
+; Line 264
+	*** 000280	83 7e f8 02 		cmp	WORD PTR [bp-8],2	;a
+	*** 000284	7c 2a 			jl	$peo_exit535
+;|***         goto peo_exit;
+;|***     }
+;|*** 
+;|***     BootArgs.ucEdbgIRQ         = ucIRQ;
+; Line 268
+	*** 000286	8a 46 fc 		mov	al,BYTE PTR [bp-4]	;ucIRQ
+	*** 000289	a2 0f 00 		mov	BYTE PTR _BootArgs+15,al
+;|***     // WARNING - must mask off high bits
+;|***     BootArgs.dwEdbgBaseAddr    = (DWORD)pBase & 0xFFFF;
+; Line 270
+	*** 00028c	8b 4e f4 		mov	cx,WORD PTR [bp-12]	;pBase
+	*** 00028f	89 0e 10 00 		mov	WORD PTR _BootArgs+16,cx
+	*** 000293	c7 06 12 00 00 00 	mov	WORD PTR _BootArgs+18,0
+;|***     BootArgs.ucLoaderFlags     |= LDRFL_USE_EDBG;
+; Line 271
+	*** 000299	80 0e 0c 00 01 		or	BYTE PTR _BootArgs+12,1
+;|***     printf("Debug network card at I/O port 0x%x, IRQ 0x%x\n", pBase, ucIRQ);
+; Line 272
+	*** 00029e	2a e4 			sub	ah,ah
+	*** 0002a0	50 			push	ax
+	*** 0002a1	51 			push	cx
+	*** 0002a2	68 00 00 		push	OFFSET DGROUP:$SG562
+	*** 0002a5	e8 00 00 		call	_printf
+	*** 0002a8	83 c4 06 		add	sp,6
+;|***     bRet = TRUE;
+; Line 273
+	*** 0002ab	c7 46 f6 01 00 		mov	WORD PTR [bp-10],1	;bRet
+;|*** 
+;|*** peo_exit:
+; Line 275
+					$peo_exit535:
+;|***     return bRet;
+; Line 276
+	*** 0002b0	8b 46 f6 		mov	ax,WORD PTR [bp-10]	;bRet
+;|*** }   // ParseEthernetOptions
+; Line 277
+	*** 0002b3	5e 			pop	si
+	*** 0002b4	5f 			pop	di
+	*** 0002b5	c9 			leave	
+	*** 0002b6	c3 			ret	
+	*** 0002b7	90 			nop	
+
+_ParseEthernetOptions	ENDP
+_TEXT	ENDS
+END

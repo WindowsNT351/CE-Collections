@@ -1,0 +1,2118 @@
+;	Static Name Aliases
+;
+;	$S714_?cReadBuffer@?1??GetOneFile@@9@9	EQU	?cReadBuffer@?1??GetOneFile@@9@9
+;	$S684_?dwOldPercent@?1??DrawPercent@@9@9	EQU	?dwOldPercent@?1??DrawPercent@@9@9
+	TITLE   ppfstool.c
+	.286p
+	.287
+INCLUDELIB      SLIBCE
+INCLUDELIB	OLDNAMES.LIB
+_TEXT	SEGMENT  WORD PUBLIC 'CODE'
+_TEXT	ENDS
+_DATA	SEGMENT  WORD PUBLIC 'DATA'
+_DATA	ENDS
+CONST	SEGMENT  WORD PUBLIC 'CONST'
+CONST	ENDS
+_BSS	SEGMENT  WORD PUBLIC 'BSS'
+_BSS	ENDS
+$$SYMBOLS	SEGMENT  BYTE PUBLIC 'DEBSYM'
+$$SYMBOLS	ENDS
+$$TYPES	SEGMENT  BYTE PUBLIC 'DEBTYP'
+$$TYPES	ENDS
+DGROUP	GROUP	CONST, _BSS, _DATA
+	ASSUME DS: DGROUP, SS: DGROUP
+PUBLIC  _CurMSec
+PUBLIC  _PtrCurMSec
+EXTRN	_rfindfirst:NEAR
+EXTRN	_fprintf:NEAR
+EXTRN	__close:NEAR
+EXTRN	_rfindnext:NEAR
+EXTRN	_strrchr:NEAR
+EXTRN	__open:NEAR
+EXTRN	_printf:NEAR
+EXTRN	_rread:NEAR
+EXTRN	__write:NEAR
+EXTRN	_rclose:NEAR
+EXTRN	__aNulmul:NEAR
+EXTRN	__aNuldiv:NEAR
+EXTRN	_ropen:NEAR
+EXTRN	__stat:NEAR
+EXTRN	__unlink:NEAR
+EXTRN	__utime:NEAR
+EXTRN	_OEMParallelPortInit:NEAR
+EXTRN	_gmtime:NEAR
+EXTRN	_time:NEAR
+EXTRN	__mkdir:NEAR
+EXTRN	_errno:WORD
+EXTRN	__ctype:BYTE
+EXTRN	__daylight:WORD
+EXTRN	__timezone:DWORD
+EXTRN	__iob:BYTE
+_DATA      SEGMENT
+_CurMSec	DD	00H
+_PtrCurMSec	DW	DGROUP:_CurMSec
+$SG657	DB	'%s: Parallel Port FileSystem Tool',  0aH, 'usage: %s -d[:]<p'
+	DB	'attern> -(g|r|u)[[:]<pattern> [<destination>]',  0aH, '-d   '
+	DB	' Display a directory of files matching <pattern>.',  0aH,  0aH
+	DB	'-g    Get files matching <pattern> and copy them to the',  0aH
+	DB	'      optionally specified <destination>.  Any existing file'
+	DB	' with',  0aH, '      the same name will be overwritten.',  0aH
+	DB	0aH, '-r    Refresh files matching <pattern> which already e'
+	DB	'xist in <destination>',  0aH, '      and have a timestamp ne'
+	DB	'wer than the one in <destination>.',  0aH,  0aH, '-u    Upda'
+	DB	'te files matching <pattern> which don''t already exist in',  0aH
+	DB	'      <destination> or those that have a timestamp newer tha'
+	DB	'n those',  0aH, '      in <destination>.',  0aH,  0aH, '<pat'
+	DB	'tern> Windows filename path with optional wildcard character'
+	DB	's.',  0aH,  0aH, '<destination> If not specified then the cu'
+	DB	'rrent directory is the',  0aH, '      default.',  0aH, '    '
+	DB	'  If specified and it doesn''t exist and the last character '
+	DB	'is \,',  0aH, '      then the directory is created.  Otherwi'
+	DB	'se <destination> is',  0aH, '      treated as the name of th'
+	DB	'e file.',  0aH, '      It is an error for <pattern> to match'
+	DB	' multiple files',  0aH, '      when <destination> specifies '
+	DB	'a file.',  0aH,  00H
+$SG666	DB	'%s: No files found',  0aH,  00H
+$SG672	DB	'%c%c%c%c%c %2.2d/%2.2d/%2.2d %2.2d:%2.2d:%2.2d %-8ld %s',  0aH
+	DB	00H
+$SG675	DB	'%s: Error processing directory',  0aH,  00H
+	ORG	$+1
+$S684_?dwOldPercent@?1??DrawPercent@@9@9	DD	02710H
+$SG686	DB	'%s                         ',  00H
+$SG688	DB	08H,  08H,  08H,  08H,  08H,  08H,  08H,  08H,  08H,  08H,  08H
+	DB	08H,  08H,  08H,  08H,  08H,  08H,  08H,  08H,  08H,  08H,  08H
+	DB	08H,  08H,  08H,  08H,  08H,  08H,  08H,  08H,  08H,  08H,  08H
+	DB	08H,  08H,  08H,  08H,  08H,  08H,  08H,  08H,  08H,  08H,  08H
+	DB	08H,  08H,  08H,  08H,  08H,  08H,  08H,  08H,  08H,  08H,  00H
+$SG692	DB	'%c',  00H
+$SG696	DB	'%c',  00H
+$SG697	DB	' %2d%%',  00H
+$SG699	DB	08H,  08H,  08H, '%2d%%',  00H
+$SG716	DB	'%s --> %s',  0aH,  00H
+$SG718	DB	'%s: Error opening file for write access, error = %d',  0aH,  00H
+$SG720	DB	'%s: Error opening file for read access',  0aH,  00H
+$SG721	DB	00H
+$SG726	DB	0dH, '                                                      '
+	DB	'                   ',  0dH,  00H
+$SG748	DB	'%s: Error creating directory, error = %d',  0aH,  00H
+$SG776	DB	'%s: File(s) not found',  0aH,  00H
+$SG786	DB	'%s: Up to date',  0aH,  00H
+$SG789	DB	'%s: Skipping',  0aH,  00H
+$SG794	DB	'%s: Destination isn''t a directory and multiple files select'
+	DB	'ed',  0aH,  00H
+$SG797	DB	'%d files copied',  0aH,  00H
+$SG824	DB	'*.*',  00H
+$SG833	DB	'Error source path missing',  0aH,  00H
+$SG837	DB	'%s: Unsupported option',  0aH,  0aH,  00H
+_DATA      ENDS
+_BSS      SEGMENT
+$S714_?cReadBuffer@?1??GetOneFile@@9@9	DW 02000H DUP (?)
+_BSS      ENDS
+_TEXT      SEGMENT
+	ASSUME	CS: _TEXT
+	PUBLIC	_usage2
+_usage2	PROC NEAR
+;|*** //
+;|*** // Copyright (c) Microsoft Corporation.  All rights reserved.
+;|*** //
+;|*** //
+;|*** // Use of this sample source code is subject to the terms of the Microsoft
+;|*** // license agreement under which you licensed this sample source code. If
+;|*** // you did not accept the terms of the license agreement, you are not
+;|*** // authorized to use this sample source code. For the terms of the license,
+;|*** // please see the license agreement between you and Microsoft or, if applicable,
+;|*** // see the LICENSE.RTF on your install media or the root of your tools installation.
+;|*** // THE SAMPLE SOURCE CODE IS PROVIDED "AS IS", WITH NO WARRANTIES.
+;|*** //
+;|*** /*++
+;|*** THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
+;|*** ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+;|*** THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+;|*** PARTICULAR PURPOSE.
+;|*** 
+;|*** Module Name:  
+;|*** 
+;|*** Abstract:  
+;|*** 
+;|*** Functions:
+;|*** 
+;|*** 
+;|*** Notes: 
+;|*** 
+;|*** --*/
+;|*** #include "windows.h"
+;|*** #include <stdio.h>
+;|*** #include <stdlib.h>
+;|*** #include <string.h>
+;|*** #include <sys\stat.h>
+;|*** #include <sys\utime.h>
+;|*** #include <ctype.h>
+;|*** #include <direct.h>
+;|*** #include <dos.h>
+;|*** #include <fcntl.h>
+;|*** #include <io.h>
+;|*** #include <time.h>
+;|*** #include "ppfs.h"
+;|*** 
+;|*** #if DEBUG
+;|*** VOID    DumpCounters(VOID);
+;|*** #endif
+;|*** 
+;|*** DWORD   CurMSec = 0;
+;|*** DWORD   *PtrCurMSec = &CurMSec;
+;|*** 
+;|*** #define COPY_FLAG_UPDATE_EXISTING   0x0001
+;|*** #define COPY_FLAG_UPDATE_OR_ADD     0x0002
+;|*** 
+;|*** typedef unsigned long _fsize_t; /* Could be 64 bits for Win32 */
+;|*** 
+;|*** struct _finddata_t {
+;|***     unsigned long   attrib;
+;|***     time_t  time_create;    /* -1 for FAT file systems */
+;|***     time_t  time_access;    /* -1 for FAT file systems */
+;|***     time_t  time_write;
+;|***     _fsize_t    size;
+;|***     char    name[260];
+;|*** };
+;|*** 
+;|*** void
+;|*** usage2(char *pszProgramPath)
+;|*** {
+; Line 66
+	*** 000000	55 			push	bp
+	*** 000001	8b ec 			mov	bp,sp
+	*** 000003	57 			push	di
+	*** 000004	56 			push	si
+;	pszProgramPath = 4
+;	register si = pszProgramName
+	*** 000005	8b 7e 04 		mov	di,WORD PTR [bp+4]	;pszProgramPath
+;|***     char    *pszProgramName;
+;|*** 
+;|***     if ((pszProgramName = strrchr(pszProgramPath, '\\')) == NULL)
+; Line 69
+	*** 000008	6a 5c 			push	92	;005cH
+	*** 00000a	57 			push	di
+	*** 00000b	e8 00 00 		call	_strrchr
+	*** 00000e	83 c4 04 		add	sp,4
+	*** 000011	8b f0 			mov	si,ax
+	*** 000013	0b f0 			or	si,ax
+	*** 000015	75 05 			jne	$I655
+;|***     {
+;|***         pszProgramName = pszProgramPath;
+; Line 71
+	*** 000017	8b f7 			mov	si,di
+;|***     }
+;|***     else
+; Line 73
+	*** 000019	eb 02 			jmp	SHORT $I656
+	*** 00001b	90 			nop	
+					$I655:
+;|***     {
+;|***         pszProgramName++;
+; Line 75
+	*** 00001c	46 			inc	si
+;|***     }
+; Line 76
+					$I656:
+;|*** 
+;|***     printf(
+;|***         "%s: Parallel Port FileSystem Tool\n"
+;|***         "usage: %s -d[:]<pattern> -(g|r|u)[[:]<pattern> [<destination>]\n"
+;|***         "-d    Display a directory of files matching <pattern>.\n\n"
+;|***         "-g    Get files matching <pattern> and copy them to the\n"
+;|***         "      optionally specified <destination>.  Any existing file with\n"
+;|***         "      the same name will be overwritten.\n\n"
+;|***         "-r    Refresh files matching <pattern> which already exist in <destination>\n"
+;|***         "      and have a timestamp newer than the one in <destination>.\n\n"
+;|***         "-u    Update files matching <pattern> which don't already exist in\n"
+;|***         "      <destination> or those that have a timestamp newer than those\n"
+;|***         "      in <destination>.\n\n"
+;|***         "<pattern> Windows filename path with optional wildcard characters.\n\n"
+;|***         "<destination> If not specified then the current directory is the\n"
+;|***         "      default.\n"
+;|***         "      If specified and it doesn't exist and the last character is \\,\n"
+;|***         "      then the directory is created.  Otherwise <destination> is\n"
+;|***         "      treated as the name of the file.\n"
+;|***         "      It is an error for <pattern> to match multiple files\n"
+;|***         "      when <destination> specifies a file.\n",
+;|***         pszProgramName, pszProgramName);
+; Line 98
+	*** 00001d	56 			push	si
+	*** 00001e	56 			push	si
+	*** 00001f	68 00 00 		push	OFFSET DGROUP:$SG657
+	*** 000022	e8 00 00 		call	_printf
+	*** 000025	83 c4 06 		add	sp,6
+;|*** }
+; Line 99
+	*** 000028	5e 			pop	si
+	*** 000029	5f 			pop	di
+	*** 00002a	c9 			leave	
+	*** 00002b	c3 			ret	
+
+_usage2	ENDP
+	PUBLIC	_DisplayDirectory
+_DisplayDirectory	PROC NEAR
+;|*** 
+;|*** VOID
+;|*** DisplayDirectory(char *pszPath)
+;|*** {
+; Line 103
+	*** 00002c	c8 1c 01 00 		enter	284,0
+	*** 000030	57 			push	di
+	*** 000031	56 			push	si
+;	pszPath = 4
+;	hFind = -4
+;	fd = -284
+;	register si = ptmWrite
+	*** 000032	8b 7e 04 		mov	di,WORD PTR [bp+4]	;pszPath
+;|***     DWORD                   hFind;
+;|***     struct  _finddata_t     fd;
+;|***     struct  tm             *ptmWrite;
+;|*** 
+;|***     hFind = rfindfirst(0, pszPath, &fd);
+;|*** 
+;|***     if (hFind == 0)
+; Line 110
+	*** 000035	8d 86 e4 fe 		lea	ax,WORD PTR [bp-284]	;fd
+	*** 000039	50 			push	ax
+	*** 00003a	57 			push	di
+	*** 00003b	6a 00 			push	0
+	*** 00003d	6a 00 			push	0
+	*** 00003f	e8 00 00 		call	_rfindfirst
+	*** 000042	83 c4 08 		add	sp,8
+	*** 000045	89 46 fc 		mov	WORD PTR [bp-4],ax	;hFind
+	*** 000048	89 56 fe 		mov	WORD PTR [bp-2],dx
+	*** 00004b	0b d0 			or	dx,ax
+	*** 00004d	75 0d 			jne	$I665
+;|***     {
+;|***         printf("%s: No files found\n", pszPath);
+; Line 112
+	*** 00004f	57 			push	di
+	*** 000050	68 00 00 		push	OFFSET DGROUP:$SG666
+	*** 000053	e8 00 00 		call	_printf
+	*** 000056	83 c4 04 		add	sp,4
+;|***     }
+;|***     else if (hFind != -1)
+; Line 114
+	*** 000059	e9 c8 00 		jmp	$D673
+					$I665:
+	*** 00005c	3d ff ff 		cmp	ax,-1	;ffffH
+	*** 00005f	75 08 			jne	$L849
+	*** 000061	39 46 fe 		cmp	WORD PTR [bp-2],ax
+	*** 000064	75 03 			jne	$JCC100
+	*** 000066	e9 bb 00 		jmp	$D673
+					$JCC100:
+					$L849:
+;|***     {
+;|***         do
+;|***         {
+;|***             ptmWrite = gmtime(&fd.time_write);
+; Line 118
+	*** 000069	8d 86 f0 fe 		lea	ax,WORD PTR [bp-272]
+	*** 00006d	50 			push	ax
+	*** 00006e	e8 00 00 		call	_gmtime
+	*** 000071	83 c4 02 		add	sp,2
+	*** 000074	8b f0 			mov	si,ax
+;|*** 
+;|***             printf(
+;|***                 "%c%c%c%c%c %2.2d/%2.2d/%2.2d %2.2d:%2.2d:%2.2d %-8ld %s\n",
+;|***                 fd.attrib & _A_RDONLY ? 'R' : ' ',
+;|***                 fd.attrib & _A_HIDDEN ? 'H' : ' ',
+;|***                 fd.attrib & _A_SYSTEM ? 'S' : ' ',
+;|***                 fd.attrib & _A_SUBDIR ? 'D' : ' ',
+;|***                 fd.attrib & _A_ARCH   ? 'A' : ' ',
+;|***                 ptmWrite->tm_mon + 1, ptmWrite->tm_mday, ptmWrite->tm_year,
+;|***                 ptmWrite->tm_hour, ptmWrite->tm_min, ptmWrite->tm_sec,
+;|***                 fd.size, fd.name);
+; Line 129
+	*** 000076	8d 86 f8 fe 		lea	ax,WORD PTR [bp-264]
+	*** 00007a	50 			push	ax
+	*** 00007b	ff b6 f6 fe 		push	WORD PTR [bp-266]
+	*** 00007f	ff b6 f4 fe 		push	WORD PTR [bp-268]
+	*** 000083	ff 34 			push	WORD PTR [si]
+	*** 000085	ff 74 02 		push	WORD PTR [si+2]
+	*** 000088	ff 74 04 		push	WORD PTR [si+4]
+	*** 00008b	ff 74 0a 		push	WORD PTR [si+10]
+	*** 00008e	ff 74 06 		push	WORD PTR [si+6]
+	*** 000091	8b 44 08 		mov	ax,WORD PTR [si+8]
+	*** 000094	40 			inc	ax
+	*** 000095	50 			push	ax
+	*** 000096	8b 86 e4 fe 		mov	ax,WORD PTR [bp-284]	;fd
+	*** 00009a	25 20 00 		and	ax,32	;0020H
+	*** 00009d	3d 01 00 		cmp	ax,1
+	*** 0000a0	1b c0 			sbb	ax,ax
+	*** 0000a2	24 df 			and	al,223	;00dfH
+	*** 0000a4	05 41 00 		add	ax,65	;0041H
+	*** 0000a7	50 			push	ax
+	*** 0000a8	8b 86 e4 fe 		mov	ax,WORD PTR [bp-284]	;fd
+	*** 0000ac	25 10 00 		and	ax,16	;0010H
+	*** 0000af	3d 01 00 		cmp	ax,1
+	*** 0000b2	1b c0 			sbb	ax,ax
+	*** 0000b4	24 dc 			and	al,220	;00dcH
+	*** 0000b6	05 44 00 		add	ax,68	;0044H
+	*** 0000b9	50 			push	ax
+	*** 0000ba	8b 86 e4 fe 		mov	ax,WORD PTR [bp-284]	;fd
+	*** 0000be	25 04 00 		and	ax,4
+	*** 0000c1	3d 01 00 		cmp	ax,1
+	*** 0000c4	1b c0 			sbb	ax,ax
+	*** 0000c6	24 cd 			and	al,205	;00cdH
+	*** 0000c8	05 53 00 		add	ax,83	;0053H
+	*** 0000cb	50 			push	ax
+	*** 0000cc	8b 86 e4 fe 		mov	ax,WORD PTR [bp-284]	;fd
+	*** 0000d0	25 02 00 		and	ax,2
+	*** 0000d3	3d 01 00 		cmp	ax,1
+	*** 0000d6	1b c0 			sbb	ax,ax
+	*** 0000d8	24 d8 			and	al,216	;00d8H
+	*** 0000da	05 48 00 		add	ax,72	;0048H
+	*** 0000dd	50 			push	ax
+	*** 0000de	8a 86 e4 fe 		mov	al,BYTE PTR [bp-284]	;fd
+	*** 0000e2	25 01 00 		and	ax,1
+	*** 0000e5	3d 01 00 		cmp	ax,1
+	*** 0000e8	1b c0 			sbb	ax,ax
+	*** 0000ea	24 ce 			and	al,206	;00ceH
+	*** 0000ec	05 52 00 		add	ax,82	;0052H
+	*** 0000ef	50 			push	ax
+	*** 0000f0	68 00 00 		push	OFFSET DGROUP:$SG672
+	*** 0000f3	e8 00 00 		call	_printf
+	*** 0000f6	83 c4 1e 		add	sp,30	;001eH
+;|***             
+;|***             hFind = rfindnext(hFind, &fd);
+;|***         }
+;|***         while (hFind != 0 && hFind != -1);
+; Line 133
+	*** 0000f9	8d 86 e4 fe 		lea	ax,WORD PTR [bp-284]	;fd
+	*** 0000fd	50 			push	ax
+	*** 0000fe	ff 76 fe 		push	WORD PTR [bp-2]
+	*** 000101	ff 76 fc 		push	WORD PTR [bp-4]	;hFind
+	*** 000104	e8 00 00 		call	_rfindnext
+	*** 000107	83 c4 06 		add	sp,6
+	*** 00010a	89 46 fc 		mov	WORD PTR [bp-4],ax	;hFind
+	*** 00010d	89 56 fe 		mov	WORD PTR [bp-2],dx
+	*** 000110	0b d0 			or	dx,ax
+	*** 000112	74 10 			je	$D673
+	*** 000114	3d ff ff 		cmp	ax,-1	;ffffH
+	*** 000117	74 03 			je	$JCC279
+	*** 000119	e9 4d ff 		jmp	$L849
+					$JCC279:
+	*** 00011c	39 46 fe 		cmp	WORD PTR [bp-2],ax
+	*** 00011f	74 03 			je	$JCC287
+	*** 000121	e9 45 ff 		jmp	$L849
+					$JCC287:
+					$D673:
+;|***     }
+;|*** 
+;|***     if (hFind == -1)
+; Line 136
+	*** 000124	83 7e fc ff 		cmp	WORD PTR [bp-4],-1	;ffffH	;hFind
+	*** 000128	75 10 			jne	$EX661
+	*** 00012a	83 7e fe ff 		cmp	WORD PTR [bp-2],-1	;ffffH
+	*** 00012e	75 0a 			jne	$EX661
+;|***     {
+;|***         printf("%s: Error processing directory\n", pszPath);
+; Line 138
+	*** 000130	57 			push	di
+	*** 000131	68 00 00 		push	OFFSET DGROUP:$SG675
+	*** 000134	e8 00 00 		call	_printf
+	*** 000137	83 c4 04 		add	sp,4
+;|***     }
+;|*** }
+; Line 140
+					$EX661:
+	*** 00013a	5e 			pop	si
+	*** 00013b	5f 			pop	di
+	*** 00013c	c9 			leave	
+	*** 00013d	c3 			ret	
+
+_DisplayDirectory	ENDP
+	PUBLIC	_DrawPercent
+_DrawPercent	PROC NEAR
+;|*** 
+;|*** VOID
+;|*** DrawPercent (DWORD CurValue, DWORD MaxValue)
+;|*** {
+; Line 144
+	*** 00013e	c8 04 00 00 		enter	4,0
+;	CurValue = 4
+;	MaxValue = 8
+;	dwPercent = -4
+;|***     DWORD   dwPercent;
+;|***     static DWORD dwOldPercent = 10000;
+;|*** 
+;|***     if (CurValue == (DWORD)-1) {
+; Line 148
+	*** 000142	83 7e 04 ff 		cmp	WORD PTR [bp+4],-1	;ffffH	;CurValue
+	*** 000146	75 1e 			jne	$I685
+	*** 000148	83 7e 06 ff 		cmp	WORD PTR [bp+6],-1	;ffffH
+	*** 00014c	75 18 			jne	$I685
+;|***         dwOldPercent = 10000;
+; Line 149
+	*** 00014e	c7 06 00 00 10 27 	mov	WORD PTR $S684_?dwOldPercent@?1??DrawPercent@@9@9,10000	;2710H
+	*** 000154	c7 06 02 00 00 00 	mov	WORD PTR $S684_?dwOldPercent@?1??DrawPercent@@9@9+2,0
+;|***         fprintf(stderr, "%s                         ", MaxValue);
+; Line 150
+	*** 00015a	ff 76 0a 		push	WORD PTR [bp+10]
+	*** 00015d	ff 76 08 		push	WORD PTR [bp+8]	;MaxValue
+	*** 000160	68 00 00 		push	OFFSET DGROUP:$SG686
+	*** 000163	e9 d5 00 		jmp	$L881
+;|***         return;
+;|***     }
+;|*** 
+;|***     dwPercent = (CurValue*100)/MaxValue;
+; Line 154
+					$I685:
+;|***     if ((dwPercent / 2) != (dwOldPercent / 2))
+; Line 155
+	*** 000166	ff 76 0a 		push	WORD PTR [bp+10]
+	*** 000169	ff 76 08 		push	WORD PTR [bp+8]	;MaxValue
+	*** 00016c	6a 00 			push	0
+	*** 00016e	6a 64 			push	100	;0064H
+	*** 000170	ff 76 06 		push	WORD PTR [bp+6]
+	*** 000173	ff 76 04 		push	WORD PTR [bp+4]	;CurValue
+	*** 000176	e8 00 00 		call	__aNulmul
+	*** 000179	52 			push	dx
+	*** 00017a	50 			push	ax
+	*** 00017b	e8 00 00 		call	__aNuldiv
+	*** 00017e	89 46 fc 		mov	WORD PTR [bp-4],ax	;dwPercent
+	*** 000181	89 56 fe 		mov	WORD PTR [bp-2],dx
+	*** 000184	33 06 00 00 		xor	ax,WORD PTR $S684_?dwOldPercent@?1??DrawPercent@@9@9
+	*** 000188	33 16 02 00 		xor	dx,WORD PTR $S684_?dwOldPercent@?1??DrawPercent@@9@9+2
+	*** 00018c	24 fe 			and	al,254	;00feH
+	*** 00018e	0b d0 			or	dx,ax
+	*** 000190	75 03 			jne	$JCC400
+	*** 000192	e9 9d 00 		jmp	$I687
+					$JCC400:
+;|***     {
+;|***         fprintf(stderr, "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
+; Line 157
+	*** 000195	68 00 00 		push	OFFSET DGROUP:$SG688
+	*** 000198	68 10 00 		push	OFFSET __iob+16
+	*** 00019b	e8 00 00 		call	_fprintf
+	*** 00019e	83 c4 04 		add	sp,4
+;|*** 
+;|***         for (dwOldPercent=0; dwOldPercent < (dwPercent/2); dwOldPercent++)
+; Line 159
+	*** 0001a1	2b c0 			sub	ax,ax
+	*** 0001a3	a3 02 00 		mov	WORD PTR $S684_?dwOldPercent@?1??DrawPercent@@9@9+2,ax
+	*** 0001a6	a3 00 00 		mov	WORD PTR $S684_?dwOldPercent@?1??DrawPercent@@9@9,ax
+	*** 0001a9	f7 46 fe ff ff 		test	WORD PTR [bp-2],-1	;ffffH
+	*** 0001ae	77 07 			ja	$L856
+	*** 0001b0	f7 46 fc fe ff 		test	WORD PTR [bp-4],-2	;fffeH	;dwPercent
+	*** 0001b5	76 31 			jbe	$L857
+					$L856:
+;|***         {
+;|***             fprintf(stderr, "%c", 219);
+; Line 161
+	*** 0001b7	68 db 00 		push	219	;00dbH
+	*** 0001ba	68 00 00 		push	OFFSET DGROUP:$SG692
+	*** 0001bd	68 10 00 		push	OFFSET __iob+16
+	*** 0001c0	e8 00 00 		call	_fprintf
+	*** 0001c3	83 c4 06 		add	sp,6
+	*** 0001c6	83 06 00 00 01 		add	WORD PTR $S684_?dwOldPercent@?1??DrawPercent@@9@9,1
+	*** 0001cb	83 16 02 00 00 		adc	WORD PTR $S684_?dwOldPercent@?1??DrawPercent@@9@9+2,0
+	*** 0001d0	8b 46 fc 		mov	ax,WORD PTR [bp-4]	;dwPercent
+	*** 0001d3	8b 56 fe 		mov	dx,WORD PTR [bp-2]
+	*** 0001d6	d1 ea 			shr	dx,1
+	*** 0001d8	d1 d8 			rcr	ax,1
+	*** 0001da	3b 16 02 00 		cmp	dx,WORD PTR $S684_?dwOldPercent@?1??DrawPercent@@9@9+2
+	*** 0001de	77 d7 			ja	$L856
+	*** 0001e0	72 06 			jb	$L857
+	*** 0001e2	3b 06 00 00 		cmp	ax,WORD PTR $S684_?dwOldPercent@?1??DrawPercent@@9@9
+	*** 0001e6	77 cf 			ja	$L856
+					$L857:
+;|***         }
+;|*** 
+;|***         for (; dwOldPercent < 50; dwOldPercent++)
+; Line 164
+	*** 0001e8	83 3e 02 00 00 		cmp	WORD PTR $S684_?dwOldPercent@?1??DrawPercent@@9@9+2,0
+	*** 0001ed	75 2e 			jne	$L859
+	*** 0001ef	83 3e 00 00 32 		cmp	WORD PTR $S684_?dwOldPercent@?1??DrawPercent@@9@9,50	;0032H
+	*** 0001f4	73 27 			jae	$L859
+					$F693:
+;|***         {
+;|***             fprintf(stderr, "%c", 176);
+; Line 166
+	*** 0001f6	68 b0 00 		push	176	;00b0H
+	*** 0001f9	68 00 00 		push	OFFSET DGROUP:$SG696
+	*** 0001fc	68 10 00 		push	OFFSET __iob+16
+	*** 0001ff	e8 00 00 		call	_fprintf
+	*** 000202	83 c4 06 		add	sp,6
+	*** 000205	83 06 00 00 01 		add	WORD PTR $S684_?dwOldPercent@?1??DrawPercent@@9@9,1
+	*** 00020a	83 16 02 00 00 		adc	WORD PTR $S684_?dwOldPercent@?1??DrawPercent@@9@9+2,0
+	*** 00020f	83 3e 02 00 00 		cmp	WORD PTR $S684_?dwOldPercent@?1??DrawPercent@@9@9+2,0
+	*** 000214	75 07 			jne	$L859
+	*** 000216	83 3e 00 00 32 		cmp	WORD PTR $S684_?dwOldPercent@?1??DrawPercent@@9@9,50	;0032H
+	*** 00021b	72 d9 			jb	$F693
+					$L859:
+;|***         }
+;|*** 
+;|***         dwOldPercent = dwPercent;
+; Line 169
+	*** 00021d	8b 46 fc 		mov	ax,WORD PTR [bp-4]	;dwPercent
+	*** 000220	8b 56 fe 		mov	dx,WORD PTR [bp-2]
+	*** 000223	a3 00 00 		mov	WORD PTR $S684_?dwOldPercent@?1??DrawPercent@@9@9,ax
+	*** 000226	89 16 02 00 		mov	WORD PTR $S684_?dwOldPercent@?1??DrawPercent@@9@9+2,dx
+;|***         fprintf(stderr, " %2d%%", dwPercent);
+; Line 170
+	*** 00022a	52 			push	dx
+	*** 00022b	50 			push	ax
+	*** 00022c	68 00 00 		push	OFFSET DGROUP:$SG697
+	*** 00022f	eb 0a 			jmp	SHORT $L881
+	*** 000231	90 			nop	
+					$I687:
+;|***     }
+;|***     else
+;|***     {
+;|***         fprintf(stderr, "\b\b\b%2d%%", dwPercent);
+; Line 174
+	*** 000232	ff 76 fe 		push	WORD PTR [bp-2]
+	*** 000235	ff 76 fc 		push	WORD PTR [bp-4]	;dwPercent
+	*** 000238	68 00 00 		push	OFFSET DGROUP:$SG699
+					$L881:
+	*** 00023b	68 10 00 		push	OFFSET __iob+16
+	*** 00023e	e8 00 00 		call	_fprintf
+;|***     }
+;|*** }
+; Line 176
+	*** 000241	c9 			leave	
+	*** 000242	c3 			ret	
+	*** 000243	90 			nop	
+
+_DrawPercent	ENDP
+	PUBLIC	_GetOneFile
+_GetOneFile	PROC NEAR
+;|*** 
+;|*** BOOL
+;|*** GetOneFile(
+;|***     char *pszSourceFile, char *pszDestinationFile,
+;|***     DWORD dwFileSize, time_t tmModify)
+;|*** {
+; Line 182
+	*** 000244	c8 0c 00 00 		enter	12,0
+	*** 000248	57 			push	di
+	*** 000249	56 			push	si
+;	dwFileSize = 8
+;	tmModify = 12
+;	hDestinationFile = -6
+;	hSourceFile = -10
+;	register si = nReadCount
+;	dwBytesWritten = -4
+;	utDestination = -12
+;	tmNow = -4
+;	pszSourceFile = 4
+;	pszDestinationFile = 6
+	*** 00024a	8b 76 04 		mov	si,WORD PTR [bp+4]	;pszSourceFile
+	*** 00024d	8b 7e 06 		mov	di,WORD PTR [bp+6]	;pszDestinationFile
+;|***     int                 hDestinationFile;
+;|***     DWORD               hSourceFile;
+;|*** 
+;|***     int                 nReadCount;
+;|***     static char         cReadBuffer[16384];
+;|*** 
+;|***     DWORD               dwBytesWritten;
+;|*** 
+;|***     printf("%s --> %s\n", pszSourceFile, pszDestinationFile);
+; Line 191
+	*** 000250	57 			push	di
+	*** 000251	56 			push	si
+	*** 000252	68 00 00 		push	OFFSET DGROUP:$SG716
+	*** 000255	e8 00 00 		call	_printf
+	*** 000258	83 c4 06 		add	sp,6
+;|*** 
+;|***     hDestinationFile = _open(
+;|***         pszDestinationFile, _O_WRONLY | _O_CREAT | _O_BINARY | _O_TRUNC,
+;|***         _S_IREAD | _S_IWRITE);
+;|*** 
+;|***     if (hDestinationFile == -1)
+; Line 197
+	*** 00025b	68 80 01 		push	384	;0180H
+	*** 00025e	68 01 83 		push	-31999	;8301H
+	*** 000261	57 			push	di
+	*** 000262	e8 00 00 		call	__open
+	*** 000265	83 c4 06 		add	sp,6
+	*** 000268	89 46 fa 		mov	WORD PTR [bp-6],ax	;hDestinationFile
+	*** 00026b	40 			inc	ax
+	*** 00026c	75 16 			jne	$I717
+;|***     {
+;|***         printf(
+;|***             "%s: Error opening file for write access, error = %d\n",
+;|***             pszDestinationFile, errno);
+; Line 201
+	*** 00026e	ff 36 00 00 		push	WORD PTR _errno
+	*** 000272	57 			push	di
+	*** 000273	68 00 00 		push	OFFSET DGROUP:$SG718
+	*** 000276	e8 00 00 		call	_printf
+	*** 000279	83 c4 06 		add	sp,6
+;|***         return FALSE;
+; Line 202
+					$L882:
+	*** 00027c	33 c0 			xor	ax,ax
+	*** 00027e	99 			cwd	
+	*** 00027f	5e 			pop	si
+	*** 000280	5f 			pop	di
+	*** 000281	c9 			leave	
+	*** 000282	c3 			ret	
+	*** 000283	90 			nop	
+;|***     }
+;|*** 
+;|***     hSourceFile = ropen(pszSourceFile, _O_RDONLY);
+; Line 205
+					$I717:
+;|*** 
+;|***     if (hSourceFile == -1)
+; Line 207
+	*** 000284	6a 00 			push	0
+	*** 000286	6a 00 			push	0
+	*** 000288	56 			push	si
+	*** 000289	e8 00 00 		call	_ropen
+	*** 00028c	83 c4 06 		add	sp,6
+	*** 00028f	89 46 f6 		mov	WORD PTR [bp-10],ax	;hSourceFile
+	*** 000292	89 56 f8 		mov	WORD PTR [bp-8],dx
+	*** 000295	3d ff ff 		cmp	ax,-1	;ffffH
+	*** 000298	75 1a 			jne	$I719
+	*** 00029a	3b d0 			cmp	dx,ax
+	*** 00029c	75 16 			jne	$I719
+;|***     {
+;|***         _close(hDestinationFile);
+; Line 209
+	*** 00029e	ff 76 fa 		push	WORD PTR [bp-6]	;hDestinationFile
+	*** 0002a1	e8 00 00 		call	__close
+	*** 0002a4	83 c4 02 		add	sp,2
+;|***         printf("%s: Error opening file for read access\n", pszSourceFile);
+; Line 210
+	*** 0002a7	56 			push	si
+	*** 0002a8	68 00 00 		push	OFFSET DGROUP:$SG720
+	*** 0002ab	e8 00 00 		call	_printf
+	*** 0002ae	83 c4 04 		add	sp,4
+	*** 0002b1	eb c9 			jmp	SHORT $L882
+	*** 0002b3	90 			nop	
+;|***         return FALSE;
+;|***     }
+;|*** 
+;|***     // Initialize the percent thingie.
+;|***     DrawPercent((DWORD)-1, (DWORD)"");
+; Line 215
+					$I719:
+	*** 0002b4	1e 			push	ds
+	*** 0002b5	68 00 00 		push	OFFSET DGROUP:$SG721
+	*** 0002b8	6a ff 			push	-1	;ffffH
+	*** 0002ba	6a ff 			push	-1	;ffffH
+	*** 0002bc	e8 7f fe 		call	_DrawPercent
+	*** 0002bf	83 c4 08 		add	sp,8
+;|*** 
+;|***     dwBytesWritten = 0;
+; Line 217
+	*** 0002c2	2b c0 			sub	ax,ax
+	*** 0002c4	89 46 fe 		mov	WORD PTR [bp-2],ax
+	*** 0002c7	89 46 fc 		mov	WORD PTR [bp-4],ax	;dwBytesWritten
+	*** 0002ca	8b 7e fa 		mov	di,WORD PTR [bp-6]	;hDestinationFile
+;|*** 
+;|***     for ( ; ; )
+; Line 219
+	*** 0002cd	eb 27 			jmp	SHORT $L883
+	*** 0002cf	90 			nop	
+					$FC723:
+;|***     {
+;|***         nReadCount = (int)rread(hSourceFile, &cReadBuffer[0], sizeof(cReadBuffer));
+;|*** 
+;|***         if (nReadCount <= 0)
+;|***         {
+;|***             break;
+;|***         }
+;|*** 
+;|***         _write(hDestinationFile, cReadBuffer, nReadCount);
+; Line 228
+	*** 0002d0	56 			push	si
+	*** 0002d1	68 00 00 		push	OFFSET DGROUP:$S714_?cReadBuffer@?1??GetOneFile@@9@9
+	*** 0002d4	57 			push	di
+	*** 0002d5	e8 00 00 		call	__write
+	*** 0002d8	83 c4 06 		add	sp,6
+;|*** 
+;|***         dwBytesWritten += nReadCount;
+;|*** 
+;|***         DrawPercent(dwBytesWritten, dwFileSize);
+; Line 232
+	*** 0002db	ff 76 0a 		push	WORD PTR [bp+10]
+	*** 0002de	ff 76 08 		push	WORD PTR [bp+8]	;dwFileSize
+	*** 0002e1	8b c6 			mov	ax,si
+	*** 0002e3	99 			cwd	
+	*** 0002e4	01 46 fc 		add	WORD PTR [bp-4],ax	;dwBytesWritten
+	*** 0002e7	11 56 fe 		adc	WORD PTR [bp-2],dx
+	*** 0002ea	ff 76 fe 		push	WORD PTR [bp-2]
+	*** 0002ed	ff 76 fc 		push	WORD PTR [bp-4]	;dwBytesWritten
+	*** 0002f0	e8 4b fe 		call	_DrawPercent
+	*** 0002f3	83 c4 08 		add	sp,8
+;|***     }
+; Line 233
+					$L883:
+	*** 0002f6	6a 00 			push	0
+	*** 0002f8	68 00 40 		push	16384	;4000H
+	*** 0002fb	68 00 00 		push	OFFSET DGROUP:$S714_?cReadBuffer@?1??GetOneFile@@9@9
+	*** 0002fe	ff 76 f8 		push	WORD PTR [bp-8]
+	*** 000301	ff 76 f6 		push	WORD PTR [bp-10]	;hSourceFile
+	*** 000304	e8 00 00 		call	_rread
+	*** 000307	83 c4 0a 		add	sp,10	;000aH
+	*** 00030a	8b f0 			mov	si,ax
+	*** 00030c	0b f0 			or	si,ax
+	*** 00030e	7f c0 			jg	$FC723
+;|*** 
+;|***     fprintf(stderr, "\r                                                                         \r");
+; Line 235
+	*** 000310	68 00 00 		push	OFFSET DGROUP:$SG726
+	*** 000313	68 10 00 		push	OFFSET __iob+16
+	*** 000316	e8 00 00 		call	_fprintf
+	*** 000319	83 c4 04 		add	sp,4
+;|*** 
+;|***     rclose(hSourceFile);
+; Line 237
+	*** 00031c	ff 76 f8 		push	WORD PTR [bp-8]
+	*** 00031f	ff 76 f6 		push	WORD PTR [bp-10]	;hSourceFile
+	*** 000322	e8 00 00 		call	_rclose
+	*** 000325	83 c4 04 		add	sp,4
+;|*** 
+;|***     _close(hDestinationFile);
+; Line 239
+	*** 000328	57 			push	di
+	*** 000329	e8 00 00 		call	__close
+	*** 00032c	83 c4 02 		add	sp,2
+;|*** 
+;|***     if (nReadCount == 0)
+; Line 241
+	*** 00032f	0b f6 			or	si,si
+	*** 000331	75 3f 			jne	$I727
+;|***     {
+;|***         struct  _utimbuf    utDestination;
+;|***         time_t              tmNow;
+;|*** 
+;|***         time(&tmNow);
+; Line 246
+	*** 000333	8d 46 fc 		lea	ax,WORD PTR [bp-4]	;dwBytesWritten
+	*** 000336	50 			push	ax
+	*** 000337	e8 00 00 		call	_time
+	*** 00033a	83 c4 02 		add	sp,2
+;|*** 
+;|***         utDestination.actime = tmNow;
+; Line 248
+	*** 00033d	8b 46 fc 		mov	ax,WORD PTR [bp-4]	;dwBytesWritten
+	*** 000340	8b 56 fe 		mov	dx,WORD PTR [bp-2]
+	*** 000343	89 46 f4 		mov	WORD PTR [bp-12],ax	;utDestination
+	*** 000346	89 56 f6 		mov	WORD PTR [bp-10],dx	;hSourceFile
+;|***         utDestination.modtime = tmModify != 0 ? tmModify : tmNow;
+; Line 249
+	*** 000349	8b 46 0e 		mov	ax,WORD PTR [bp+14]
+	*** 00034c	0b 46 0c 		or	ax,WORD PTR [bp+12]	;tmModify
+	*** 00034f	74 09 			je	$L860
+	*** 000351	8b 46 0c 		mov	ax,WORD PTR [bp+12]	;tmModify
+	*** 000354	8b 56 0e 		mov	dx,WORD PTR [bp+14]
+	*** 000357	eb 04 			jmp	SHORT $L884
+	*** 000359	90 			nop	
+					$L860:
+	*** 00035a	8b 46 fc 		mov	ax,WORD PTR [bp-4]	;dwBytesWritten
+					$L884:
+	*** 00035d	89 46 f8 		mov	WORD PTR [bp-8],ax
+	*** 000360	89 56 fa 		mov	WORD PTR [bp-6],dx	;hDestinationFile
+;|***         _utime(pszDestinationFile, &utDestination);
+; Line 250
+	*** 000363	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;utDestination
+	*** 000366	50 			push	ax
+	*** 000367	ff 76 06 		push	WORD PTR [bp+6]	;pszDestinationFile
+	*** 00036a	e8 00 00 		call	__utime
+	*** 00036d	83 c4 04 		add	sp,4
+;|***     }
+;|***     else
+; Line 252
+	*** 000370	eb 09 			jmp	SHORT $I730
+					$I727:
+;|***     {
+;|***         _unlink(pszDestinationFile);
+; Line 254
+	*** 000372	ff 76 06 		push	WORD PTR [bp+6]	;pszDestinationFile
+	*** 000375	e8 00 00 		call	__unlink
+	*** 000378	83 c4 02 		add	sp,2
+;|***     }
+; Line 255
+					$I730:
+;|*** 
+;|***     return nReadCount == 0;
+; Line 257
+	*** 00037b	83 fe 01 		cmp	si,1
+	*** 00037e	1b c0 			sbb	ax,ax
+	*** 000380	f7 d8 			neg	ax
+	*** 000382	99 			cwd	
+;|*** }
+; Line 258
+	*** 000383	5e 			pop	si
+	*** 000384	5f 			pop	di
+	*** 000385	c9 			leave	
+	*** 000386	c3 			ret	
+	*** 000387	90 			nop	
+
+_GetOneFile	ENDP
+	PUBLIC	_CheckDestination
+_CheckDestination	PROC NEAR
+;|*** 
+;|*** BOOL
+;|*** CheckDestination(char *pszDestination, char **ppszDirEnd)
+;|*** {
+; Line 262
+	*** 000388	c8 22 00 00 		enter	34,0
+	*** 00038c	57 			push	di
+	*** 00038d	56 			push	si
+;	pszDestination = 4
+;	ppszDirEnd = 6
+;	stDestination = -34
+;	bIsDir = -4
+	*** 00038e	8b 76 04 		mov	si,WORD PTR [bp+4]	;pszDestination
+;|***     struct _stat    stDestination;
+;|***     BOOL            bIsDir;
+;|*** 
+;|***     *ppszDirEnd = strrchr(pszDestination, '\\');
+; Line 266
+	*** 000391	6a 5c 			push	92	;005cH
+	*** 000393	56 			push	si
+	*** 000394	e8 00 00 		call	_strrchr
+	*** 000397	8b 5e 06 		mov	bx,WORD PTR [bp+6]	;ppszDirEnd
+	*** 00039a	83 c4 04 		add	sp,4
+	*** 00039d	89 07 			mov	WORD PTR [bx],ax
+;|*** 
+;|***     if (*ppszDirEnd == NULL && pszDestination[1] == ':')
+; Line 268
+	*** 00039f	0b c0 			or	ax,ax
+	*** 0003a1	75 0e 			jne	$I739
+	*** 0003a3	80 7c 01 3a 		cmp	BYTE PTR [si+1],58	;003aH
+	*** 0003a7	75 08 			jne	$I739
+;|***     {
+;|***         *ppszDirEnd = &pszDestination[1];
+; Line 270
+	*** 0003a9	8d 44 01 		lea	ax,WORD PTR [si+1]
+	*** 0003ac	8b 5e 06 		mov	bx,WORD PTR [bp+6]	;ppszDirEnd
+	*** 0003af	89 07 			mov	WORD PTR [bx],ax
+;|***     }
+;|*** 
+;|***     if (*ppszDirEnd == NULL)
+; Line 273
+					$I739:
+	*** 0003b1	8b 5e 06 		mov	bx,WORD PTR [bp+6]	;ppszDirEnd
+	*** 0003b4	83 3f 00 		cmp	WORD PTR [bx],0
+	*** 0003b7	75 05 			jne	$I740
+;|***     {
+;|***         *ppszDirEnd = pszDestination;
+; Line 275
+	*** 0003b9	89 37 			mov	WORD PTR [bx],si
+;|***     }
+;|***     else
+; Line 277
+	*** 0003bb	eb 03 			jmp	SHORT $I741
+	*** 0003bd	90 			nop	
+					$I740:
+;|***     {
+;|***         (*ppszDirEnd)++;
+; Line 279
+	*** 0003be	ff 07 			inc	WORD PTR [bx]
+;|***     }
+; Line 280
+					$I741:
+;|*** 
+;|***     bIsDir = FALSE;
+; Line 282
+	*** 0003c0	2b c0 			sub	ax,ax
+	*** 0003c2	89 46 fe 		mov	WORD PTR [bp-2],ax
+	*** 0003c5	89 46 fc 		mov	WORD PTR [bp-4],ax	;bIsDir
+;|*** 
+;|***     if (pszDestination[strlen(pszDestination)-1] == '\\')
+; Line 284
+	*** 0003c8	8b fe 			mov	di,si
+	*** 0003ca	8c d8 			mov	ax,ds
+	*** 0003cc	8e c0 			mov	es,ax
+	*** 0003ce	b9 ff ff 		mov	cx,-1	;ffffH
+	*** 0003d1	33 c0 			xor	ax,ax
+	*** 0003d3	f2 			repnz
+	*** 0003d4	ae 			scasb
+	*** 0003d5	f7 d1 			not	cx
+	*** 0003d7	49 			dec	cx
+	*** 0003d8	8b d9 			mov	bx,cx
+	*** 0003da	80 78 ff 5c 		cmp	BYTE PTR [bx-1][si],92	;005cH
+	*** 0003de	75 17 			jne	$I742
+;|***     {
+;|***         pszDestination[strlen(pszDestination)-1] = '\0';
+; Line 286
+	*** 0003e0	8b fe 			mov	di,si
+	*** 0003e2	b9 ff ff 		mov	cx,-1	;ffffH
+	*** 0003e5	f2 			repnz
+	*** 0003e6	ae 			scasb
+	*** 0003e7	f7 d1 			not	cx
+	*** 0003e9	49 			dec	cx
+	*** 0003ea	8b d9 			mov	bx,cx
+	*** 0003ec	88 40 ff 		mov	BYTE PTR [bx-1][si],al
+;|***         bIsDir = TRUE;
+; Line 287
+	*** 0003ef	c7 46 fc 01 00 		mov	WORD PTR [bp-4],1	;bIsDir
+	*** 0003f4	89 46 fe 		mov	WORD PTR [bp-2],ax
+;|***     }
+;|*** 
+;|***     if (_stat(pszDestination, &stDestination) == 0)
+; Line 290
+					$I742:
+	*** 0003f7	8d 46 de 		lea	ax,WORD PTR [bp-34]	;stDestination
+	*** 0003fa	50 			push	ax
+	*** 0003fb	56 			push	si
+	*** 0003fc	e8 00 00 		call	__stat
+	*** 0003ff	83 c4 04 		add	sp,4
+	*** 000402	0b c0 			or	ax,ax
+	*** 000404	75 10 			jne	$I743
+;|***     {
+;|***         if (stDestination.st_mode & _S_IFDIR)
+; Line 292
+	*** 000406	f6 46 e3 40 		test	BYTE PTR [bp-29],64	;0040H
+	*** 00040a	74 2a 			je	$I745
+;|***         {
+;|***             bIsDir = TRUE;
+; Line 294
+	*** 00040c	c7 46 fc 01 00 		mov	WORD PTR [bp-4],1	;bIsDir
+	*** 000411	89 46 fe 		mov	WORD PTR [bp-2],ax
+;|***         }
+;|***     }
+;|***     else if (bIsDir)
+; Line 297
+	*** 000414	eb 20 			jmp	SHORT $I745
+					$I743:
+	*** 000416	8b 46 fe 		mov	ax,WORD PTR [bp-2]
+	*** 000419	0b 46 fc 		or	ax,WORD PTR [bp-4]	;bIsDir
+	*** 00041c	74 18 			je	$I745
+;|***     {
+;|***         if (_mkdir(pszDestination) == -1)
+; Line 299
+	*** 00041e	56 			push	si
+	*** 00041f	e8 00 00 		call	__mkdir
+	*** 000422	83 c4 02 		add	sp,2
+	*** 000425	40 			inc	ax
+	*** 000426	75 0e 			jne	$I745
+;|***         {
+;|***             printf("%s: Error creating directory, error = %d\n", pszDestination, errno);
+; Line 301
+	*** 000428	ff 36 00 00 		push	WORD PTR _errno
+	*** 00042c	56 			push	si
+	*** 00042d	68 00 00 		push	OFFSET DGROUP:$SG748
+	*** 000430	e8 00 00 		call	_printf
+	*** 000433	83 c4 06 		add	sp,6
+;|***         }
+;|***     }
+;|*** 
+;|***     if (bIsDir)
+; Line 305
+					$I745:
+	*** 000436	8b 46 fe 		mov	ax,WORD PTR [bp-2]
+	*** 000439	0b 46 fc 		or	ax,WORD PTR [bp-4]	;bIsDir
+	*** 00043c	74 29 			je	$I749
+;|***     {
+;|***         *ppszDirEnd = &pszDestination[strlen(pszDestination)];
+; Line 307
+	*** 00043e	8b fe 			mov	di,si
+	*** 000440	8c d8 			mov	ax,ds
+	*** 000442	8e c0 			mov	es,ax
+	*** 000444	b9 ff ff 		mov	cx,-1	;ffffH
+	*** 000447	33 c0 			xor	ax,ax
+	*** 000449	f2 			repnz
+	*** 00044a	ae 			scasb
+	*** 00044b	f7 d1 			not	cx
+	*** 00044d	49 			dec	cx
+	*** 00044e	8b 5e 06 		mov	bx,WORD PTR [bp+6]	;ppszDirEnd
+	*** 000451	03 ce 			add	cx,si
+	*** 000453	89 0f 			mov	WORD PTR [bx],cx
+;|*** 
+;|***         if (*ppszDirEnd[-1] != '\\')
+; Line 309
+	*** 000455	8b 5f fe 		mov	bx,WORD PTR [bx-2]
+	*** 000458	80 3f 5c 		cmp	BYTE PTR [bx],92	;005cH
+	*** 00045b	74 0a 			je	$I749
+;|***         {
+;|***             *(*ppszDirEnd)++ = '\\';
+; Line 311
+	*** 00045d	8b 5e 06 		mov	bx,WORD PTR [bp+6]	;ppszDirEnd
+	*** 000460	8b 37 			mov	si,WORD PTR [bx]
+	*** 000462	c6 04 5c 		mov	BYTE PTR [si],92	;005cH
+	*** 000465	ff 07 			inc	WORD PTR [bx]
+;|***         }
+;|***     }
+;|*** 
+;|***     return bIsDir;
+; Line 315
+					$I749:
+	*** 000467	8b 46 fc 		mov	ax,WORD PTR [bp-4]	;bIsDir
+	*** 00046a	8b 56 fe 		mov	dx,WORD PTR [bp-2]
+;|*** }
+; Line 316
+	*** 00046d	5e 			pop	si
+	*** 00046e	5f 			pop	di
+	*** 00046f	c9 			leave	
+	*** 000470	c3 			ret	
+	*** 000471	90 			nop	
+
+_CheckDestination	ENDP
+	PUBLIC	_GetFile
+_GetFile	PROC NEAR
+;|*** 
+;|*** VOID
+;|*** GetFile(char *pszSource, char *pszDestination, USHORT usCopyFlags)
+;|*** {
+; Line 320
+	*** 000472	c8 50 03 00 		enter	848,0
+	*** 000476	57 			push	di
+	*** 000477	56 			push	si
+;	bDestinationExists = -848
+;	bDoCopy = -14
+;	nDirLength = -854
+;	pszSource = 4
+;	pszDestination = 6
+;	usCopyFlags = 8
+;	hFind = -4
+;	stDestination = -48
+;	szDestinationFile = -568
+;	pDestinationDirEnd = -18
+;	fdSource = -848
+;	szSourceFile = -308
+;	pSourceDirEnd = -10
+;	bDestinationIsDir = -8
+;	nFilesCopied = -16
+;|***     DWORD               hFind;
+;|*** 
+;|***     struct _stat        stDestination;
+;|***     char                szDestinationFile[_MAX_PATH];
+;|***     char               *pDestinationDirEnd;
+;|*** 
+;|***     struct _finddata_t  fdSource;
+;|***     char                szSourceFile[_MAX_PATH];
+;|***     char               *pSourceDirEnd;
+;|*** 
+;|***     BOOL                bDestinationIsDir;
+;|*** 
+;|***     int                 nFilesCopied = 0;
+; Line 333
+	*** 000478	c7 46 f0 00 00 		mov	WORD PTR [bp-16],0	;nFilesCopied
+;|*** 
+;|***     BOOL                bDestinationExists;
+;|***     BOOL                bDoCopy;
+;|*** 
+;|***     pSourceDirEnd = strrchr(pszSource, '\\');
+;|*** 
+;|***     if (pSourceDirEnd == NULL && pszSource[1] == ':')
+; Line 340
+	*** 00047d	6a 5c 			push	92	;005cH
+	*** 00047f	ff 76 04 		push	WORD PTR [bp+4]	;pszSource
+	*** 000482	e8 00 00 		call	_strrchr
+	*** 000485	83 c4 04 		add	sp,4
+	*** 000488	89 46 f6 		mov	WORD PTR [bp-10],ax	;pSourceDirEnd
+	*** 00048b	0b c0 			or	ax,ax
+	*** 00048d	75 0f 			jne	$I770
+	*** 00048f	8b 5e 04 		mov	bx,WORD PTR [bp+4]	;pszSource
+	*** 000492	80 7f 01 3a 		cmp	BYTE PTR [bx+1],58	;003aH
+	*** 000496	75 06 			jne	$I770
+;|***     {
+;|***         pSourceDirEnd = &pszSource[1];
+; Line 342
+	*** 000498	8d 47 01 		lea	ax,WORD PTR [bx+1]
+	*** 00049b	89 46 f6 		mov	WORD PTR [bp-10],ax	;pSourceDirEnd
+;|***     }
+;|*** 
+;|***     if (pSourceDirEnd != NULL)
+; Line 345
+					$I770:
+	*** 00049e	0b c0 			or	ax,ax
+	*** 0004a0	74 24 			je	$I771
+;|***     {
+;|***         int     nDirLength = pSourceDirEnd - pszSource + 1;
+;|*** 
+;|***         memcpy(szSourceFile, pszSource, nDirLength);
+; Line 349
+	*** 0004a2	8b 46 04 		mov	ax,WORD PTR [bp+4]	;pszSource
+	*** 0004a5	8b 4e f6 		mov	cx,WORD PTR [bp-10]	;pSourceDirEnd
+	*** 0004a8	2b c8 			sub	cx,ax
+	*** 0004aa	41 			inc	cx
+	*** 0004ab	8b d1 			mov	dx,cx
+	*** 0004ad	8d be cc fe 		lea	di,WORD PTR [bp-308]	;szSourceFile
+	*** 0004b1	8b f0 			mov	si,ax
+	*** 0004b3	16 			push	ss
+	*** 0004b4	07 			pop	es
+	*** 0004b5	d1 e9 			shr	cx,1
+	*** 0004b7	f3 			rep
+	*** 0004b8	a5 			movsw
+	*** 0004b9	13 c9 			adc	cx,cx
+	*** 0004bb	f3 			rep
+	*** 0004bc	a4 			movsb
+;|***         pSourceDirEnd = &szSourceFile[nDirLength];
+; Line 350
+	*** 0004bd	8b f2 			mov	si,dx
+	*** 0004bf	8d 82 cc fe 		lea	ax,WORD PTR [bp-308][si]
+	*** 0004c3	eb 05 			jmp	SHORT $L886
+	*** 0004c5	90 			nop	
+					$I771:
+;|***     }
+;|***     else
+;|***     {
+;|***         pSourceDirEnd = szSourceFile;
+; Line 354
+	*** 0004c6	8d 86 cc fe 		lea	ax,WORD PTR [bp-308]	;szSourceFile
+					$L886:
+	*** 0004ca	89 46 f6 		mov	WORD PTR [bp-10],ax	;pSourceDirEnd
+;|***     }
+;|*** 
+;|***     hFind = rfindfirst(0, pszSource, &fdSource);
+;|*** 
+;|***     if (hFind == 0 || hFind == -1)
+; Line 359
+	*** 0004cd	8d 86 b0 fc 		lea	ax,WORD PTR [bp-848]	;bDestinationExists
+	*** 0004d1	50 			push	ax
+	*** 0004d2	ff 76 04 		push	WORD PTR [bp+4]	;pszSource
+	*** 0004d5	6a 00 			push	0
+	*** 0004d7	6a 00 			push	0
+	*** 0004d9	e8 00 00 		call	_rfindfirst
+	*** 0004dc	83 c4 08 		add	sp,8
+	*** 0004df	89 46 fc 		mov	WORD PTR [bp-4],ax	;hFind
+	*** 0004e2	89 56 fe 		mov	WORD PTR [bp-2],dx
+	*** 0004e5	0b d0 			or	dx,ax
+	*** 0004e7	75 03 			jne	$JCC1255
+	*** 0004e9	e9 b8 01 		jmp	$I775
+					$JCC1255:
+	*** 0004ec	3d ff ff 		cmp	ax,-1	;ffffH
+	*** 0004ef	75 08 			jne	$L869
+	*** 0004f1	39 46 fe 		cmp	WORD PTR [bp-2],ax
+	*** 0004f4	75 03 			jne	$JCC1268
+	*** 0004f6	e9 ab 01 		jmp	$I775
+					$JCC1268:
+					$L869:
+;|***     {
+;|***         printf("%s: File(s) not found\n", pszSource);
+;|***         return;
+;|***     }
+;|*** 
+;|***     if (pszDestination != NULL)
+; Line 365
+	*** 0004f9	83 7e 06 00 		cmp	WORD PTR [bp+6],0	;pszDestination
+	*** 0004fd	74 35 			je	$I777
+;|***     {
+;|***         strcpy(szDestinationFile, pszDestination);
+; Line 367
+	*** 0004ff	8d b6 c8 fd 		lea	si,WORD PTR [bp-568]	;szDestinationFile
+	*** 000503	1e 			push	ds
+	*** 000504	07 			pop	es
+	*** 000505	8b 7e 06 		mov	di,WORD PTR [bp+6]	;pszDestination
+	*** 000508	b9 ff ff 		mov	cx,-1	;ffffH
+	*** 00050b	33 c0 			xor	ax,ax
+	*** 00050d	f2 			repnz
+	*** 00050e	ae 			scasb
+	*** 00050f	f7 d1 			not	cx
+	*** 000511	2b f9 			sub	di,cx
+	*** 000513	87 fe 			xchg	di,si
+	*** 000515	d1 e9 			shr	cx,1
+	*** 000517	f3 			rep
+	*** 000518	a5 			movsw
+	*** 000519	13 c9 			adc	cx,cx
+	*** 00051b	f3 			rep
+	*** 00051c	a4 			movsb
+;|*** 
+;|***         bDestinationIsDir = CheckDestination(szDestinationFile, &pDestinationDirEnd);
+; Line 369
+	*** 00051d	8d 46 ee 		lea	ax,WORD PTR [bp-18]	;pDestinationDirEnd
+	*** 000520	50 			push	ax
+	*** 000521	8d 86 c8 fd 		lea	ax,WORD PTR [bp-568]	;szDestinationFile
+	*** 000525	50 			push	ax
+	*** 000526	e8 5f fe 		call	_CheckDestination
+	*** 000529	83 c4 04 		add	sp,4
+	*** 00052c	89 46 f8 		mov	WORD PTR [bp-8],ax	;bDestinationIsDir
+	*** 00052f	89 56 fa 		mov	WORD PTR [bp-6],dx
+;|***     }
+;|***     else
+; Line 371
+	*** 000532	eb 11 			jmp	SHORT $L867
+					$I777:
+;|***     {
+;|***         pDestinationDirEnd = szDestinationFile;
+; Line 373
+	*** 000534	8d 86 c8 fd 		lea	ax,WORD PTR [bp-568]	;szDestinationFile
+	*** 000538	89 46 ee 		mov	WORD PTR [bp-18],ax	;pDestinationDirEnd
+;|***         bDestinationIsDir = TRUE;
+; Line 374
+	*** 00053b	c7 46 f8 01 00 		mov	WORD PTR [bp-8],1	;bDestinationIsDir
+	*** 000540	c7 46 fa 00 00 		mov	WORD PTR [bp-6],0
+					$L867:
+;|***     }
+;|*** 
+;|***     do
+;|***     {
+;|***         strcpy(pSourceDirEnd, fdSource.name);
+; Line 379
+	*** 000545	8d be c4 fc 		lea	di,WORD PTR [bp-828]
+	*** 000549	8c d1 			mov	cx,ss
+	*** 00054b	8e c1 			mov	es,cx
+	*** 00054d	8b 76 f6 		mov	si,WORD PTR [bp-10]	;pSourceDirEnd
+	*** 000550	b9 ff ff 		mov	cx,-1	;ffffH
+	*** 000553	33 c0 			xor	ax,ax
+	*** 000555	f2 			repnz
+	*** 000556	ae 			scasb
+	*** 000557	f7 d1 			not	cx
+	*** 000559	2b f9 			sub	di,cx
+	*** 00055b	87 fe 			xchg	di,si
+	*** 00055d	d1 e9 			shr	cx,1
+	*** 00055f	f3 			rep
+	*** 000560	a5 			movsw
+	*** 000561	13 c9 			adc	cx,cx
+	*** 000563	f3 			rep
+	*** 000564	a4 			movsb
+;|*** 
+;|***         if (bDestinationIsDir)
+; Line 381
+	*** 000565	8b 46 fa 		mov	ax,WORD PTR [bp-6]
+	*** 000568	0b 46 f8 		or	ax,WORD PTR [bp-8]	;bDestinationIsDir
+	*** 00056b	74 1c 			je	$I782
+;|***         {
+;|***             strcpy(pDestinationDirEnd, fdSource.name);
+; Line 383
+	*** 00056d	8d be c4 fc 		lea	di,WORD PTR [bp-828]
+	*** 000571	8b 76 ee 		mov	si,WORD PTR [bp-18]	;pDestinationDirEnd
+	*** 000574	b9 ff ff 		mov	cx,-1	;ffffH
+	*** 000577	33 c0 			xor	ax,ax
+	*** 000579	f2 			repnz
+	*** 00057a	ae 			scasb
+	*** 00057b	f7 d1 			not	cx
+	*** 00057d	2b f9 			sub	di,cx
+	*** 00057f	87 fe 			xchg	di,si
+	*** 000581	d1 e9 			shr	cx,1
+	*** 000583	f3 			rep
+	*** 000584	a5 			movsw
+	*** 000585	13 c9 			adc	cx,cx
+	*** 000587	f3 			rep
+	*** 000588	a4 			movsb
+;|***         }
+;|*** 
+;|***         bDoCopy = TRUE;
+; Line 386
+					$I782:
+	*** 000589	c7 46 f2 01 00 		mov	WORD PTR [bp-14],1	;bDoCopy
+	*** 00058e	c7 46 f4 00 00 		mov	WORD PTR [bp-12],0
+;|*** 
+;|***         if (usCopyFlags & (COPY_FLAG_UPDATE_EXISTING | COPY_FLAG_UPDATE_OR_ADD))
+; Line 388
+	*** 000593	f6 46 08 03 		test	BYTE PTR [bp+8],3	;usCopyFlags
+	*** 000597	74 57 			je	$I783
+;|***         {
+;|***             bDestinationExists = _stat(szDestinationFile, &stDestination) == 0;
+;|*** 
+;|***             if (bDestinationExists)
+; Line 392
+	*** 000599	8d 46 d0 		lea	ax,WORD PTR [bp-48]	;stDestination
+	*** 00059c	50 			push	ax
+	*** 00059d	8d 86 c8 fd 		lea	ax,WORD PTR [bp-568]	;szDestinationFile
+	*** 0005a1	50 			push	ax
+	*** 0005a2	e8 00 00 		call	__stat
+	*** 0005a5	83 c4 04 		add	sp,4
+	*** 0005a8	0b c0 			or	ax,ax
+	*** 0005aa	75 28 			jne	$I784
+;|***             {
+;|***                 //
+;|***                 // Clear lsb of both times so inaccurate FATFS doesn't cause
+;|***                 // problems
+;|***                 //
+;|***                 stDestination.st_mtime &= ~1;
+;|***                 fdSource.time_write &= ~1;
+;|*** 
+;|***                 if (stDestination.st_mtime >= fdSource.time_write)
+; Line 401
+	*** 0005ac	80 66 e6 fe 		and	BYTE PTR [bp-26],254	;00feH
+	*** 0005b0	8b 46 e6 		mov	ax,WORD PTR [bp-26]
+	*** 0005b3	8b 56 e8 		mov	dx,WORD PTR [bp-24]
+	*** 0005b6	80 a6 bc fc fe 		and	BYTE PTR [bp-836],254	;00feH
+	*** 0005bb	39 96 be fc 		cmp	WORD PTR [bp-834],dx
+	*** 0005bf	77 2f 			ja	$I783
+	*** 0005c1	72 06 			jb	$L870
+	*** 0005c3	39 86 bc fc 		cmp	WORD PTR [bp-836],ax
+	*** 0005c7	77 27 			ja	$I783
+					$L870:
+;|***                 {
+;|***                     printf("%s: Up to date\n", szDestinationFile);
+; Line 403
+	*** 0005c9	8d 86 c8 fd 		lea	ax,WORD PTR [bp-568]	;szDestinationFile
+	*** 0005cd	50 			push	ax
+	*** 0005ce	68 00 00 		push	OFFSET DGROUP:$SG786
+	*** 0005d1	eb 0f 			jmp	SHORT $L887
+	*** 0005d3	90 			nop	
+					$I784:
+	*** 0005d4	f6 46 08 02 		test	BYTE PTR [bp+8],2	;usCopyFlags
+	*** 0005d8	75 16 			jne	$I783
+;|***                     bDoCopy = FALSE;
+;|***                 }
+;|***             }
+;|***             else if (!(usCopyFlags & COPY_FLAG_UPDATE_OR_ADD))
+;|***             {
+;|***                 printf("%s: Skipping\n", szSourceFile);
+; Line 409
+	*** 0005da	8d 86 cc fe 		lea	ax,WORD PTR [bp-308]	;szSourceFile
+	*** 0005de	50 			push	ax
+	*** 0005df	68 00 00 		push	OFFSET DGROUP:$SG789
+					$L887:
+	*** 0005e2	e8 00 00 		call	_printf
+	*** 0005e5	83 c4 04 		add	sp,4
+;|***                 bDoCopy = FALSE;
+; Line 410
+	*** 0005e8	2b c0 			sub	ax,ax
+	*** 0005ea	89 46 f4 		mov	WORD PTR [bp-12],ax
+	*** 0005ed	89 46 f2 		mov	WORD PTR [bp-14],ax	;bDoCopy
+;|***             }
+;|***         }
+;|*** 
+;|***         if (bDoCopy)        
+; Line 414
+					$I783:
+	*** 0005f0	8b 46 f4 		mov	ax,WORD PTR [bp-12]
+	*** 0005f3	0b 46 f2 		or	ax,WORD PTR [bp-14]	;bDoCopy
+	*** 0005f6	74 27 			je	$I790
+;|***         {
+;|***             if (GetOneFile(szSourceFile, szDestinationFile, fdSource.size, fdSource.time_write))
+; Line 416
+	*** 0005f8	ff b6 be fc 		push	WORD PTR [bp-834]
+	*** 0005fc	ff b6 bc fc 		push	WORD PTR [bp-836]
+	*** 000600	ff b6 c2 fc 		push	WORD PTR [bp-830]
+	*** 000604	ff b6 c0 fc 		push	WORD PTR [bp-832]
+	*** 000608	8d 86 c8 fd 		lea	ax,WORD PTR [bp-568]	;szDestinationFile
+	*** 00060c	50 			push	ax
+	*** 00060d	8d 86 cc fe 		lea	ax,WORD PTR [bp-308]	;szSourceFile
+	*** 000611	50 			push	ax
+	*** 000612	e8 2f fc 		call	_GetOneFile
+	*** 000615	83 c4 0c 		add	sp,12	;000cH
+	*** 000618	0b d0 			or	dx,ax
+	*** 00061a	74 4c 			je	$D795
+;|***             {
+;|***                 nFilesCopied++;
+; Line 418
+	*** 00061c	ff 46 f0 		inc	WORD PTR [bp-16]	;nFilesCopied
+;|***             }
+;|***             else
+;|***             {
+;|***                 break;
+;|***             }
+;|***         }
+;|*** 
+;|***         hFind = rfindnext(hFind, &fdSource);
+; Line 426
+					$I790:
+	*** 00061f	8d 86 b0 fc 		lea	ax,WORD PTR [bp-848]	;bDestinationExists
+	*** 000623	50 			push	ax
+	*** 000624	ff 76 fe 		push	WORD PTR [bp-2]
+	*** 000627	ff 76 fc 		push	WORD PTR [bp-4]	;hFind
+	*** 00062a	e8 00 00 		call	_rfindnext
+	*** 00062d	83 c4 06 		add	sp,6
+	*** 000630	89 46 fc 		mov	WORD PTR [bp-4],ax	;hFind
+	*** 000633	89 56 fe 		mov	WORD PTR [bp-2],dx
+;|*** 
+;|***         if (!bDestinationIsDir && hFind != 0 && hFind != -1)
+; Line 428
+	*** 000636	8b 46 fa 		mov	ax,WORD PTR [bp-6]
+	*** 000639	0b 46 f8 		or	ax,WORD PTR [bp-8]	;bDestinationIsDir
+	*** 00063c	75 12 			jne	$DC780
+	*** 00063e	8b c2 			mov	ax,dx
+	*** 000640	0b 46 fc 		or	ax,WORD PTR [bp-4]	;hFind
+	*** 000643	74 0b 			je	$DC780
+	*** 000645	83 7e fc ff 		cmp	WORD PTR [bp-4],-1	;ffffH	;hFind
+	*** 000649	75 49 			jne	$L868
+	*** 00064b	83 fa ff 		cmp	dx,-1	;ffffH
+	*** 00064e	75 44 			jne	$L868
+;|***         {
+;|***             printf(
+;|***                 "%s: Destination isn't a directory and multiple files selected\n",
+;|***                 szDestinationFile);
+;|*** 
+;|***             break;
+;|***         }
+;|***     }
+;|***     while (hFind != 0 && hFind != -1);
+; Line 437
+					$DC780:
+	*** 000650	8b c2 			mov	ax,dx
+	*** 000652	0b 46 fc 		or	ax,WORD PTR [bp-4]	;hFind
+	*** 000655	74 11 			je	$D795
+	*** 000657	83 7e fc ff 		cmp	WORD PTR [bp-4],-1	;ffffH	;hFind
+	*** 00065b	74 03 			je	$JCC1627
+	*** 00065d	e9 e5 fe 		jmp	$L867
+					$JCC1627:
+	*** 000660	83 fa ff 		cmp	dx,-1	;ffffH
+	*** 000663	74 03 			je	$JCC1635
+	*** 000665	e9 dd fe 		jmp	$L867
+					$JCC1635:
+					$D795:
+;|*** 
+;|***     if (hFind != 0 && hFind != -1)
+; Line 439
+	*** 000668	8b 46 fe 		mov	ax,WORD PTR [bp-2]
+	*** 00066b	0b 46 fc 		or	ax,WORD PTR [bp-4]	;hFind
+	*** 00066e	74 1c 			je	$I796
+	*** 000670	83 7e fc ff 		cmp	WORD PTR [bp-4],-1	;ffffH	;hFind
+	*** 000674	75 06 			jne	$L871
+	*** 000676	83 7e fe ff 		cmp	WORD PTR [bp-2],-1	;ffffH
+	*** 00067a	74 10 			je	$I796
+					$L871:
+;|***     {
+;|***         rfindfirst(hFind, NULL, NULL);
+; Line 441
+	*** 00067c	6a 00 			push	0
+	*** 00067e	6a 00 			push	0
+	*** 000680	ff 76 fe 		push	WORD PTR [bp-2]
+	*** 000683	ff 76 fc 		push	WORD PTR [bp-4]	;hFind
+	*** 000686	e8 00 00 		call	_rfindfirst
+	*** 000689	83 c4 08 		add	sp,8
+;|***     }
+;|*** 
+;|***     printf("%d files copied\n", nFilesCopied);
+; Line 444
+					$I796:
+	*** 00068c	ff 76 f0 		push	WORD PTR [bp-16]	;nFilesCopied
+	*** 00068f	68 00 00 		push	OFFSET DGROUP:$SG797
+	*** 000692	eb 16 			jmp	SHORT $L888
+					$L868:
+;|***                 szDestinationFile);
+; Line 432
+	*** 000694	8d 86 c8 fd 		lea	ax,WORD PTR [bp-568]	;szDestinationFile
+	*** 000698	50 			push	ax
+	*** 000699	68 00 00 		push	OFFSET DGROUP:$SG794
+	*** 00069c	e8 00 00 		call	_printf
+	*** 00069f	83 c4 04 		add	sp,4
+;|*** 
+;|***             break;
+; Line 434
+	*** 0006a2	eb c4 			jmp	SHORT $D795
+;|***     if (hFind == 0 || hFind == -1)
+; Line 359
+					$I775:
+;|***     {
+;|***         printf("%s: File(s) not found\n", pszSource);
+; Line 361
+	*** 0006a4	ff 76 04 		push	WORD PTR [bp+4]	;pszSource
+	*** 0006a7	68 00 00 		push	OFFSET DGROUP:$SG776
+					$L888:
+	*** 0006aa	e8 00 00 		call	_printf
+	*** 0006ad	83 c4 04 		add	sp,4
+;|***         return;
+;|***     }
+;|*** 
+;|***     if (pszDestination != NULL)
+;|***     {
+;|***         strcpy(szDestinationFile, pszDestination);
+;|*** 
+;|***         bDestinationIsDir = CheckDestination(szDestinationFile, &pDestinationDirEnd);
+;|***     }
+;|***     else
+;|***     {
+;|***         pDestinationDirEnd = szDestinationFile;
+;|***         bDestinationIsDir = TRUE;
+;|***     }
+;|*** 
+;|***     do
+;|***     {
+;|***         strcpy(pSourceDirEnd, fdSource.name);
+;|*** 
+;|***         if (bDestinationIsDir)
+;|***         {
+;|***             strcpy(pDestinationDirEnd, fdSource.name);
+;|***         }
+;|*** 
+;|***         bDoCopy = TRUE;
+;|*** 
+;|***         if (usCopyFlags & (COPY_FLAG_UPDATE_EXISTING | COPY_FLAG_UPDATE_OR_ADD))
+;|***         {
+;|***             bDestinationExists = _stat(szDestinationFile, &stDestination) == 0;
+;|*** 
+;|***             if (bDestinationExists)
+;|***             {
+;|***                 //
+;|***                 // Clear lsb of both times so inaccurate FATFS doesn't cause
+;|***                 // problems
+;|***                 //
+;|***                 stDestination.st_mtime &= ~1;
+;|***                 fdSource.time_write &= ~1;
+;|*** 
+;|***                 if (stDestination.st_mtime >= fdSource.time_write)
+;|***                 {
+;|***                     printf("%s: Up to date\n", szDestinationFile);
+;|***                     bDoCopy = FALSE;
+;|***                 }
+;|***             }
+;|***             else if (!(usCopyFlags & COPY_FLAG_UPDATE_OR_ADD))
+;|***             {
+;|***                 printf("%s: Skipping\n", szSourceFile);
+;|***                 bDoCopy = FALSE;
+;|***             }
+;|***         }
+;|*** 
+;|***         if (bDoCopy)        
+;|***         {
+;|***             if (GetOneFile(szSourceFile, szDestinationFile, fdSource.size, fdSource.time_write))
+;|***             {
+;|***                 nFilesCopied++;
+;|***             }
+;|***             else
+;|***             {
+;|***                 break;
+;|***             }
+;|***         }
+;|*** 
+;|***         hFind = rfindnext(hFind, &fdSource);
+;|*** 
+;|***         if (!bDestinationIsDir && hFind != 0 && hFind != -1)
+;|***         {
+;|***             printf(
+;|***                 "%s: Destination isn't a directory and multiple files selected\n",
+;|***                 szDestinationFile);
+;|*** 
+;|***             break;
+;|***         }
+;|***     }
+;|***     while (hFind != 0 && hFind != -1);
+;|*** 
+;|***     if (hFind != 0 && hFind != -1)
+;|***     {
+;|***         rfindfirst(hFind, NULL, NULL);
+;|***     }
+;|*** 
+;|***     printf("%d files copied\n", nFilesCopied);
+;|*** }
+; Line 445
+	*** 0006b0	5e 			pop	si
+	*** 0006b1	5f 			pop	di
+	*** 0006b2	c9 			leave	
+	*** 0006b3	c3 			ret	
+
+_GetFile	ENDP
+	PUBLIC	_main2
+_main2	PROC NEAR
+;|*** 
+;|*** int
+;|*** main2(int argc, char **argv)
+;|*** {
+; Line 449
+	*** 0006b4	c8 0a 00 00 		enter	10,0
+	*** 0006b8	56 			push	si
+;	argc = 4
+;	argv = 6
+;	cOption = -1
+;	register si = i
+;	register dx = pszPath
+;	pszSource = -4
+;	pszDestination = -8
+;|***     char    cOption;
+;|***     int     i;
+;|***     int     OEMParallelPortInit(void);
+;|*** 
+;|***     //
+;|***     // Keep timezone conversions from getting in our way.  All of the responses
+;|***     // from the host are in local time anyways.
+;|***     //
+;|***     _daylight = 0;
+; Line 458
+	*** 0006b9	c7 06 00 00 00 00 	mov	WORD PTR __daylight,0
+;|***     _timezone = 0;
+; Line 459
+	*** 0006bf	2b c0 			sub	ax,ax
+	*** 0006c1	a3 02 00 		mov	WORD PTR __timezone+2,ax
+	*** 0006c4	a3 00 00 		mov	WORD PTR __timezone,ax
+;|*** 
+;|***     OEMParallelPortInit();
+; Line 461
+	*** 0006c7	e8 00 00 		call	_OEMParallelPortInit
+;|*** 
+;|***     for (i = 1; i < argc; i++)
+; Line 463
+	*** 0006ca	be 01 00 		mov	si,1
+	*** 0006cd	39 76 04 		cmp	WORD PTR [bp+4],si	;argc
+	*** 0006d0	7f 03 			jg	$JCC1744
+	*** 0006d2	e9 ab 01 		jmp	$FB809
+					$JCC1744:
+					$F807:
+;|***     {
+;|***         if (argv[i][0] == '-' || argv[i][0] == '/')
+; Line 465
+	*** 0006d5	8b de 			mov	bx,si
+	*** 0006d7	03 de 			add	bx,si
+	*** 0006d9	03 5e 06 		add	bx,WORD PTR [bp+6]	;argv
+	*** 0006dc	89 5e f6 		mov	WORD PTR [bp-10],bx
+	*** 0006df	8b 1f 			mov	bx,WORD PTR [bx]
+	*** 0006e1	80 3f 2d 		cmp	BYTE PTR [bx],45	;002dH
+	*** 0006e4	74 0d 			je	$I811
+	*** 0006e6	8b 5e f6 		mov	bx,WORD PTR [bp-10]
+	*** 0006e9	8b 1f 			mov	bx,WORD PTR [bx]
+	*** 0006eb	80 3f 2f 		cmp	BYTE PTR [bx],47	;002fH
+	*** 0006ee	74 03 			je	$JCC1774
+	*** 0006f0	e9 84 01 		jmp	$FC808
+					$JCC1774:
+					$I811:
+;|***         {
+;|***             cOption = tolower(argv[i][1]);
+; Line 467
+	*** 0006f3	8b 5e f6 		mov	bx,WORD PTR [bp-10]
+	*** 0006f6	8b 1f 			mov	bx,WORD PTR [bx]
+	*** 0006f8	8a 47 01 		mov	al,BYTE PTR [bx+1]
+	*** 0006fb	98 			cbw	
+	*** 0006fc	8b d8 			mov	bx,ax
+	*** 0006fe	f6 87 01 00 01 		test	BYTE PTR __ctype[bx+1],1
+	*** 000703	74 0d 			je	$L872
+	*** 000705	8b 5e f6 		mov	bx,WORD PTR [bp-10]
+	*** 000708	8b 1f 			mov	bx,WORD PTR [bx]
+	*** 00070a	8a 47 01 		mov	al,BYTE PTR [bx+1]
+	*** 00070d	04 20 			add	al,32	;0020H
+	*** 00070f	eb 09 			jmp	SHORT $L889
+	*** 000711	90 			nop	
+					$L872:
+	*** 000712	8b 5e f6 		mov	bx,WORD PTR [bp-10]
+	*** 000715	8b 1f 			mov	bx,WORD PTR [bx]
+	*** 000717	8a 47 01 		mov	al,BYTE PTR [bx+1]
+					$L889:
+	*** 00071a	88 46 ff 		mov	BYTE PTR [bp-1],al	;cOption
+;|*** 
+;|***             switch (cOption)
+; Line 469
+	*** 00071d	98 			cbw	
+;|***             {
+;|***             case '?':
+;|***             case 'h':
+;|***                 usage2(argv[0]);
+;|***                 break;
+;|***             case 'd':
+;|***                 {
+;|***                     char   *pszPath;
+;|*** 
+;|***                     if (argv[i][2] != '\0')
+;|***                     {
+;|***                         pszPath = &argv[i][2];
+;|***                         if (*pszPath == ':')
+;|***                         {
+;|***                             pszPath++;
+;|***                         }
+;|***                     }
+;|***                     else if (argc > (i+1) && argv[i+1][0] != '-' && argv[i+1][0] != '/')
+;|***                     {
+;|***                         pszPath = argv[i+1];
+;|***                         i++;
+;|***                     }
+;|***                     else
+;|***                     {
+;|***                         pszPath = "*.*"; 
+;|***                     }
+;|***                     DisplayDirectory(pszPath);
+;|***                 }
+;|***                 break;
+;|*** 
+;|***             case 'g':
+;|***             case 'r':
+;|***             case 'u':
+;|***                 {
+;|***                     char    *pszSource;
+;|***                     char    *pszDestination;
+;|*** 
+;|***                     if (argv[i][2] != '\0')
+;|***                     {
+;|***                         pszSource = &argv[i][2];
+;|***                         if (*pszSource == ':')
+;|***                         {
+;|***                             pszSource++;
+;|***                         }
+;|***                     }
+;|***                     else if (argc > (i+1) && argv[i+1][0] != '-' && argv[i+1][0] != '/')
+;|***                     {
+;|***                         pszSource = argv[i+1];
+;|***                         i++;
+;|***                     }
+;|***                     else
+;|***                     {
+;|***                         printf("Error source path missing\n");
+;|***                         break;
+;|***                     }
+;|*** 
+;|***                     if (argc > (i+1) && argv[i+1][0] != '-' && argv[i+1][0] != '/')
+;|***                     {
+;|***                         pszDestination = argv[i+1];
+;|***                         i++;
+;|***                     }
+;|***                     else
+;|***                     {
+;|***                         pszDestination = NULL;
+;|***                     }
+;|*** 
+;|***                     GetFile(
+;|***                         pszSource, pszDestination,
+;|***                         cOption == 'r' ? COPY_FLAG_UPDATE_EXISTING :
+;|***                             cOption == 'u' ? COPY_FLAG_UPDATE_OR_ADD :
+;|***                                 0);
+;|***                 }
+;|***                 break;
+;|*** 
+;|***             default:
+;|***                 printf("%s: Unsupported option\n\n", argv[i]);
+;|***                 usage2(argv[0]);
+;|***             }
+; Line 547
+	*** 00071e	3d 75 00 		cmp	ax,117	;0075H
+	*** 000721	75 03 			jne	$JCC1825
+	*** 000723	e9 8a 00 		jmp	$SC825
+					$JCC1825:
+	*** 000726	77 11 			ja	$SD836
+	*** 000728	3c 67 			cmp	al,103	;0067H
+	*** 00072a	75 03 			jne	$JCC1834
+	*** 00072c	e9 81 00 		jmp	$SC825
+					$JCC1834:
+	*** 00072f	7f 23 			jg	$L880
+	*** 000731	2c 3f 			sub	al,63	;003fH
+	*** 000733	74 12 			je	$L891
+	*** 000735	2c 25 			sub	al,37	;0025H
+	*** 000737	74 25 			je	$SC817
+					$SD836:
+;|***                 printf("%s: Unsupported option\n\n", argv[i]);
+; Line 545
+	*** 000739	8b 5e f6 		mov	bx,WORD PTR [bp-10]
+	*** 00073c	ff 37 			push	WORD PTR [bx]
+	*** 00073e	68 00 00 		push	OFFSET DGROUP:$SG837
+	*** 000741	e8 00 00 		call	_printf
+	*** 000744	83 c4 04 		add	sp,4
+;|***                 usage2(argv[0]);
+; Line 546
+					$L891:
+	*** 000747	8b 5e 06 		mov	bx,WORD PTR [bp+6]	;argv
+	*** 00074a	ff 37 			push	WORD PTR [bx]
+	*** 00074c	e8 b1 f8 		call	_usage2
+	*** 00074f	e9 22 01 		jmp	$L890
+	*** 000752	90 			nop	
+	*** 000753	90 			nop	
+					$L880:
+	*** 000754	2c 68 			sub	al,104	;0068H
+	*** 000756	74 ef 			je	$L891
+	*** 000758	2c 0a 			sub	al,10	;000aH
+	*** 00075a	74 54 			je	$SC825
+	*** 00075c	eb db 			jmp	SHORT $SD836
+					$SC817:
+;|***                     if (argv[i][2] != '\0')
+; Line 479
+	*** 00075e	8b 5e f6 		mov	bx,WORD PTR [bp-10]
+	*** 000761	8b 1f 			mov	bx,WORD PTR [bx]
+	*** 000763	80 7f 02 00 		cmp	BYTE PTR [bx+2],0
+	*** 000767	74 15 			je	$I819
+;|***                     {
+;|***                         pszPath = &argv[i][2];
+; Line 481
+	*** 000769	8b 5e f6 		mov	bx,WORD PTR [bp-10]
+	*** 00076c	8b 07 			mov	ax,WORD PTR [bx]
+	*** 00076e	05 02 00 		add	ax,2
+	*** 000771	8b d0 			mov	dx,ax
+;|***                         if (*pszPath == ':')
+; Line 482
+	*** 000773	8b d8 			mov	bx,ax
+	*** 000775	80 3f 3a 		cmp	BYTE PTR [bx],58	;003aH
+	*** 000778	75 2f 			jne	$I821
+;|***                         {
+;|***                             pszPath++;
+; Line 484
+	*** 00077a	42 			inc	dx
+;|***                         }
+;|***                     }
+;|***                     else if (argc > (i+1) && argv[i+1][0] != '-' && argv[i+1][0] != '/')
+; Line 487
+	*** 00077b	eb 2c 			jmp	SHORT $I821
+	*** 00077d	90 			nop	
+					$I819:
+	*** 00077e	8d 44 01 		lea	ax,WORD PTR [si+1]
+	*** 000781	3b 46 04 		cmp	ax,WORD PTR [bp+4]	;argc
+	*** 000784	7d 20 			jge	$I822
+	*** 000786	8b 5e f6 		mov	bx,WORD PTR [bp-10]
+	*** 000789	8b 5f 02 		mov	bx,WORD PTR [bx+2]
+	*** 00078c	80 3f 2d 		cmp	BYTE PTR [bx],45	;002dH
+	*** 00078f	74 15 			je	$I822
+	*** 000791	8b 5e f6 		mov	bx,WORD PTR [bp-10]
+	*** 000794	8b 5f 02 		mov	bx,WORD PTR [bx+2]
+	*** 000797	80 3f 2f 		cmp	BYTE PTR [bx],47	;002fH
+	*** 00079a	74 0a 			je	$I822
+;|***                     {
+;|***                         pszPath = argv[i+1];
+; Line 489
+	*** 00079c	8b 5e f6 		mov	bx,WORD PTR [bp-10]
+	*** 00079f	8b f0 			mov	si,ax
+	*** 0007a1	8b 57 02 		mov	dx,WORD PTR [bx+2]
+;|***                         i++;
+;|***                     }
+;|***                     else
+; Line 492
+	*** 0007a4	eb 03 			jmp	SHORT $I821
+					$I822:
+;|***                     {
+;|***                         pszPath = "*.*"; 
+; Line 494
+	*** 0007a6	ba 00 00 		mov	dx,OFFSET DGROUP:$SG824
+;|***                     }
+; Line 495
+					$I821:
+;|***                     DisplayDirectory(pszPath);
+; Line 496
+	*** 0007a9	52 			push	dx
+	*** 0007aa	e8 7f f8 		call	_DisplayDirectory
+	*** 0007ad	e9 c4 00 		jmp	$L890
+;|***                 }
+;|***                 break;
+;|*** 
+;|***             case 'g':
+; Line 500
+					$SC825:
+;|***             case 'r':
+;|***             case 'u':
+;|***                 {
+;|***                     char    *pszSource;
+;|***                     char    *pszDestination;
+;|*** 
+;|***                     if (argv[i][2] != '\0')
+; Line 507
+	*** 0007b0	8b 5e f6 		mov	bx,WORD PTR [bp-10]
+	*** 0007b3	8b 1f 			mov	bx,WORD PTR [bx]
+	*** 0007b5	80 7f 02 00 		cmp	BYTE PTR [bx+2],0
+	*** 0007b9	74 17 			je	$I828
+;|***                     {
+;|***                         pszSource = &argv[i][2];
+; Line 509
+	*** 0007bb	8b 5e f6 		mov	bx,WORD PTR [bp-10]
+	*** 0007be	8b 07 			mov	ax,WORD PTR [bx]
+	*** 0007c0	05 02 00 		add	ax,2
+	*** 0007c3	89 46 fc 		mov	WORD PTR [bp-4],ax	;pszSource
+;|***                         if (*pszSource == ':')
+; Line 510
+	*** 0007c6	8b d8 			mov	bx,ax
+	*** 0007c8	80 3f 3a 		cmp	BYTE PTR [bx],58	;003aH
+	*** 0007cb	75 37 			jne	$I830
+;|***                         {
+;|***                             pszSource++;
+; Line 512
+	*** 0007cd	ff 46 fc 		inc	WORD PTR [bp-4]	;pszSource
+;|***                         }
+;|***                     }
+;|***                     else if (argc > (i+1) && argv[i+1][0] != '-' && argv[i+1][0] != '/')
+; Line 515
+	*** 0007d0	eb 32 			jmp	SHORT $I830
+					$I828:
+	*** 0007d2	8d 44 01 		lea	ax,WORD PTR [si+1]
+	*** 0007d5	3b 46 04 		cmp	ax,WORD PTR [bp+4]	;argc
+	*** 0007d8	7c 03 			jl	$JCC2008
+	*** 0007da	e9 91 00 		jmp	$I831
+					$JCC2008:
+	*** 0007dd	8b 5e f6 		mov	bx,WORD PTR [bp-10]
+	*** 0007e0	8b 5f 02 		mov	bx,WORD PTR [bx+2]
+	*** 0007e3	80 3f 2d 		cmp	BYTE PTR [bx],45	;002dH
+	*** 0007e6	75 03 			jne	$JCC2022
+	*** 0007e8	e9 83 00 		jmp	$I831
+					$JCC2022:
+	*** 0007eb	8b 5e f6 		mov	bx,WORD PTR [bp-10]
+	*** 0007ee	8b 5f 02 		mov	bx,WORD PTR [bx+2]
+	*** 0007f1	80 3f 2f 		cmp	BYTE PTR [bx],47	;002fH
+	*** 0007f4	74 78 			je	$I831
+;|***                     {
+;|***                         pszSource = argv[i+1];
+; Line 517
+	*** 0007f6	8b 5e f6 		mov	bx,WORD PTR [bp-10]
+	*** 0007f9	8b 47 02 		mov	ax,WORD PTR [bx+2]
+	*** 0007fc	89 46 fc 		mov	WORD PTR [bp-4],ax	;pszSource
+;|***                         i++;
+; Line 518
+	*** 0007ff	8d 44 01 		lea	ax,WORD PTR [si+1]
+	*** 000802	8b f0 			mov	si,ax
+;|***                     }
+;|***                     else
+;|***                     {
+;|***                         printf("Error source path missing\n");
+;|***                         break;
+;|***                     }
+; Line 524
+					$I830:
+;|*** 
+;|***                     if (argc > (i+1) && argv[i+1][0] != '-' && argv[i+1][0] != '/')
+; Line 526
+	*** 000804	8d 44 01 		lea	ax,WORD PTR [si+1]
+	*** 000807	3b 46 04 		cmp	ax,WORD PTR [bp+4]	;argc
+	*** 00080a	7d 2e 			jge	$I834
+	*** 00080c	8b de 			mov	bx,si
+	*** 00080e	03 de 			add	bx,si
+	*** 000810	03 5e 06 		add	bx,WORD PTR [bp+6]	;argv
+	*** 000813	89 5e f6 		mov	WORD PTR [bp-10],bx
+	*** 000816	8b 5f 02 		mov	bx,WORD PTR [bx+2]
+	*** 000819	80 3f 2d 		cmp	BYTE PTR [bx],45	;002dH
+	*** 00081c	74 1c 			je	$I834
+	*** 00081e	8b 5e f6 		mov	bx,WORD PTR [bp-10]
+	*** 000821	8b 5f 02 		mov	bx,WORD PTR [bx+2]
+	*** 000824	80 3f 2f 		cmp	BYTE PTR [bx],47	;002fH
+	*** 000827	74 11 			je	$I834
+;|***                     {
+;|***                         pszDestination = argv[i+1];
+; Line 528
+	*** 000829	8b 5e f6 		mov	bx,WORD PTR [bp-10]
+	*** 00082c	8b 47 02 		mov	ax,WORD PTR [bx+2]
+	*** 00082f	89 46 f8 		mov	WORD PTR [bp-8],ax	;pszDestination
+;|***                         i++;
+; Line 529
+	*** 000832	8d 44 01 		lea	ax,WORD PTR [si+1]
+	*** 000835	8b f0 			mov	si,ax
+;|***                     }
+;|***                     else
+; Line 531
+	*** 000837	eb 06 			jmp	SHORT $I835
+	*** 000839	90 			nop	
+					$I834:
+;|***                     {
+;|***                         pszDestination = NULL;
+; Line 533
+	*** 00083a	c7 46 f8 00 00 		mov	WORD PTR [bp-8],0	;pszDestination
+;|***                     }
+; Line 534
+					$I835:
+;|*** 
+;|***                     GetFile(
+;|***                         pszSource, pszDestination,
+;|***                         cOption == 'r' ? COPY_FLAG_UPDATE_EXISTING :
+;|***                             cOption == 'u' ? COPY_FLAG_UPDATE_OR_ADD :
+;|***                                 0);
+; Line 540
+	*** 00083f	80 7e ff 72 		cmp	BYTE PTR [bp-1],114	;0072H	;cOption
+	*** 000843	75 07 			jne	$L874
+	*** 000845	c7 46 fa 01 00 		mov	WORD PTR [bp-6],1
+	*** 00084a	eb 11 			jmp	SHORT $L875
+					$L874:
+	*** 00084c	80 7e ff 75 		cmp	BYTE PTR [bp-1],117	;0075H	;cOption
+	*** 000850	75 06 			jne	$L878
+	*** 000852	b8 02 00 		mov	ax,2
+	*** 000855	eb 03 			jmp	SHORT $L879
+	*** 000857	90 			nop	
+					$L878:
+	*** 000858	33 c0 			xor	ax,ax
+					$L879:
+	*** 00085a	89 46 fa 		mov	WORD PTR [bp-6],ax
+					$L875:
+	*** 00085d	ff 76 fa 		push	WORD PTR [bp-6]
+	*** 000860	ff 76 f8 		push	WORD PTR [bp-8]	;pszDestination
+	*** 000863	ff 76 fc 		push	WORD PTR [bp-4]	;pszSource
+	*** 000866	e8 09 fc 		call	_GetFile
+	*** 000869	83 c4 06 		add	sp,6
+;|***                 }
+;|***                 break;
+; Line 542
+	*** 00086c	eb 09 			jmp	SHORT $FC808
+;|***                     else
+; Line 520
+					$I831:
+;|***                     {
+;|***                         printf("Error source path missing\n");
+; Line 522
+	*** 00086e	68 00 00 		push	OFFSET DGROUP:$SG833
+	*** 000871	e8 00 00 		call	_printf
+					$L890:
+	*** 000874	83 c4 02 		add	sp,2
+;|***     for (i = 1; i < argc; i++)
+; Line 463
+					$FC808:
+	*** 000877	46 			inc	si
+	*** 000878	3b 76 04 		cmp	si,WORD PTR [bp+4]	;argc
+	*** 00087b	7d 03 			jge	$JCC2171
+	*** 00087d	e9 55 fe 		jmp	$F807
+					$JCC2171:
+;|***     {
+;|***         if (argv[i][0] == '-' || argv[i][0] == '/')
+;|***         {
+;|***             cOption = tolower(argv[i][1]);
+;|*** 
+;|***             switch (cOption)
+;|***             {
+;|***             case '?':
+;|***             case 'h':
+;|***                 usage2(argv[0]);
+;|***                 break;
+;|***             case 'd':
+;|***                 {
+;|***                     char   *pszPath;
+;|*** 
+;|***                     if (argv[i][2] != '\0')
+;|***                     {
+;|***                         pszPath = &argv[i][2];
+;|***                         if (*pszPath == ':')
+;|***                         {
+;|***                             pszPath++;
+;|***                         }
+;|***                     }
+;|***                     else if (argc > (i+1) && argv[i+1][0] != '-' && argv[i+1][0] != '/')
+;|***                     {
+;|***                         pszPath = argv[i+1];
+;|***                         i++;
+;|***                     }
+;|***                     else
+;|***                     {
+;|***                         pszPath = "*.*"; 
+;|***                     }
+;|***                     DisplayDirectory(pszPath);
+;|***                 }
+;|***                 break;
+;|*** 
+;|***             case 'g':
+;|***             case 'r':
+;|***             case 'u':
+;|***                 {
+;|***                     char    *pszSource;
+;|***                     char    *pszDestination;
+;|*** 
+;|***                     if (argv[i][2] != '\0')
+;|***                     {
+;|***                         pszSource = &argv[i][2];
+;|***                         if (*pszSource == ':')
+;|***                         {
+;|***                             pszSource++;
+;|***                         }
+;|***                     }
+;|***                     else if (argc > (i+1) && argv[i+1][0] != '-' && argv[i+1][0] != '/')
+;|***                     {
+;|***                         pszSource = argv[i+1];
+;|***                         i++;
+;|***                     }
+;|***                     else
+;|***                     {
+;|***                         printf("Error source path missing\n");
+;|***                         break;
+;|***                     }
+;|*** 
+;|***                     if (argc > (i+1) && argv[i+1][0] != '-' && argv[i+1][0] != '/')
+;|***                     {
+;|***                         pszDestination = argv[i+1];
+;|***                         i++;
+;|***                     }
+;|***                     else
+;|***                     {
+;|***                         pszDestination = NULL;
+;|***                     }
+;|*** 
+;|***                     GetFile(
+;|***                         pszSource, pszDestination,
+;|***                         cOption == 'r' ? COPY_FLAG_UPDATE_EXISTING :
+;|***                             cOption == 'u' ? COPY_FLAG_UPDATE_OR_ADD :
+;|***                                 0);
+;|***                 }
+;|***                 break;
+;|*** 
+;|***             default:
+;|***                 printf("%s: Unsupported option\n\n", argv[i]);
+;|***                 usage2(argv[0]);
+;|***             }
+;|***         }
+;|***     }
+; Line 549
+					$FB809:
+;|*** 
+;|*** #if DEBUG
+;|***     DumpCounters();
+;|*** #endif
+;|*** 
+;|***     return 0;
+; Line 555
+	*** 000880	33 c0 			xor	ax,ax
+;|*** }
+; Line 556
+	*** 000882	5e 			pop	si
+	*** 000883	c9 			leave	
+	*** 000884	c3 			ret	
+	*** 000885	90 			nop	
+
+_main2	ENDP
+_TEXT	ENDS
+END

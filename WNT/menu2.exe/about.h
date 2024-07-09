@@ -25,4 +25,5 @@ public:
 	virtual BOOL OnInitDialog();
 	CStatic m_textver;
 	afx_msg void OnStnClicked65535();
+	CEdit m_edit1;
 };

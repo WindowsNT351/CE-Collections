@@ -25,6 +25,7 @@ void about::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_STATICVER, m_textver);
+	DDX_Control(pDX, IDC_EDIT1, m_edit1);
 }
 
 
@@ -95,7 +96,16 @@ BOOL about::OnInitDialog()
 
 	m_textver.SetWindowText(AsciiToUnicode(buffer));
 
-
+	m_edit1.SetWindowText( L"Name		Bilibili ID\r\n"
+							"351		351Workshop\r\n"
+							"Inter		-INTER_INIT-\r\n"
+							"WinPad		とある科学の手机副屏\r\n"
+							"GoldApple		不务正业的金苹果\r\n"
+							"DZY		DZY20070614\r\n"
+							"Zesa		LinuxMEMZ\r\n"
+							"XJBLMNP(?");
+	//HWND hWndEdit1 = m_edit1.GetSafeHwnd();
+	//::SendMessage(hWndEdit1, EM_LINESCROLL, 0, 3);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE

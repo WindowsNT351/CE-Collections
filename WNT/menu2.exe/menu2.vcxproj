@@ -218,6 +218,7 @@
   <ItemGroup>
     <Image Include="E:\Desktop\background - 副本 (2).bmp" />
     <Image Include="E:\Desktop\background2.bmp" />
+    <Image Include="res\about.bmp" />
     <Image Include="res\background.bmp" />
     <Image Include="res\flag.bmp" />
     <Image Include="res\info.ico" />

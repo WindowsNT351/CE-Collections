@@ -41,6 +41,7 @@ BEGIN_MESSAGE_MAP(Cmenu2Dlg, CDialogEx)
 	ON_NOTIFY(NM_CLICK, IDC_SYSLINK1, &Cmenu2Dlg::OnNMClickSyslink1)
 	ON_NOTIFY(NM_CLICK, IDC_SYSLINK2, &Cmenu2Dlg::OnNMClickSyslink2)
 	ON_NOTIFY(NM_CLICK, IDC_SYSLINK3, &Cmenu2Dlg::OnNMClickSyslink3)
+	ON_NOTIFY(NM_DBLCLK, IDC_TREE1, &Cmenu2Dlg::OnNMDblclkTree1)
 END_MESSAGE_MAP()
 
 
@@ -220,5 +221,16 @@ void Cmenu2Dlg::OnNMClickSyslink3(NMHDR *pNMHDR, LRESULT *pResult)
 	dlg->Create(IDD_ABOUT_DIALOG, NULL);
 	dlg->ShowWindow(SW_SHOWNORMAL);//SW_SHOW是对话框的显示方式
 
+	*pResult = 0;
+}
+
+
+
+
+
+void Cmenu2Dlg::OnNMDblclkTree1(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	// TODO: 在此添加控件通知处理程序代码
+	Cmenu2Dlg::OnBnClickedOk();
 	*pResult = 0;
 }

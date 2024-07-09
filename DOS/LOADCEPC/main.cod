@@ -1,0 +1,4574 @@
+;	Static Name Aliases
+;
+;	$S775_?ucBuffer@?1??LoadImage@@9@9	EQU	?ucBuffer@?1??LoadImage@@9@9
+;	$S519_BootHeader	EQU	BootHeader
+;	$S520_BootTail	EQU	BootTail
+;	$S777_?ucSignature@?1??LoadImage@@9@9	EQU	?ucSignature@?1??LoadImage@@9@9
+	TITLE   main.c
+	.286p
+	.287
+INCLUDELIB      SLIBCE
+INCLUDELIB	OLDNAMES.LIB
+_TEXT	SEGMENT  WORD PUBLIC 'CODE'
+_TEXT	ENDS
+_DATA	SEGMENT  WORD PUBLIC 'DATA'
+_DATA	ENDS
+CONST	SEGMENT  WORD PUBLIC 'CONST'
+CONST	ENDS
+_BSS	SEGMENT  WORD PUBLIC 'BSS'
+_BSS	ENDS
+$$SYMBOLS	SEGMENT  BYTE PUBLIC 'DEBSYM'
+$$SYMBOLS	ENDS
+$$TYPES	SEGMENT  BYTE PUBLIC 'DEBTYP'
+$$TYPES	ENDS
+DGROUP	GROUP	CONST, _BSS, _DATA
+	ASSUME DS: DGROUP, SS: DGROUP
+PUBLIC  _BaudTable
+PUBLIC  _bSerialDownload
+PUBLIC  _iDesiredMode
+EXTRN	__acrtused:ABS
+EXTRN	_fprintf:NEAR
+EXTRN	_XmsErrorString:NEAR
+EXTRN	_signal:NEAR
+EXTRN	__filelength:NEAR
+EXTRN	_fseek:NEAR
+EXTRN	__open:NEAR
+EXTRN	__read:NEAR
+EXTRN	_OEMInitDebugSerial:NEAR
+EXTRN	_atol:NEAR
+EXTRN	_printf:NEAR
+EXTRN	__strerror:NEAR
+EXTRN	_OEMReadDebugBytes:NEAR
+EXTRN	_exit:NEAR
+EXTRN	_OEMWriteDebugByte:NEAR
+EXTRN	_OEMParallelPortGetByte:NEAR
+EXTRN	_XmsIsInstalled:NEAR
+EXTRN	_XmsLocalEnableA20:NEAR
+EXTRN	_OEMParallelPortSendByte:NEAR
+EXTRN	_strrchr:NEAR
+EXTRN	_OEMParallelPortInit:NEAR
+EXTRN	_XmsQueryA20:NEAR
+EXTRN	_Launch:NEAR
+EXTRN	_XmsQueryFreeExtendedMemory:NEAR
+EXTRN	_SetVideoMode:NEAR
+EXTRN	_ParseVESAOptions:NEAR
+EXTRN	_XmsAllocateExtendedMemory:NEAR
+EXTRN	_ParseEthernetOptions:NEAR
+EXTRN	_XmsFreeExtendedMemory:NEAR
+EXTRN	_ParseDeviceName:NEAR
+EXTRN	_DrawPercent:NEAR
+EXTRN	_fclose:NEAR
+EXTRN	_DisplayDirectory:NEAR
+EXTRN	_XmsMoveExtendedMemory:NEAR
+EXTRN	_fgetc:NEAR
+EXTRN	_tolower:NEAR
+EXTRN	_XmsLockExtendedMemory:NEAR
+EXTRN	_GetFile:NEAR
+EXTRN	_fopen:NEAR
+EXTRN	_XmsUnlockExtendedMemory:NEAR
+EXTRN	__close:NEAR
+EXTRN	_NoPPFS:WORD
+_BSS      SEGMENT
+COMM NEAR	_BootArgs:	BYTE:	 170
+COMM NEAR	_usBlockHandle:	BYTE:	 2
+_BSS      ENDS
+EXTRN	__iob:BYTE
+_DATA      SEGMENT
+$S519_BootHeader	DB	0aaH
+	DB	055H
+	DB	055H
+	DB	0aaH
+	DB	00H
+	DB	00H
+$S520_BootTail	DB	05aH
+	DB	0a5H
+	DB	0aH
+	DB	01aH
+_BaudTable	DD	02580H
+	DB	0cH
+ 	DB	1 DUP(0)
+
+	DD	04b00H
+	DB	06H
+ 	DB	1 DUP(0)
+
+	DD	09600H
+	DB	03H
+ 	DB	1 DUP(0)
+
+	DD	0e100H
+	DB	02H
+ 	DB	1 DUP(0)
+
+	DD	01c200H
+	DB	01H
+ 	DB	1 DUP(0)
+
+_bSerialDownload	DW	00H
+_iDesiredMode	DW	00H
+$SG610	DB	'300STD.bin',  00H
+$SG638	DB	'Invalid option - %s',  0aH,  00H
+$SG645	DB	'Unsupported baud rate - %s',  0aH,  00H
+$SG649	DB	'Invalid option - %s',  0aH,  00H
+$SG653	DB	'Invalid option - %s',  0aH,  00H
+$SG656	DB	'The /E and /K options are mutually exclusive - please choose'
+	DB	' one of them.',  0dH,  0aH,  00H
+$SG658	DB	'Invalid option - %s',  0aH,  00H
+$SG661	DB	'The /E and /K options are mutually exclusive- please choose '
+	DB	'one of them.',  0dH,  0aH,  00H
+$SG663	DB	'Invalid option - %s',  0aH,  00H
+$SG666	DB	'Invalid option - %s',  0aH,  00H
+$SG669	DB	'Invalid option - %s',  0aH,  00H
+$SG681	DB	'*.*',  00H
+$SG690	DB	'Error source path missing',  0aH,  00H
+$SG694	DB	'Unrecognized option - %s',  0aH,  00H
+$SG699	DB	'HIMEM.SYS must be loaded',  0aH,  00H
+$SG702	DB	'Error querying A20 status - %s',  0aH,  00H
+$SG704	DB	'Warning A20 line already enabled',  0aH,  00H
+$SG707	DB	'Can''t enable A20 line, error = 0x%4.4X',  0aH,  00H
+$SG715	DB	'Jumping to 0x%8.8lX',  0aH,  00H
+$SG717	DB	0aH,  0aH, '               Press any key to cancel.',  0aH,  00H
+$SG724	DB	0aH, '%s: Loads a BIN image into memory and boots it.',  0aH
+	DB	0aH, 'Usage:%s /B:baud /C:Port /D:display /P /H /V /N:name',  0aH
+	DB	'  (/E|/K):IO:IRQ[:<dotted IP>] /L:VXxVYxBPP[:PXxPY] <file na'
+	DB	'me>',  0aH,  0aH, '  /B  Baud Rate [9600|19200|38400(default'
+	DB	')|57600|115200]',  0aH, '  /C  Communications Port [0=disabl'
+	DB	'e|1|2|3|4]',  0aH, '  /D  Display Resolution (for VESA modes'
+	DB	', use the /L option instead).',  0aH, '      0 = 320x200x256'
+	DB	' (default), 1 = 480x240x256,',  0aH, '      2 = 640x480x256,'
+	DB	' 3 = 800x600x256, 4 = 1024x768x256',  0aH, '      5 = 240x32'
+	DB	'0x256, 6 = 208x240x256',  0aH,  0aH, '  /P  Parallel port bo'
+	DB	'ot download.',  0aH,  0aH, '  /A  Use permanent storage devi'
+	DB	'ce to store NK image.',  0aH,  0aH, '  /H  Help - displays t'
+	DB	'his message.',  0aH,  0aH, '  Default <file name> is NK.BIN '
+	DB	'except for /P option which uses',  0aH, '  default on host u'
+	DB	'nless <file name> specified.',  0aH,  0aH, 'Press any key fo'
+	DB	'r more options...',  00H
+$SG725	DB	0aH,  0aH,  0aH, 'Usage:%s /B:baud /C:Port /D:display /P /H '
+	DB	'/V /N:name',  0aH, '  (/E|/K):IO:IRQ[:<dotted IP>] /L:VXxVYx'
+	DB	'BPP[:PXxPY] <file name>',  0aH,  0aH, '  /V  Verbose - displ'
+	DB	'ays extra status information during boot.',  0aH,  0aH, '  /'
+	DB	'E:IO:IRQ[:<dotted IP>]  (Debug Ethernet Card parameters)',  0aH
+	DB	'      IO - IO Base Address (specified in hexadecimal)',  0aH
+	DB	'      IRQ - Interrupt (specified in decimal or hexadecimal)',  0aH
+	DB	'      Dotted IP - (optional) static IP address (No DHCP)',  0aH
+	DB	'    NOTE: The /E and /K options are mutually exclusive.',  0aH
+	DB	0aH, '  /K:IO:IRQ[:<dotted IP>]  (RNDIS Card parameters)',  0aH
+	DB	'      IO - IO Base Address (specified in hexadecimal)',  0aH
+	DB	'      IRQ - Interrupt (specified in decimal or hexadecimal)',  0aH
+	DB	'      Dotted IP - (optional) static IP address (No DHCP)',  0aH
+	DB	'    NOTE: The /E and /K options are mutually exclusive.',  0aH
+	DB	0aH, '  /L:DXxDYxBPP[:PXxPY] (Use VESA VBE Linear/Flat Frame'
+	DB	'buffer video mode)',  0aH, '      DX, DY  - Display X and Y '
+	DB	'Sizes',  0aH, '      BPP - Bits Per Pixel Color Depth (8, 16'
+	DB	', 24, or 32)',  0aH, '      PX, PY  - (optional) Physical Sc'
+	DB	'reen X and Y Sizes to simulate a',  0aH, '                sm'
+	DB	'all device display (PX & PY should be greater than DX & DY).'
+	DB	0aH, ' /N:name  Optionally specify a device name to be used '
+	DB	'when creating',  0aH, '          the Ethernet debug name (fo'
+	DB	'r host-side connectivity).',  0aH,  0aH, 'Press any key for '
+	DB	'more options...',  00H
+$SG726	DB	0aH, 'Usage: %s -s[:]<pattern> -(g|r|u)[[:]<pattern> [<desti'
+	DB	'nation>]',  0aH, '-s    Show a directory of files matching <'
+	DB	'pattern>.',  0aH,  0aH, '-g    Get files matching <pattern> '
+	DB	'and copy them to the',  0aH, '      optionally specified <de'
+	DB	'stination>.  Any existing file with',  0aH, '      the same '
+	DB	'name will be overwritten.',  0aH,  0aH, '-r    Refresh files'
+	DB	' matching <pattern> which already exist in <destination>',  0aH
+	DB	'      and have a timestamp newer than the one in <destinatio'
+	DB	'n>.',  0aH,  0aH, '-u    Update files matching <pattern> whi'
+	DB	'ch don''t already exist in',  0aH, '      <destination> or t'
+	DB	'hose that have a timestamp newer than those',  0aH, '      i'
+	DB	'n <destination>.',  0aH,  0aH, '<pattern> Windows filename p'
+	DB	'ath with optional wildcard characters.',  0aH,  0aH, '<desti'
+	DB	'nation> If not specified then the current directory is the d'
+	DB	'efault.',  0aH, '      If specified and it doesn''t exist an'
+	DB	'd the last character is \,',  0aH, '      then the directory'
+	DB	' is created.  Otherwise <destination> is',  0aH, '      trea'
+	DB	'ted as the name of the file.',  0aH, '      It is an error f'
+	DB	'or <pattern> to match multiple files',  0aH, '      when <de'
+	DB	'stination> specifies a file.',  0aH, 'For CE Collections - L'
+	DB	'ast built with ver.2.01-Beta1-02',  00H
+	ORG	$+1
+$S777_?ucSignature@?1??LoadImage@@9@9	DB	042H
+	DB	030H
+	DB	030H
+	DB	030H
+	DB	046H
+	DB	046H
+	DB	0aH
+$SG787	DB	'Error querying free extended memory - %s',  0aH,  00H
+$SG789	DB	'               ImageName:......: %s',  0aH,  00H
+$SG790	DB	'               FLATMode........: %d',  0aH,  00H
+$SG791	DB	'               VESAMode........: 0x%x',  0aH,  00H
+$SG792	DB	'               FreeEMSMem......: %u',  0aH,  00H
+$SG793	DB	'               LagestBlock.....: %u',  0aH,  00H
+$SG794	DB	'             ==========Booting - Press CTRL+C to cancel====='
+	DB	'====',  0aH, ' ',  00H
+$SG795	DB	'                            ',  00H
+$SG796	DB	'             ',  00H
+$SG798	DB	'Total free extended memory = %u, largest block = %u',  0aH,  00H
+$SG800	DB	'Error allocating extended memory - %s',  0aH,  00H
+$SG803	DB	0dH, '                                                      '
+	DB	'                   ',  0dH,  00H
+$SG804	DB	'Error locking extended memory - %s',  0aH,  00H
+$SG807	DB	0dH, '                                                      '
+	DB	'                   ',  0dH,  00H
+$SG808	DB	'Block allocated at 0x%lX',  0aH,  00H
+$SG815	DB	0dH, '                                                      '
+	DB	'                   ',  0dH,  00H
+$SG816	DB	'Error zeroing extended memory - %s',  0aH,  00H
+$SG826	DB	'Loading image %s via serial port.',  0dH,  0aH,  00H
+$SG828	DB	'Loading image %s via parallel port.',  0dH,  0aH,  00H
+$SG834	DB	'Loading host default image via serial port.',  0dH,  0aH,  00H
+$SG836	DB	'Loading host default image via parallel port.',  0dH,  0aH,  00H
+$SG851	DB	'Sending boot packet: ',  00H
+$SG857	DB	'%x ',  00H
+$SG861	DB	'Sent.',  0dH,  0aH,  00H
+$SG864	DB	'%s: Error opening file - %s',  0aH,  00H
+$SG866	DB	'%s: Error obtaining file size - %s',  0aH,  00H
+$SG869	DB	'Loading %s, size = %ld',  0aH,  00H
+$SG871	DB	'Error reading signature - %s',  0aH,  00H
+$SG874	DB	'Error invalid signature',  0aH, 'Data: ',  00H
+$SG878	DB	'%x ',  00H
+$SG879	DB	0dH,  0aH,  00H
+$SG882	DB	'Image physical start = 0x%8.8lX, size = %ld',  0aH,  00H
+$SG883	DB	00H
+$SG888	DB	0dH, '                                                      '
+	DB	'                   ',  0dH,  00H
+$SG889	DB	'Error reading header - %s',  0aH,  00H
+$SG894	DB	0dH, '                                                      '
+	DB	'                   ',  0dH,  00H
+$SG895	DB	'Error image section doesn''t fit in allocated block',  0aH, 'B'
+	DB	'lock allocated at 0x%lX, size = %ld',  0aH, 'Section physica'
+	DB	'l start = 0x%8.8lX, size = %ld',  0aH, 'Memory too low in yo'
+	DB	'ur VM might cause this.',  0aH,  0aH, '>> Increase memory ma'
+	DB	'y fix this.',  0aH,  00H
+$SG898	DB	0dH, '                                                      '
+	DB	'                   ',  0dH,  00H
+$SG899	DB	'Section physical start = 0x%8.8lX, size = %ld',  0aH,  00H
+$SG906	DB	0dH, '                                                      '
+	DB	'                   ',  0dH,  00H
+$SG907	DB	'Error reading section - %s',  0aH,  00H
+$SG910	DB	0dH, '                                                      '
+	DB	'                   ',  0dH,  00H
+$SG911	DB	'Error moving extended memory - %s',  0aH,  00H
+$SG914	DB	0dH, '                                                      '
+	DB	'                   ',  0dH,  00H
+$SG921	DB	'PCI bus not detected',  0aH,  00H
+$SG932	DB	'Read Packet Failed',  0aH,  00H
+$SG935	DB	'Read Header/Tail failed',  0aH,  00H
+$SG938	DB	'Invalid Command',  0aH,  00H
+$SG940	DB	'Invalid Length',  0aH,  00H
+$SG945	DB	'Invalid checksum',  0aH,  00H
+$SG950	DB	'$@(',  00H
+$SG960	DB	'rb',  00H
+$SG974	DB	'Booting %s compiled with Windows CE Version %d',  0aH,  00H
+$SG976	DB	'%s: Unknown or old version of bootloader',  0aH,  00H
+_DATA      ENDS
+_BSS      SEGMENT
+$S775_?ucBuffer@?1??LoadImage@@9@9	DW 04000H DUP (?)
+_BSS      ENDS
+_TEXT      SEGMENT
+	ASSUME	CS: _TEXT
+	PUBLIC	_main
+_main	PROC NEAR
+;|*** //
+;|*** // Copyright (c) Microsoft Corporation.  All rights reserved.
+;|*** //
+;|*** //
+;|*** // Use of this source code is subject to the terms of the Microsoft end-user
+;|*** // license agreement (EULA) under which you licensed this SOFTWARE PRODUCT.
+;|*** // If you did not accept the terms of the EULA, you are not authorized to use
+;|*** // this source code. For a copy of the EULA, please see the LICENSE.RTF on your
+;|*** // install media.
+;|*** //
+;|*** 
+;|*** /*++
+;|*** THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
+;|*** ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+;|*** THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+;|*** PARTICULAR PURPOSE.
+;|*** 
+;|*** Module Name:    main.c
+;|*** 
+;|*** Abstract:       This program, loadcepc.exe, is responsible for loading
+;|***                 a binary image into memory and booting the image. It 
+;|***                 processes the boot arguments, loads the image file, and 
+;|***                 then executes it.
+;|*** 
+;|*** Functions:
+;|*** 
+;|*** 
+;|*** Notes:          none
+;|*** 
+;|*** --*/
+;|*** 
+;|*** // Include Files
+;|*** 
+;|*** #include <conio.h>
+;|*** #include <fcntl.h>
+;|*** #include <io.h>
+;|*** #include <stdio.h>
+;|*** #include <stdlib.h>
+;|*** #include <string.h>
+;|*** #include <signal.h>
+;|*** #include "loadcepc.h"
+;|*** #include "xmsapi.h"
+;|*** #include "ethernet.h"
+;|*** #include <bootarg.h>
+;|*** 
+;|*** 
+;|*** // Externs
+;|*** 
+;|*** extern int NoPPFS;                      // parallel port not present flag
+;|*** 
+;|*** 
+;|*** // Defines
+;|*** 
+;|*** #define CHUNKSIZE                   (32768)
+;|*** #define COPY_FLAG_UPDATE_EXISTING   (0x0001)
+;|*** #define COPY_FLAG_UPDATE_OR_ADD     (0x0002)
+;|*** 
+;|*** 
+;|*** // Variables
+;|*** 
+;|*** // Boot Header
+;|*** 
+;|*** static const unsigned char BootHeader[] = 
+;|*** {
+;|***     0xAA,                               // header = 4 bytes
+;|***     0x55,
+;|***     0x55,
+;|***     0xAA,
+;|***     0x00,                               // opcode = 2 bytes (0 = BOOT)
+;|***     0x00,
+;|*** };
+;|*** 
+;|*** #define BOOT_HEADER_SIZE (sizeof(BootHeader) / sizeof(BootHeader[0]))
+;|*** 
+;|*** 
+;|*** // Boot Trailer
+;|*** 
+;|*** static const unsigned char BootTail[] = 
+;|*** {
+;|***     0x5A,                               // trail = 4 bytes
+;|***     0xA5,
+;|***     0x0A,
+;|***     0x1A
+;|*** };
+;|*** 
+;|*** #define BOOT_TAIL_SIZE (sizeof(BootTail) / sizeof(BootTail[0]))
+;|*** 
+;|*** #define BOOT_TYPE (-4)                   // boot type for x86
+;|*** 
+;|*** 
+;|*** // Baud Rate
+;|*** 
+;|*** struct
+;|*** {
+;|***     ULONG   ulRate;
+;|***     UCHAR   ucDivisor;
+;|*** }   
+;|*** BaudTable[] =
+;|*** {
+;|***     { 9600,  12},
+;|***     { 19200,  6},
+;|***     { 38400,  3},
+;|***     { 57600,  2},
+;|***     { 115200, 1}
+;|*** };
+;|*** 
+;|*** #define NUM_BAUD_RATES  (sizeof(BaudTable) / sizeof(BaudTable[0]))
+;|*** 
+;|*** 
+;|*** BOOT_ARGS   BootArgs;
+;|*** USHORT      usBlockHandle;                  // XMS memory handle
+;|*** BOOL        bSerialDownload=FALSE;
+;|*** 
+;|*** 
+;|*** // Function Prototypes
+;|*** 
+;|*** // External Functions
+;|*** 
+;|*** void    OEMInitDebugSerial(void);
+;|*** int     OEMReadDebugByte(void);
+;|*** void    OEMReadDebugBytes(unsigned char * ucBuffer, int usReadSize);
+;|*** void    OEMWriteDebugByte(unsigned char ch);
+;|*** int     OEMParallelPortGetByte(void);
+;|*** void    OEMParallelPortSendByte(UCHAR chData);
+;|*** void    OEMParallelPortInit(void);
+;|*** void    Launch( ULONG ulEntryPoint, ULONG ulArguments );
+;|*** 
+;|*** // in video.c
+;|*** 
+;|*** UCHAR   SetVideoMode( int iDesiredMode);
+;|*** BOOL    ParseVESAOptions( char * params);
+;|*** 
+;|*** // in ethmain.c
+;|*** 
+;|*** BOOL    ParseEthernetOptions( char * argstr);
+;|*** BOOL    ParseDeviceName( char * argstr);
+;|*** 
+;|*** // in ppfstool.c
+;|*** 
+;|*** void    DrawPercent( DWORD CurValue, DWORD MaxValue);
+;|*** void    DisplayDirectory( char *pszPath);
+;|*** void    GetFile( char *pszSource, char *pszDestination, USHORT usCopyFlags);
+;|*** 
+;|*** // Local Functions
+;|*** 
+;|*** static void         usage( char *pszProgramNameArg );
+;|*** static void         ExitSigHandler( int sig );
+;|*** static WORD         GetJumpFlags( void );
+;|*** static UCHAR        GetPCIConfigMechanism();
+;|*** static USHORT       DownloadRead( int     hImage, 
+;|***                                   UCHAR  *ucBuffer, 
+;|***                                   USHORT  usReadSize, 
+;|***                                   BOOL    bParallelDownload );
+;|*** static int          LoadImage   ( BOOL bVerbose, 
+;|***                                   BOOL bParallelDownload, 
+;|***                                   char *pszFileName, 
+;|***                                   PULONG pulEntryAddress);
+;|*** static void	DisplayCEOSVersion( char *pszFileName);
+;|*** 
+;|*** 
+;|*** //------------------------------------------------------------------------------
+;|*** //
+;|*** //  Function Name:  main( int argc, char **argv )
+;|*** //  Description..:  Main entry point. 
+;|*** //  Inputs.......:  argc, argv      
+;|*** //  Outputs......:  int             exit status
+;|*** //
+;|*** //------------------------------------------------------------------------------
+;|*** 
+;|*** int     iDesiredMode = 0;
+;|*** int main( int argc, char **argv )
+;|*** {
+; Line 172
+	*** 000000	c8 2c 00 00 		enter	44,0
+	*** 000004	57 			push	di
+	*** 000005	56 			push	si
+;	pszFileName = -2
+;	ulEntryPoint = -6
+;	ulArguments = -10
+;	xmsError = -12
+;	bEnabled = -14
+;	bVerbose = -16
+;	bParallelDownload = -18
+;	bBackupImage = -20
+;	ulBaudRate = -24
+;	cOption = -26
+;	i = -28
+;	ret = -30
+;	iPpfstool = -32
+;	bRNDISDownload = -34
+;	bEtherDownload = -36
+;	argv = 6
+;	argc = 4
+;|***     char *  pszFileName = "300STD.bin";
+; Line 173
+	*** 000006	c7 46 fe 00 00 		mov	WORD PTR [bp-2],OFFSET DGROUP:$SG610	;pszFileName
+;|***     ULONG   ulEntryPoint;
+;|***     ULONG   ulArguments;
+;|***     int     xmsError;
+;|***     BOOL    bEnabled;
+;|***     BOOL    bVerbose = FALSE;
+;|***     BOOL    bParallelDownload=FALSE;
+;|***     BOOL    bBackupImage=FALSE;
+;|***     ULONG   ulBaudRate;
+;|***     char    cOption;
+;|***     int     i = 0;
+;|***     int     ret = 0;
+;|***     int     iPpfstool=0;
+;|***     BOOL    bRNDISDownload=FALSE;
+;|***     BOOL    bEtherDownload=FALSE;
+; Line 187
+	*** 00000b	33 c0 			xor	ax,ax
+	*** 00000d	89 46 f0 		mov	WORD PTR [bp-16],ax	;bVerbose
+	*** 000010	89 46 ee 		mov	WORD PTR [bp-18],ax	;bParallelDownload
+	*** 000013	89 46 ec 		mov	WORD PTR [bp-20],ax	;bBackupImage
+	*** 000016	89 46 e4 		mov	WORD PTR [bp-28],ax	;i
+	*** 000019	89 46 e2 		mov	WORD PTR [bp-30],ax	;ret
+	*** 00001c	89 46 e0 		mov	WORD PTR [bp-32],ax	;iPpfstool
+	*** 00001f	89 46 de 		mov	WORD PTR [bp-34],ax	;bRNDISDownload
+	*** 000022	89 46 dc 		mov	WORD PTR [bp-36],ax	;bEtherDownload
+;|*** 
+;|***     // Setup signal handler for Ctrl+C/Ctrl+Break
+;|*** 
+;|***     signal( SIGINT,  ExitSigHandler );
+; Line 191
+	*** 000025	68 00 00 		push	OFFSET ExitSigHandler
+	*** 000028	6a 02 			push	2
+	*** 00002a	e8 00 00 		call	_signal
+	*** 00002d	83 c4 04 		add	sp,4
+;|***     signal( SIGTERM, ExitSigHandler );
+; Line 192
+	*** 000030	68 00 00 		push	OFFSET ExitSigHandler
+	*** 000033	6a 0f 			push	15	;000fH
+	*** 000035	e8 00 00 		call	_signal
+	*** 000038	83 c4 04 		add	sp,4
+;|***     signal( SIGABRT, ExitSigHandler );
+; Line 193
+	*** 00003b	68 00 00 		push	OFFSET ExitSigHandler
+	*** 00003e	6a 16 			push	22	;0016H
+	*** 000040	e8 00 00 		call	_signal
+	*** 000043	83 c4 04 		add	sp,4
+;|*** 
+;|***     // Initialize the boot args block
+;|*** 
+;|***     memset( &BootArgs, 0, sizeof(BOOT_ARGS));
+; Line 197
+	*** 000046	33 c0 			xor	ax,ax
+	*** 000048	bb 00 00 		mov	bx,OFFSET DGROUP:_BootArgs
+	*** 00004b	b9 55 00 		mov	cx,85	;0055H
+	*** 00004e	8b fb 			mov	di,bx
+	*** 000050	1e 			push	ds
+	*** 000051	07 			pop	es
+	*** 000052	f3 			rep
+	*** 000053	ab 			stosw
+;|***     BootArgs.ucVideoMode     = 0;
+;|***     BootArgs.ucComPort       = 1;
+; Line 199
+	*** 000054	c6 06 01 00 01 		mov	BYTE PTR _BootArgs+1,1
+;|***     BootArgs.ucBaudDivisor   = 3;           // Default 38400
+; Line 200
+	*** 000059	c6 06 02 00 03 		mov	BYTE PTR _BootArgs+2,3
+;|***     BootArgs.ucPCIConfigType = 0;
+; Line 201
+	*** 00005e	a2 00 00 		mov	BYTE PTR _BootArgs,al
+	*** 000061	a2 03 00 		mov	BYTE PTR _BootArgs+3,al
+;|***     BootArgs.dwSig           = BOOTARG_SIG;
+; Line 202
+	*** 000064	c7 06 04 00 42 4f 	mov	WORD PTR _BootArgs+4,20290	;4f42H
+	*** 00006a	c7 06 06 00 4f 54 	mov	WORD PTR _BootArgs+6,21583	;544fH
+;|***     BootArgs.dwLen           = sizeof(BOOT_ARGS);
+; Line 203
+	*** 000070	c7 06 08 00 aa 00 	mov	WORD PTR _BootArgs+8,170	;00aaH
+	*** 000076	a3 0a 00 		mov	WORD PTR _BootArgs+10,ax
+;|***     BootArgs.dwVersionSig    = BOOT_ARG_VERSION_SIG;
+; Line 204
+	*** 000079	c7 06 80 00 78 56 	mov	WORD PTR _BootArgs+128,22136	;5678H
+	*** 00007f	c7 06 82 00 34 12 	mov	WORD PTR _BootArgs+130,4660	;1234H
+;|***     BootArgs.MajorVersion    = BOOT_ARG_MAJOR_VER;
+; Line 205
+	*** 000085	c7 06 84 00 01 00 	mov	WORD PTR _BootArgs+132,1
+;|***     BootArgs.MinorVersion    = BOOT_ARG_MINOR_VER;
+;|*** 
+;|***     usBlockHandle = 0;
+; Line 208
+	*** 00008b	a3 86 00 		mov	WORD PTR _BootArgs+134,ax
+	*** 00008e	a3 00 00 		mov	WORD PTR _usBlockHandle,ax
+;|*** 
+;|***     // Initialize parallel port
+;|*** 
+;|***     OEMParallelPortInit();              
+; Line 212
+	*** 000091	e8 00 00 		call	_OEMParallelPortInit
+;|*** 
+;|***     // Process arguments 
+;|*** 
+;|***     if( argc > 1 )
+; Line 216
+	*** 000094	83 7e 04 01 		cmp	WORD PTR [bp+4],1	;argc
+	*** 000098	7f 03 			jg	$JCC152
+	*** 00009a	e9 dd 03 		jmp	$I696
+					$JCC152:
+;|***     {
+; Line 217
+;	iArgIndex = -38
+;|***         int iArgIndex;
+;|*** 
+;|***         for( iArgIndex = 1; iArgIndex < argc; iArgIndex++ )
+; Line 220
+	*** 00009d	c7 46 da 01 00 		mov	WORD PTR [bp-38],1	;iArgIndex
+	*** 0000a2	e9 a0 03 		jmp	$F627
+	*** 0000a5	90 			nop	
+;|***         {
+;|***             if( argv[iArgIndex][0] != '/' && argv[iArgIndex][0] != '-' )
+;|***             {
+;|***                 break;
+;|***             }
+;|*** 
+;|***             cOption = (char)tolower(argv[iArgIndex][1]);
+; Line 227
+					$I630:
+;|*** 
+;|***             // Process according to option character
+;|*** 
+;|***             switch( cOption )
+; Line 231
+	*** 0000a6	8b 5e da 		mov	bx,WORD PTR [bp-38]	;iArgIndex
+	*** 0000a9	03 db 			add	bx,bx
+	*** 0000ab	8b 18 			mov	bx,WORD PTR [bx][si]
+	*** 0000ad	8a 47 01 		mov	al,BYTE PTR [bx+1]
+	*** 0000b0	98 			cbw	
+	*** 0000b1	50 			push	ax
+	*** 0000b2	e8 00 00 		call	_tolower
+	*** 0000b5	83 c4 02 		add	sp,2
+	*** 0000b8	88 46 e6 		mov	BYTE PTR [bp-26],al	;cOption
+	*** 0000bb	98 			cbw	
+	*** 0000bc	3d 76 00 		cmp	ax,118	;0076H
+	*** 0000bf	75 03 			jne	$JCC191
+	*** 0000c1	e9 10 02 		jmp	$SC673
+					$JCC191:
+	*** 0000c4	76 03 			jbe	$JCC196
+	*** 0000c6	e9 32 03 		jmp	$SD693
+					$JCC196:
+	*** 0000c9	3c 68 			cmp	al,104	;0068H
+	*** 0000cb	75 03 			jne	$JCC203
+	*** 0000cd	e9 3e 03 		jmp	$SC695
+					$JCC203:
+	*** 0000d0	7e 03 			jle	$JCC208
+	*** 0000d2	e9 47 03 		jmp	$L981
+					$JCC208:
+	*** 0000d5	3c 63 			cmp	al,99	;0063H
+	*** 0000d7	75 03 			jne	$JCC215
+	*** 0000d9	e9 ac 00 		jmp	$SC646
+					$JCC215:
+	*** 0000dc	7e 03 			jle	$JCC220
+	*** 0000de	e9 05 03 		jmp	$L982
+					$JCC220:
+	*** 0000e1	2c 3f 			sub	al,63	;003fH
+	*** 0000e3	75 03 			jne	$JCC227
+	*** 0000e5	e9 26 03 		jmp	$SC695
+					$JCC227:
+	*** 0000e8	2c 22 			sub	al,34	;0022H
+	*** 0000ea	75 03 			jne	$JCC234
+	*** 0000ec	e9 cf 01 		jmp	$SC671
+					$JCC234:
+	*** 0000ef	fe c8 			dec	al
+	*** 0000f1	74 03 			je	$JCC241
+	*** 0000f3	e9 05 03 		jmp	$SD693
+					$JCC241:
+;|***             {
+;|***             case 'b':   /* Baud rate */
+;|*** 
+;|***                 if( argv[iArgIndex][2] != ':' ||
+;|***                     argv[iArgIndex][3] < '0' || argv[iArgIndex][3] > '9' )
+; Line 236
+	*** 0000f6	8b 5e da 		mov	bx,WORD PTR [bp-38]	;iArgIndex
+	*** 0000f9	03 db 			add	bx,bx
+	*** 0000fb	8b 76 06 		mov	si,WORD PTR [bp+6]	;argv
+	*** 0000fe	8b 18 			mov	bx,WORD PTR [bx][si]
+	*** 000100	80 7f 02 3a 		cmp	BYTE PTR [bx+2],58	;003aH
+	*** 000104	75 0c 			jne	$I637
+	*** 000106	80 7f 03 30 		cmp	BYTE PTR [bx+3],48	;0030H
+	*** 00010a	7c 06 			jl	$I637
+	*** 00010c	80 7f 03 39 		cmp	BYTE PTR [bx+3],57	;0039H
+	*** 000110	7e 18 			jle	$I636
+					$I637:
+;|***                 {
+;|***                     printf("Invalid option - %s\n", argv[iArgIndex]);
+; Line 238
+	*** 000112	8b 5e da 		mov	bx,WORD PTR [bp-38]	;iArgIndex
+	*** 000115	03 db 			add	bx,bx
+	*** 000117	ff 30 			push	WORD PTR [bx][si]
+	*** 000119	68 00 00 		push	OFFSET DGROUP:$SG638
+					$L1005:
+	*** 00011c	e8 00 00 		call	_printf
+	*** 00011f	83 c4 04 		add	sp,4
+;|***                     ret = 1;
+; Line 239
+					$L1004:
+	*** 000122	c7 46 e2 01 00 		mov	WORD PTR [bp-30],1	;ret
+;|***                     goto main_error;
+; Line 240
+	*** 000127	e9 be 04 		jmp	$main_error639
+;|***                 }
+;|*** 
+;|***                 ulBaudRate = atol(&argv[iArgIndex][3]);
+; Line 243
+					$I636:
+	*** 00012a	8b 5e da 		mov	bx,WORD PTR [bp-38]	;iArgIndex
+	*** 00012d	03 db 			add	bx,bx
+	*** 00012f	8b 00 			mov	ax,WORD PTR [bx][si]
+	*** 000131	05 03 00 		add	ax,3
+	*** 000134	50 			push	ax
+	*** 000135	e8 00 00 		call	_atol
+	*** 000138	83 c4 02 		add	sp,2
+	*** 00013b	89 46 e8 		mov	WORD PTR [bp-24],ax	;ulBaudRate
+	*** 00013e	89 56 ea 		mov	WORD PTR [bp-22],dx
+;|*** 
+;|***                 for( i=0; i < NUM_BAUD_RATES; i++ )
+; Line 245
+	*** 000141	c7 46 e4 00 00 		mov	WORD PTR [bp-28],0	;i
+	*** 000146	eb 03 			jmp	SHORT $F640
+;|***                 {
+;|***                     if( BaudTable[i].ulRate == ulBaudRate )
+;|***                     {
+;|***                         BootArgs.ucBaudDivisor = BaudTable[i].ucDivisor;
+;|***                         break;
+;|***                     }
+;|***                 }
+; Line 252
+					$FC641:
+	*** 000148	ff 46 e4 		inc	WORD PTR [bp-28]	;i
+					$F640:
+	*** 00014b	83 7e e4 05 		cmp	WORD PTR [bp-28],5	;i
+	*** 00014f	73 1e 			jae	$FB642
+;|***                     if( BaudTable[i].ulRate == ulBaudRate )
+; Line 247
+	*** 000151	8b 5e e4 		mov	bx,WORD PTR [bp-28]	;i
+	*** 000154	8b cb 			mov	cx,bx
+	*** 000156	03 db 			add	bx,bx
+	*** 000158	03 d9 			add	bx,cx
+	*** 00015a	03 db 			add	bx,bx
+	*** 00015c	39 87 00 00 		cmp	WORD PTR _BaudTable[bx],ax
+	*** 000160	75 e6 			jne	$FC641
+	*** 000162	39 97 02 00 		cmp	WORD PTR _BaudTable[bx+2],dx
+	*** 000166	75 e0 			jne	$FC641
+;|***                     {
+;|***                         BootArgs.ucBaudDivisor = BaudTable[i].ucDivisor;
+; Line 249
+	*** 000168	8a 87 04 00 		mov	al,BYTE PTR _BaudTable[bx+4]
+	*** 00016c	a2 02 00 		mov	BYTE PTR _BootArgs+2,al
+;|***                         break;
+; Line 250
+					$FB642:
+;|***                     }
+;|***                 }
+;|*** 
+;|***                 if( i >= NUM_BAUD_RATES )
+; Line 254
+	*** 00016f	83 7e e4 05 		cmp	WORD PTR [bp-28],5	;i
+	*** 000173	73 03 			jae	$JCC371
+	*** 000175	e9 ca 02 		jmp	$SB632
+					$JCC371:
+;|***                 {
+;|***                     printf( "Unsupported baud rate - %s\n", argv[iArgIndex] );
+; Line 256
+	*** 000178	8b 5e da 		mov	bx,WORD PTR [bp-38]	;iArgIndex
+	*** 00017b	03 db 			add	bx,bx
+	*** 00017d	8b 76 06 		mov	si,WORD PTR [bp+6]	;argv
+	*** 000180	ff 30 			push	WORD PTR [bx][si]
+	*** 000182	68 00 00 		push	OFFSET DGROUP:$SG645
+	*** 000185	eb 95 			jmp	SHORT $L1005
+	*** 000187	90 			nop	
+					$SC646:
+;|***                     ret = 1;
+;|***                     goto main_error;
+;|***                 }
+;|***                 break;
+;|*** 
+;|***             case 'c':
+;|*** 
+;|***                 // COM Port Parameter
+;|***                 //
+;|***                 // Allowable values for the COM ports 1-4. Zero (0) is 
+;|***                 // allowed as a way to disable use of the COM port and is
+;|***                 // allowed by ...\csp\i486\oal\debug.c.
+;|*** 
+;|***                 if( (argv[iArgIndex][2] == ':') &&
+;|***                     (argv[iArgIndex][3] >= '0') &&  
+;|***                     (argv[iArgIndex][3] <= '4') )
+; Line 272
+	*** 000188	8b 5e da 		mov	bx,WORD PTR [bp-38]	;iArgIndex
+	*** 00018b	03 db 			add	bx,bx
+	*** 00018d	8b 76 06 		mov	si,WORD PTR [bp+6]	;argv
+	*** 000190	8b 18 			mov	bx,WORD PTR [bx][si]
+	*** 000192	80 7f 02 3a 		cmp	BYTE PTR [bx+2],58	;003aH
+	*** 000196	75 18 			jne	$I647
+	*** 000198	80 7f 03 30 		cmp	BYTE PTR [bx+3],48	;0030H
+	*** 00019c	7c 12 			jl	$I647
+	*** 00019e	80 7f 03 34 		cmp	BYTE PTR [bx+3],52	;0034H
+	*** 0001a2	7f 0c 			jg	$I647
+;|***                 {
+;|***                     BootArgs.ucComPort = (UCHAR)(argv[iArgIndex][3] - '0');
+; Line 274
+	*** 0001a4	8a 47 03 		mov	al,BYTE PTR [bx+3]
+	*** 0001a7	2c 30 			sub	al,48	;0030H
+	*** 0001a9	a2 01 00 		mov	BYTE PTR _BootArgs+1,al
+;|***                 }
+;|***                 else
+;|***                 {
+;|***                     printf( "Invalid option - %s\n", argv[iArgIndex] );
+;|***                     ret = 1;
+;|***                     goto main_error;
+;|***                 }
+;|***                 break;
+; Line 282
+	*** 0001ac	e9 93 02 		jmp	$SB632
+	*** 0001af	90 			nop	
+					$I647:
+;|***                     printf( "Invalid option - %s\n", argv[iArgIndex] );
+; Line 278
+	*** 0001b0	8b 5e da 		mov	bx,WORD PTR [bp-38]	;iArgIndex
+	*** 0001b3	03 db 			add	bx,bx
+	*** 0001b5	ff 30 			push	WORD PTR [bx][si]
+	*** 0001b7	68 00 00 		push	OFFSET DGROUP:$SG649
+	*** 0001ba	e9 5f ff 		jmp	$L1005
+	*** 0001bd	90 			nop	
+;|***                     ret = 1;
+;|***                     goto main_error;
+;|***                 }
+;|***                 break;
+;|*** 
+;|***             case 'd':   /* Display mode */
+; Line 284
+					$SC650:
+;|*** 
+;|***                 if( argv[iArgIndex][2] != ':' ||
+;|***                     argv[iArgIndex][3] < '0' || argv[iArgIndex][3] > '6' )
+; Line 287
+	*** 0001be	8b 5e da 		mov	bx,WORD PTR [bp-38]	;iArgIndex
+	*** 0001c1	03 db 			add	bx,bx
+	*** 0001c3	8b 76 06 		mov	si,WORD PTR [bp+6]	;argv
+	*** 0001c6	8b 18 			mov	bx,WORD PTR [bx][si]
+	*** 0001c8	80 7f 02 3a 		cmp	BYTE PTR [bx+2],58	;003aH
+	*** 0001cc	75 0c 			jne	$I652
+	*** 0001ce	80 7f 03 30 		cmp	BYTE PTR [bx+3],48	;0030H
+	*** 0001d2	7c 06 			jl	$I652
+	*** 0001d4	80 7f 03 36 		cmp	BYTE PTR [bx+3],54	;0036H
+	*** 0001d8	7e 0e 			jle	$I651
+					$I652:
+;|***                 {
+;|***                     printf( "Invalid option - %s\n", argv[iArgIndex] );
+; Line 289
+	*** 0001da	8b 5e da 		mov	bx,WORD PTR [bp-38]	;iArgIndex
+	*** 0001dd	03 db 			add	bx,bx
+	*** 0001df	ff 30 			push	WORD PTR [bx][si]
+	*** 0001e1	68 00 00 		push	OFFSET DGROUP:$SG653
+	*** 0001e4	e9 35 ff 		jmp	$L1005
+	*** 0001e7	90 			nop	
+;|***                     ret = 1;
+;|***                     goto main_error;
+;|***                 }
+;|***                 iDesiredMode = (int)(argv[iArgIndex][3] - '0');
+; Line 293
+					$I651:
+	*** 0001e8	8b 5e da 		mov	bx,WORD PTR [bp-38]	;iArgIndex
+	*** 0001eb	03 db 			add	bx,bx
+	*** 0001ed	8b 18 			mov	bx,WORD PTR [bx][si]
+	*** 0001ef	8a 47 03 		mov	al,BYTE PTR [bx+3]
+	*** 0001f2	98 			cbw	
+	*** 0001f3	2d 30 00 		sub	ax,48	;0030H
+	*** 0001f6	e9 92 00 		jmp	$L1007
+	*** 0001f9	90 			nop	
+;|***                 break;
+;|*** 
+;|***             case 'e':
+; Line 296
+					$SC654:
+;|***                 if( bRNDISDownload )
+; Line 297
+	*** 0001fa	83 7e de 00 		cmp	WORD PTR [bp-34],0	;bRNDISDownload
+	*** 0001fe	74 0c 			je	$I655
+;|***                 {
+;|***                     printf( "The /E and /K options are mutually exclusive"
+;|***                             " - please choose one of them.\r\n" );
+; Line 300
+	*** 000200	68 00 00 		push	OFFSET DGROUP:$SG656
+					$L1006:
+	*** 000203	e8 00 00 		call	_printf
+	*** 000206	83 c4 02 		add	sp,2
+;|*** 
+;|***                     goto main_error;
+; Line 302
+	*** 000209	e9 dc 03 		jmp	$main_error639
+;|***                 }
+;|***                 if( !ParseEthernetOptions(argv[iArgIndex]) )
+; Line 304
+					$I655:
+	*** 00020c	8b 5e da 		mov	bx,WORD PTR [bp-38]	;iArgIndex
+	*** 00020f	03 db 			add	bx,bx
+	*** 000211	8b 76 06 		mov	si,WORD PTR [bp+6]	;argv
+	*** 000214	ff 30 			push	WORD PTR [bx][si]
+	*** 000216	8b fb 			mov	di,bx
+	*** 000218	e8 00 00 		call	_ParseEthernetOptions
+	*** 00021b	83 c4 02 		add	sp,2
+	*** 00021e	0b c0 			or	ax,ax
+	*** 000220	75 0a 			jne	$I657
+;|***                 {
+;|***                     printf("Invalid option - %s\n", argv[iArgIndex]);
+; Line 306
+	*** 000222	03 fe 			add	di,si
+	*** 000224	ff 35 			push	WORD PTR [di]
+	*** 000226	68 00 00 		push	OFFSET DGROUP:$SG658
+	*** 000229	e9 f0 fe 		jmp	$L1005
+;|***                     ret = 1;
+;|***                     goto main_error;
+;|***                 }
+;|***                 bEtherDownload = TRUE;
+; Line 310
+					$I657:
+	*** 00022c	c7 46 dc 01 00 		mov	WORD PTR [bp-36],1	;bEtherDownload
+;|***                 break;
+; Line 311
+	*** 000231	e9 0e 02 		jmp	$SB632
+;|*** 
+;|***             case 'k':   /* RNDIS flags */
+; Line 313
+					$SC659:
+;|*** 
+;|***                 if( bEtherDownload )
+; Line 315
+	*** 000234	83 7e dc 00 		cmp	WORD PTR [bp-36],0	;bEtherDownload
+	*** 000238	74 06 			je	$I660
+;|***                 {
+;|***                     printf( "The /E and /K options are mutually exclusive"
+;|***                             "- please choose one of them.\r\n");
+; Line 318
+	*** 00023a	68 00 00 		push	OFFSET DGROUP:$SG661
+	*** 00023d	eb c4 			jmp	SHORT $L1006
+	*** 00023f	90 			nop	
+;|***                     goto main_error;
+;|***                 }
+;|***                 if( !ParseEthernetOptions(argv[iArgIndex]) )
+; Line 321
+					$I660:
+	*** 000240	8b 5e da 		mov	bx,WORD PTR [bp-38]	;iArgIndex
+	*** 000243	03 db 			add	bx,bx
+	*** 000245	8b 76 06 		mov	si,WORD PTR [bp+6]	;argv
+	*** 000248	ff 30 			push	WORD PTR [bx][si]
+	*** 00024a	8b fb 			mov	di,bx
+	*** 00024c	e8 00 00 		call	_ParseEthernetOptions
+	*** 00024f	83 c4 02 		add	sp,2
+	*** 000252	0b c0 			or	ax,ax
+	*** 000254	75 0a 			jne	$I662
+;|***                 {
+;|***                     printf("Invalid option - %s\n", argv[iArgIndex]);
+; Line 323
+	*** 000256	03 fe 			add	di,si
+	*** 000258	ff 35 			push	WORD PTR [di]
+	*** 00025a	68 00 00 		push	OFFSET DGROUP:$SG663
+	*** 00025d	e9 bc fe 		jmp	$L1005
+;|***                     ret = 1;
+;|***                     goto main_error;
+;|***                 }
+;|***                 bRNDISDownload = TRUE;
+; Line 327
+					$I662:
+	*** 000260	c7 46 de 01 00 		mov	WORD PTR [bp-34],1	;bRNDISDownload
+;|***                 break;
+; Line 328
+	*** 000265	e9 da 01 		jmp	$SB632
+;|*** 
+;|***             case 'l':   
+; Line 330
+					$SC664:
+;|*** 
+;|***                 // VESA VBE Linear/Flat Framebuffer display mode 
+;|*** 
+;|***                 if( !ParseVESAOptions( argv[iArgIndex] ) )
+; Line 334
+	*** 000268	8b 5e da 		mov	bx,WORD PTR [bp-38]	;iArgIndex
+	*** 00026b	03 db 			add	bx,bx
+	*** 00026d	8b 76 06 		mov	si,WORD PTR [bp+6]	;argv
+	*** 000270	ff 30 			push	WORD PTR [bx][si]
+	*** 000272	8b fb 			mov	di,bx
+	*** 000274	e8 00 00 		call	_ParseVESAOptions
+	*** 000277	83 c4 02 		add	sp,2
+	*** 00027a	0b c0 			or	ax,ax
+	*** 00027c	75 0a 			jne	$I665
+;|***                 {
+;|***                     printf( "Invalid option - %s\n", argv[iArgIndex] );
+; Line 336
+	*** 00027e	03 fe 			add	di,si
+	*** 000280	ff 35 			push	WORD PTR [di]
+	*** 000282	68 00 00 		push	OFFSET DGROUP:$SG666
+	*** 000285	e9 94 fe 		jmp	$L1005
+;|***                     ret = 1;
+;|***                     goto main_error;
+;|***                 }
+;|***                 iDesiredMode = BootArgs.vesaMode;
+; Line 340
+					$I665:
+	*** 000288	a1 6c 00 		mov	ax,WORD PTR _BootArgs+108
+					$L1007:
+	*** 00028b	a3 00 00 		mov	WORD PTR _iDesiredMode,ax
+;|*** #if 0
+;|*** 
+;|***                 // Video Mode Debug - display and hang
+;|*** 
+;|***                 printf( "VESA Boot Options\n" );
+;|***                 printf( "vesaMode........: 0x%x\n", BootArgs.vesaMode );
+;|***                 printf( "xDisplayScreen..: %d\n", BootArgs.cxDisplayScreen );
+;|***                 printf( "YDisplayScreen..: %d\n", BootArgs.cyDisplayScreen );
+;|***                 printf( "bppScreen.......: %d\n", BootArgs.bppScreen );
+;|***                 printf( "xPhysScreen.....: %d\n", BootArgs.cxPhysicalScreen );  
+;|***                 printf( "yPhysScreen.....: %d\n", BootArgs.cyPhysicalScreen );  
+;|*** 
+;|***                 while( 1 )
+;|***                 {
+;|***                     ;
+;|***                 }
+;|*** #endif
+;|***                 break;
+; Line 358
+	*** 00028e	e9 b1 01 		jmp	$SB632
+	*** 000291	90 			nop	
+;|*** 
+;|***             case 'n':   /* Device name specified */
+; Line 360
+					$SC667:
+;|*** 
+;|***                 if( !ParseDeviceName(argv[iArgIndex]) )
+; Line 362
+	*** 000292	8b 5e da 		mov	bx,WORD PTR [bp-38]	;iArgIndex
+	*** 000295	03 db 			add	bx,bx
+	*** 000297	8b 76 06 		mov	si,WORD PTR [bp+6]	;argv
+	*** 00029a	ff 30 			push	WORD PTR [bx][si]
+	*** 00029c	8b fb 			mov	di,bx
+	*** 00029e	e8 00 00 		call	_ParseDeviceName
+	*** 0002a1	83 c4 02 		add	sp,2
+	*** 0002a4	0b c0 			or	ax,ax
+	*** 0002a6	74 03 			je	$JCC678
+	*** 0002a8	e9 97 01 		jmp	$SB632
+					$JCC678:
+;|***                 {
+;|***                     printf("Invalid option - %s\n", argv[iArgIndex]); 
+; Line 364
+	*** 0002ab	03 fe 			add	di,si
+	*** 0002ad	ff 35 			push	WORD PTR [di]
+	*** 0002af	68 00 00 		push	OFFSET DGROUP:$SG669
+	*** 0002b2	e9 67 fe 		jmp	$L1005
+	*** 0002b5	90 			nop	
+					$SC670:
+;|***                     ret = 1;
+;|***                     goto main_error;
+;|***                 }
+;|***                 break;
+;|*** 
+;|***             case 'p':   /* Parallel port boot download */
+;|*** 
+;|***                 bParallelDownload=TRUE;
+; Line 372
+	*** 0002b6	c7 46 ee 01 00 		mov	WORD PTR [bp-18],1	;bParallelDownload
+	*** 0002bb	eb 0f 			jmp	SHORT $L1008
+	*** 0002bd	90 			nop	
+;|***                 pszFileName= NULL;
+;|***                 break;
+;|*** 
+;|***             case 'a':   /* Use permanent storage to store image */
+; Line 376
+					$SC671:
+;|*** 
+;|***                 bBackupImage=TRUE;
+; Line 378
+	*** 0002be	c7 46 ec 01 00 		mov	WORD PTR [bp-20],1	;bBackupImage
+;|***                 break;
+; Line 379
+	*** 0002c3	e9 7c 01 		jmp	$SB632
+;|*** 
+;|***             case 'q':   /* Serial port boot download */
+; Line 381
+					$SC672:
+;|*** 
+;|***                 bSerialDownload=TRUE;
+; Line 383
+	*** 0002c6	c7 06 00 00 01 00 	mov	WORD PTR _bSerialDownload,1
+;|***                 pszFileName= NULL;
+; Line 384
+					$L1008:
+	*** 0002cc	c7 46 fe 00 00 		mov	WORD PTR [bp-2],0	;pszFileName
+;|***                 break;
+; Line 385
+	*** 0002d1	e9 6e 01 		jmp	$SB632
+;|*** 
+;|***             case 'v':
+; Line 387
+					$SC673:
+;|*** 
+;|***                 bVerbose = TRUE;
+; Line 389
+	*** 0002d4	c7 46 f0 01 00 		mov	WORD PTR [bp-16],1	;bVerbose
+;|***                 break;
+; Line 390
+	*** 0002d9	e9 66 01 		jmp	$SB632
+;|*** 
+;|***             case 's':
+; Line 392
+					$SC674:
+;|***                 {
+; Line 393
+;	pszPath = -40
+;|***                     char   *pszPath;
+;|*** 
+;|***                     iPpfstool=1;
+; Line 396
+	*** 0002dc	c7 46 e0 01 00 		mov	WORD PTR [bp-32],1	;iPpfstool
+;|*** 
+;|***                     if( argv[iArgIndex][2] != '\0' )
+; Line 398
+	*** 0002e1	8b 5e da 		mov	bx,WORD PTR [bp-38]	;iArgIndex
+	*** 0002e4	03 db 			add	bx,bx
+	*** 0002e6	8b 76 06 		mov	si,WORD PTR [bp+6]	;argv
+	*** 0002e9	8b 18 			mov	bx,WORD PTR [bx][si]
+	*** 0002eb	80 7f 02 00 		cmp	BYTE PTR [bx+2],0
+	*** 0002ef	74 13 			je	$I676
+;|***                     {
+;|***                         pszPath = &argv[iArgIndex][2];
+; Line 400
+	*** 0002f1	8d 47 02 		lea	ax,WORD PTR [bx+2]
+	*** 0002f4	89 46 d8 		mov	WORD PTR [bp-40],ax	;pszPath
+;|***                         if( *pszPath == ':' )
+; Line 401
+	*** 0002f7	8b d8 			mov	bx,ax
+	*** 0002f9	80 3f 3a 		cmp	BYTE PTR [bx],58	;003aH
+	*** 0002fc	75 31 			jne	$I680
+;|***                         {
+;|***                             pszPath++;
+; Line 403
+	*** 0002fe	40 			inc	ax
+	*** 0002ff	89 46 d8 		mov	WORD PTR [bp-40],ax	;pszPath
+;|***                         }
+;|***                     }
+;|***                     else if( (argc > (i+1) && argv[iArgIndex+1][0] != '-') && 
+; Line 406
+	*** 000302	eb 2b 			jmp	SHORT $I680
+					$I676:
+;|***                              (argv[iArgIndex+1][0] != '/') )
+; Line 407
+	*** 000304	8b 46 e4 		mov	ax,WORD PTR [bp-28]	;i
+	*** 000307	40 			inc	ax
+	*** 000308	3b 46 04 		cmp	ax,WORD PTR [bp+4]	;argc
+	*** 00030b	7d 1d 			jge	$I679
+	*** 00030d	8b 76 da 		mov	si,WORD PTR [bp-38]	;iArgIndex
+	*** 000310	8b 5e 06 		mov	bx,WORD PTR [bp+6]	;argv
+	*** 000313	03 f6 			add	si,si
+	*** 000315	8b 58 02 		mov	bx,WORD PTR [bx+2][si]
+	*** 000318	80 3f 2d 		cmp	BYTE PTR [bx],45	;002dH
+	*** 00031b	74 0d 			je	$I679
+	*** 00031d	80 3f 2f 		cmp	BYTE PTR [bx],47	;002fH
+	*** 000320	74 08 			je	$I679
+;|***                     {
+;|***                         pszPath = argv[iArgIndex+1];
+; Line 409
+	*** 000322	89 5e d8 		mov	WORD PTR [bp-40],bx	;pszPath
+;|***                         i++;
+; Line 410
+	*** 000325	89 46 e4 		mov	WORD PTR [bp-28],ax	;i
+;|***                     }
+;|***                     else
+; Line 412
+	*** 000328	eb 05 			jmp	SHORT $I680
+					$I679:
+;|***                     {
+;|***                         pszPath = "*.*";
+; Line 414
+	*** 00032a	c7 46 d8 00 00 		mov	WORD PTR [bp-40],OFFSET DGROUP:$SG681	;pszPath
+;|***                     }
+; Line 415
+					$I680:
+;|***                     DisplayDirectory(pszPath);
+; Line 416
+	*** 00032f	ff 76 d8 		push	WORD PTR [bp-40]	;pszPath
+	*** 000332	e8 00 00 		call	_DisplayDirectory
+	*** 000335	eb 79 			jmp	SHORT $L1009
+	*** 000337	90 			nop	
+;|***                 }
+;|***                 break;
+;|*** 
+;|***             case 'g':
+; Line 420
+					$SC682:
+;|***             case 'r':
+;|***             case 'u':
+;|***                 {
+; Line 423
+;	pszSource = -40
+;	pszDestination = -42
+;|***                     char    *pszSource;
+;|***                     char    *pszDestination;
+;|*** 
+;|***                     iPpfstool=1;
+; Line 427
+	*** 000338	c7 46 e0 01 00 		mov	WORD PTR [bp-32],1	;iPpfstool
+;|***                     if( argv[iArgIndex][2] != '\0' )
+; Line 428
+	*** 00033d	8b 5e da 		mov	bx,WORD PTR [bp-38]	;iArgIndex
+	*** 000340	03 db 			add	bx,bx
+	*** 000342	8b 76 06 		mov	si,WORD PTR [bp+6]	;argv
+	*** 000345	8b 18 			mov	bx,WORD PTR [bx][si]
+	*** 000347	80 7f 02 00 		cmp	BYTE PTR [bx+2],0
+	*** 00034b	74 13 			je	$I685
+;|***                     {
+;|***                         pszSource = &argv[iArgIndex][2];
+; Line 430
+	*** 00034d	8d 47 02 		lea	ax,WORD PTR [bx+2]
+	*** 000350	89 46 d8 		mov	WORD PTR [bp-40],ax	;pszPath
+;|***                         if( *pszSource == ':' )
+; Line 431
+	*** 000353	8b d8 			mov	bx,ax
+	*** 000355	80 3f 3a 		cmp	BYTE PTR [bx],58	;003aH
+	*** 000358	75 2a 			jne	$I687
+;|***                         {
+;|***                             pszSource++;
+; Line 433
+	*** 00035a	40 			inc	ax
+	*** 00035b	89 46 d8 		mov	WORD PTR [bp-40],ax	;pszPath
+;|***                         }
+;|***                     }
+;|***                     else if( argc > (iArgIndex+1) && argv[iArgIndex+1][0] != '-' && argv[iArgIndex+1][0] != '/' )
+; Line 436
+	*** 00035e	eb 24 			jmp	SHORT $I687
+					$I685:
+	*** 000360	8b 46 da 		mov	ax,WORD PTR [bp-38]	;iArgIndex
+	*** 000363	40 			inc	ax
+	*** 000364	3b 46 04 		cmp	ax,WORD PTR [bp+4]	;argc
+	*** 000367	7d 41 			jge	$I688
+	*** 000369	8b 76 da 		mov	si,WORD PTR [bp-38]	;iArgIndex
+	*** 00036c	8b 5e 06 		mov	bx,WORD PTR [bp+6]	;argv
+	*** 00036f	03 f6 			add	si,si
+	*** 000371	8b 58 02 		mov	bx,WORD PTR [bx+2][si]
+	*** 000374	80 3f 2d 		cmp	BYTE PTR [bx],45	;002dH
+	*** 000377	74 31 			je	$I688
+	*** 000379	80 3f 2f 		cmp	BYTE PTR [bx],47	;002fH
+	*** 00037c	74 2c 			je	$I688
+;|***                     {
+;|***                         pszSource = argv[iArgIndex+1];
+; Line 438
+	*** 00037e	89 5e d8 		mov	WORD PTR [bp-40],bx	;pszPath
+;|***                         iArgIndex++;
+; Line 439
+	*** 000381	89 46 da 		mov	WORD PTR [bp-38],ax	;iArgIndex
+;|***                     }
+;|***                     else
+; Line 441
+					$I687:
+;|***                     {
+;|***                         printf("Error source path missing\n");
+;|***                         break;
+;|***                     }
+;|*** 
+;|***                     if( argc > (iArgIndex+1) && argv[iArgIndex+1][0] != '-' && argv[iArgIndex+1][0] != '/' )
+; Line 447
+	*** 000384	8b 46 da 		mov	ax,WORD PTR [bp-38]	;iArgIndex
+	*** 000387	40 			inc	ax
+	*** 000388	3b 46 04 		cmp	ax,WORD PTR [bp+4]	;argc
+	*** 00038b	7d 29 			jge	$I691
+	*** 00038d	8b 76 da 		mov	si,WORD PTR [bp-38]	;iArgIndex
+	*** 000390	8b 5e 06 		mov	bx,WORD PTR [bp+6]	;argv
+	*** 000393	03 f6 			add	si,si
+	*** 000395	8b 58 02 		mov	bx,WORD PTR [bx+2][si]
+	*** 000398	80 3f 2d 		cmp	BYTE PTR [bx],45	;002dH
+	*** 00039b	74 19 			je	$I691
+	*** 00039d	80 3f 2f 		cmp	BYTE PTR [bx],47	;002fH
+	*** 0003a0	74 14 			je	$I691
+;|***                     {
+;|***                         pszDestination = argv[iArgIndex+1];
+; Line 449
+	*** 0003a2	89 5e d6 		mov	WORD PTR [bp-42],bx	;pszDestination
+;|***                         i++;
+; Line 450
+	*** 0003a5	ff 46 e4 		inc	WORD PTR [bp-28]	;i
+;|***                     }
+;|***                     else
+; Line 452
+	*** 0003a8	eb 11 			jmp	SHORT $I692
+					$I688:
+;|***                         printf("Error source path missing\n");
+; Line 443
+	*** 0003aa	68 00 00 		push	OFFSET DGROUP:$SG690
+	*** 0003ad	e8 00 00 		call	_printf
+					$L1009:
+	*** 0003b0	83 c4 02 		add	sp,2
+;|***                         break;
+; Line 444
+	*** 0003b3	e9 8c 00 		jmp	$SB632
+;|***                     }
+; Line 445
+					$I691:
+;|*** 
+;|***                     if( argc > (iArgIndex+1) && argv[iArgIndex+1][0] != '-' && argv[iArgIndex+1][0] != '/' )
+;|***                     {
+;|***                         pszDestination = argv[iArgIndex+1];
+;|***                         i++;
+;|***                     }
+;|***                     else
+;|***                     {
+;|***                         pszDestination = NULL;
+; Line 454
+	*** 0003b6	c7 46 d6 00 00 		mov	WORD PTR [bp-42],0	;pszDestination
+;|***                     }
+; Line 455
+					$I692:
+;|*** 
+;|***                     GetFile( pszSource, pszDestination,
+;|***                              cOption == 'r' ? COPY_FLAG_UPDATE_EXISTING :
+;|***                              cOption == 'u' ? COPY_FLAG_UPDATE_OR_ADD :
+;|***                              0 );
+; Line 460
+	*** 0003bb	80 7e e6 72 		cmp	BYTE PTR [bp-26],114	;0072H	;cOption
+	*** 0003bf	75 05 			jne	$L977
+	*** 0003c1	b8 01 00 		mov	ax,1
+	*** 0003c4	eb 0e 			jmp	SHORT $L980
+					$L977:
+	*** 0003c6	80 7e e6 75 		cmp	BYTE PTR [bp-26],117	;0075H	;cOption
+	*** 0003ca	75 06 			jne	$L979
+	*** 0003cc	b8 02 00 		mov	ax,2
+	*** 0003cf	eb 03 			jmp	SHORT $L980
+	*** 0003d1	90 			nop	
+					$L979:
+	*** 0003d2	33 c0 			xor	ax,ax
+					$L980:
+	*** 0003d4	89 46 d4 		mov	WORD PTR [bp-44],ax
+	*** 0003d7	50 			push	ax
+	*** 0003d8	ff 76 d6 		push	WORD PTR [bp-42]	;pszDestination
+	*** 0003db	ff 76 d8 		push	WORD PTR [bp-40]	;pszPath
+	*** 0003de	e8 00 00 		call	_GetFile
+	*** 0003e1	83 c4 06 		add	sp,6
+;|***                 }
+;|***                 break;
+; Line 462
+	*** 0003e4	eb 5c 			jmp	SHORT $SB632
+;|*** 
+;|***             default:
+; Line 464
+					$L982:
+	*** 0003e6	2c 64 			sub	al,100	;0064H
+	*** 0003e8	75 03 			jne	$JCC1000
+	*** 0003ea	e9 d1 fd 		jmp	$SC650
+					$JCC1000:
+	*** 0003ed	fe c8 			dec	al
+	*** 0003ef	75 03 			jne	$JCC1007
+	*** 0003f1	e9 06 fe 		jmp	$SC654
+					$JCC1007:
+	*** 0003f4	2c 02 			sub	al,2
+	*** 0003f6	75 03 			jne	$JCC1014
+	*** 0003f8	e9 3d ff 		jmp	$SC682
+					$JCC1014:
+					$SD693:
+;|*** 
+;|***                 printf("Unrecognized option - %s\n", argv[iArgIndex]);
+; Line 466
+	*** 0003fb	8b 5e da 		mov	bx,WORD PTR [bp-38]	;iArgIndex
+	*** 0003fe	03 db 			add	bx,bx
+	*** 000400	8b 76 06 		mov	si,WORD PTR [bp+6]	;argv
+	*** 000403	ff 30 			push	WORD PTR [bx][si]
+	*** 000405	68 00 00 		push	OFFSET DGROUP:$SG694
+	*** 000408	e8 00 00 		call	_printf
+	*** 00040b	83 c4 04 		add	sp,4
+;|*** 
+;|***                 // Fall through to display usage 
+;|*** 
+;|***             case '?':
+; Line 470
+					$SC695:
+;|***             case 'h':
+;|*** 
+;|***                 // Display usage data
+;|*** 
+;|***                 usage( argv[0] );
+; Line 475
+	*** 00040e	8b 5e 06 		mov	bx,WORD PTR [bp+6]	;argv
+	*** 000411	ff 37 			push	WORD PTR [bx]
+	*** 000413	e8 00 00 		call	usage
+	*** 000416	83 c4 02 		add	sp,2
+	*** 000419	e9 06 fd 		jmp	$L1004
+					$L981:
+	*** 00041c	2c 6b 			sub	al,107	;006bH
+	*** 00041e	3d 0a 00 		cmp	ax,10	;000aH
+	*** 000421	77 d8 			ja	$SD693
+	*** 000423	03 c0 			add	ax,ax
+	*** 000425	93 			xchg	ax,bx
+	*** 000426	2e ff a7 00 00 		jmp	WORD PTR cs:$L983[bx]
+	*** 00042b	90 			nop	
+					$L983:
+	*** 00042c	00 00 				DW	$SC659
+	*** 00042e	00 00 				DW	$SC664
+	*** 000430	00 00 				DW	$SD693
+	*** 000432	00 00 				DW	$SC667
+	*** 000434	00 00 				DW	$SD693
+	*** 000436	00 00 				DW	$SC670
+	*** 000438	00 00 				DW	$SC672
+	*** 00043a	00 00 				DW	$SC682
+	*** 00043c	00 00 				DW	$SC674
+	*** 00043e	00 00 				DW	$SD693
+	*** 000440	00 00 				DW	$SC682
+					$SB632:
+;|***                 ret = 1;
+;|***                 goto main_error;
+;|***             }
+;|***         }
+; Line 479
+	*** 000442	ff 46 da 		inc	WORD PTR [bp-38]	;iArgIndex
+					$F627:
+	*** 000445	8b 46 04 		mov	ax,WORD PTR [bp+4]	;argc
+	*** 000448	39 46 da 		cmp	WORD PTR [bp-38],ax	;iArgIndex
+	*** 00044b	7d 1a 			jge	$FB629
+;|***             if( argv[iArgIndex][0] != '/' && argv[iArgIndex][0] != '-' )
+; Line 222
+	*** 00044d	8b 5e da 		mov	bx,WORD PTR [bp-38]	;iArgIndex
+	*** 000450	03 db 			add	bx,bx
+	*** 000452	8b 76 06 		mov	si,WORD PTR [bp+6]	;argv
+	*** 000455	8b 18 			mov	bx,WORD PTR [bx][si]
+	*** 000457	80 3f 2f 		cmp	BYTE PTR [bx],47	;002fH
+	*** 00045a	75 03 			jne	$JCC1114
+	*** 00045c	e9 47 fc 		jmp	$I630
+					$JCC1114:
+	*** 00045f	80 3f 2d 		cmp	BYTE PTR [bx],45	;002dH
+	*** 000462	75 03 			jne	$JCC1122
+	*** 000464	e9 3f fc 		jmp	$I630
+					$JCC1122:
+;|***             {
+;|***                 break;
+; Line 224
+					$FB629:
+;|***             }
+;|*** 
+;|***             cOption = (char)tolower(argv[iArgIndex][1]);
+;|*** 
+;|***             // Process according to option character
+;|*** 
+;|***             switch( cOption )
+;|***             {
+;|***             case 'b':   /* Baud rate */
+;|*** 
+;|***                 if( argv[iArgIndex][2] != ':' ||
+;|***                     argv[iArgIndex][3] < '0' || argv[iArgIndex][3] > '9' )
+;|***                 {
+;|***                     printf("Invalid option - %s\n", argv[iArgIndex]);
+;|***                     ret = 1;
+;|***                     goto main_error;
+;|***                 }
+;|*** 
+;|***                 ulBaudRate = atol(&argv[iArgIndex][3]);
+;|*** 
+;|***                 for( i=0; i < NUM_BAUD_RATES; i++ )
+;|***                 {
+;|***                     if( BaudTable[i].ulRate == ulBaudRate )
+;|***                     {
+;|***                         BootArgs.ucBaudDivisor = BaudTable[i].ucDivisor;
+;|***                         break;
+;|***                     }
+;|***                 }
+;|*** 
+;|***                 if( i >= NUM_BAUD_RATES )
+;|***                 {
+;|***                     printf( "Unsupported baud rate - %s\n", argv[iArgIndex] );
+;|***                     ret = 1;
+;|***                     goto main_error;
+;|***                 }
+;|***                 break;
+;|*** 
+;|***             case 'c':
+;|*** 
+;|***                 // COM Port Parameter
+;|***                 //
+;|***                 // Allowable values for the COM ports 1-4. Zero (0) is 
+;|***                 // allowed as a way to disable use of the COM port and is
+;|***                 // allowed by ...\csp\i486\oal\debug.c.
+;|*** 
+;|***                 if( (argv[iArgIndex][2] == ':') &&
+;|***                     (argv[iArgIndex][3] >= '0') &&  
+;|***                     (argv[iArgIndex][3] <= '4') )
+;|***                 {
+;|***                     BootArgs.ucComPort = (UCHAR)(argv[iArgIndex][3] - '0');
+;|***                 }
+;|***                 else
+;|***                 {
+;|***                     printf( "Invalid option - %s\n", argv[iArgIndex] );
+;|***                     ret = 1;
+;|***                     goto main_error;
+;|***                 }
+;|***                 break;
+;|*** 
+;|***             case 'd':   /* Display mode */
+;|*** 
+;|***                 if( argv[iArgIndex][2] != ':' ||
+;|***                     argv[iArgIndex][3] < '0' || argv[iArgIndex][3] > '6' )
+;|***                 {
+;|***                     printf( "Invalid option - %s\n", argv[iArgIndex] );
+;|***                     ret = 1;
+;|***                     goto main_error;
+;|***                 }
+;|***                 iDesiredMode = (int)(argv[iArgIndex][3] - '0');
+;|***                 break;
+;|*** 
+;|***             case 'e':
+;|***                 if( bRNDISDownload )
+;|***                 {
+;|***                     printf( "The /E and /K options are mutually exclusive"
+;|***                             " - please choose one of them.\r\n" );
+;|*** 
+;|***                     goto main_error;
+;|***                 }
+;|***                 if( !ParseEthernetOptions(argv[iArgIndex]) )
+;|***                 {
+;|***                     printf("Invalid option - %s\n", argv[iArgIndex]);
+;|***                     ret = 1;
+;|***                     goto main_error;
+;|***                 }
+;|***                 bEtherDownload = TRUE;
+;|***                 break;
+;|*** 
+;|***             case 'k':   /* RNDIS flags */
+;|*** 
+;|***                 if( bEtherDownload )
+;|***                 {
+;|***                     printf( "The /E and /K options are mutually exclusive"
+;|***                             "- please choose one of them.\r\n");
+;|***                     goto main_error;
+;|***                 }
+;|***                 if( !ParseEthernetOptions(argv[iArgIndex]) )
+;|***                 {
+;|***                     printf("Invalid option - %s\n", argv[iArgIndex]);
+;|***                     ret = 1;
+;|***                     goto main_error;
+;|***                 }
+;|***                 bRNDISDownload = TRUE;
+;|***                 break;
+;|*** 
+;|***             case 'l':   
+;|*** 
+;|***                 // VESA VBE Linear/Flat Framebuffer display mode 
+;|*** 
+;|***                 if( !ParseVESAOptions( argv[iArgIndex] ) )
+;|***                 {
+;|***                     printf( "Invalid option - %s\n", argv[iArgIndex] );
+;|***                     ret = 1;
+;|***                     goto main_error;
+;|***                 }
+;|***                 iDesiredMode = BootArgs.vesaMode;
+;|*** #if 0
+;|*** 
+;|***                 // Video Mode Debug - display and hang
+;|*** 
+;|***                 printf( "VESA Boot Options\n" );
+;|***                 printf( "vesaMode........: 0x%x\n", BootArgs.vesaMode );
+;|***                 printf( "xDisplayScreen..: %d\n", BootArgs.cxDisplayScreen );
+;|***                 printf( "YDisplayScreen..: %d\n", BootArgs.cyDisplayScreen );
+;|***                 printf( "bppScreen.......: %d\n", BootArgs.bppScreen );
+;|***                 printf( "xPhysScreen.....: %d\n", BootArgs.cxPhysicalScreen );  
+;|***                 printf( "yPhysScreen.....: %d\n", BootArgs.cyPhysicalScreen );  
+;|*** 
+;|***                 while( 1 )
+;|***                 {
+;|***                     ;
+;|***                 }
+;|*** #endif
+;|***                 break;
+;|*** 
+;|***             case 'n':   /* Device name specified */
+;|*** 
+;|***                 if( !ParseDeviceName(argv[iArgIndex]) )
+;|***                 {
+;|***                     printf("Invalid option - %s\n", argv[iArgIndex]); 
+;|***                     ret = 1;
+;|***                     goto main_error;
+;|***                 }
+;|***                 break;
+;|*** 
+;|***             case 'p':   /* Parallel port boot download */
+;|*** 
+;|***                 bParallelDownload=TRUE;
+;|***                 pszFileName= NULL;
+;|***                 break;
+;|*** 
+;|***             case 'a':   /* Use permanent storage to store image */
+;|*** 
+;|***                 bBackupImage=TRUE;
+;|***                 break;
+;|*** 
+;|***             case 'q':   /* Serial port boot download */
+;|*** 
+;|***                 bSerialDownload=TRUE;
+;|***                 pszFileName= NULL;
+;|***                 break;
+;|*** 
+;|***             case 'v':
+;|*** 
+;|***                 bVerbose = TRUE;
+;|***                 break;
+;|*** 
+;|***             case 's':
+;|***                 {
+;|***                     char   *pszPath;
+;|*** 
+;|***                     iPpfstool=1;
+;|*** 
+;|***                     if( argv[iArgIndex][2] != '\0' )
+;|***                     {
+;|***                         pszPath = &argv[iArgIndex][2];
+;|***                         if( *pszPath == ':' )
+;|***                         {
+;|***                             pszPath++;
+;|***                         }
+;|***                     }
+;|***                     else if( (argc > (i+1) && argv[iArgIndex+1][0] != '-') && 
+;|***                              (argv[iArgIndex+1][0] != '/') )
+;|***                     {
+;|***                         pszPath = argv[iArgIndex+1];
+;|***                         i++;
+;|***                     }
+;|***                     else
+;|***                     {
+;|***                         pszPath = "*.*";
+;|***                     }
+;|***                     DisplayDirectory(pszPath);
+;|***                 }
+;|***                 break;
+;|*** 
+;|***             case 'g':
+;|***             case 'r':
+;|***             case 'u':
+;|***                 {
+;|***                     char    *pszSource;
+;|***                     char    *pszDestination;
+;|*** 
+;|***                     iPpfstool=1;
+;|***                     if( argv[iArgIndex][2] != '\0' )
+;|***                     {
+;|***                         pszSource = &argv[iArgIndex][2];
+;|***                         if( *pszSource == ':' )
+;|***                         {
+;|***                             pszSource++;
+;|***                         }
+;|***                     }
+;|***                     else if( argc > (iArgIndex+1) && argv[iArgIndex+1][0] != '-' && argv[iArgIndex+1][0] != '/' )
+;|***                     {
+;|***                         pszSource = argv[iArgIndex+1];
+;|***                         iArgIndex++;
+;|***                     }
+;|***                     else
+;|***                     {
+;|***                         printf("Error source path missing\n");
+;|***                         break;
+;|***                     }
+;|*** 
+;|***                     if( argc > (iArgIndex+1) && argv[iArgIndex+1][0] != '-' && argv[iArgIndex+1][0] != '/' )
+;|***                     {
+;|***                         pszDestination = argv[iArgIndex+1];
+;|***                         i++;
+;|***                     }
+;|***                     else
+;|***                     {
+;|***                         pszDestination = NULL;
+;|***                     }
+;|*** 
+;|***                     GetFile( pszSource, pszDestination,
+;|***                              cOption == 'r' ? COPY_FLAG_UPDATE_EXISTING :
+;|***                              cOption == 'u' ? COPY_FLAG_UPDATE_OR_ADD :
+;|***                              0 );
+;|***                 }
+;|***                 break;
+;|*** 
+;|***             default:
+;|*** 
+;|***                 printf("Unrecognized option - %s\n", argv[iArgIndex]);
+;|*** 
+;|***                 // Fall through to display usage 
+;|*** 
+;|***             case '?':
+;|***             case 'h':
+;|*** 
+;|***                 // Display usage data
+;|*** 
+;|***                 usage( argv[0] );
+;|***                 ret = 1;
+;|***                 goto main_error;
+;|***             }
+;|***         }
+;|*** 
+;|***         if( iArgIndex == (argc - 1) )
+; Line 481
+	*** 000467	2b 46 da 		sub	ax,WORD PTR [bp-38]	;iArgIndex
+	*** 00046a	48 			dec	ax
+	*** 00046b	75 0d 			jne	$I696
+;|***         {
+;|***             pszFileName = argv[iArgIndex];
+; Line 483
+	*** 00046d	8b 5e da 		mov	bx,WORD PTR [bp-38]	;iArgIndex
+	*** 000470	03 db 			add	bx,bx
+	*** 000472	8b 76 06 		mov	si,WORD PTR [bp+6]	;argv
+	*** 000475	8b 00 			mov	ax,WORD PTR [bx][si]
+	*** 000477	89 46 fe 		mov	WORD PTR [bp-2],ax	;pszFileName
+;|***         }
+;|***     }
+; Line 485
+					$I696:
+;|*** 
+;|***     if( iPpfstool )
+; Line 487
+	*** 00047a	83 7e e0 00 		cmp	WORD PTR [bp-32],0	;iPpfstool
+	*** 00047e	74 08 			je	$I697
+;|***     {
+;|***         ret = 0;
+; Line 489
+	*** 000480	c7 46 e2 00 00 		mov	WORD PTR [bp-30],0	;ret
+;|***         goto main_error;
+; Line 490
+	*** 000485	e9 60 01 		jmp	$main_error639
+;|***     }
+;|*** 
+;|***     if( !XmsIsInstalled() )
+; Line 493
+					$I697:
+	*** 000488	e8 00 00 		call	_XmsIsInstalled
+	*** 00048b	0b c0 			or	ax,ax
+	*** 00048d	75 11 			jne	$I698
+;|***     {
+;|***         printf( "HIMEM.SYS must be loaded\n" );
+; Line 495
+	*** 00048f	68 00 00 		push	OFFSET DGROUP:$SG699
+	*** 000492	e8 00 00 		call	_printf
+	*** 000495	83 c4 02 		add	sp,2
+;|***         ret = 2;
+; Line 496
+	*** 000498	c7 46 e2 02 00 		mov	WORD PTR [bp-30],2	;ret
+;|***         goto main_error;
+; Line 497
+	*** 00049d	e9 48 01 		jmp	$main_error639
+;|***     }
+;|*** 
+;|***     if( bVerbose )
+; Line 500
+					$I698:
+	*** 0004a0	83 7e f0 00 		cmp	WORD PTR [bp-16],0	;bVerbose
+	*** 0004a4	74 39 			je	$I703
+;|***     {
+;|***         if( (xmsError = XmsQueryA20(&bEnabled)) != XMS_SUCCESS )
+; Line 502
+	*** 0004a6	8d 46 f2 		lea	ax,WORD PTR [bp-14]	;bEnabled
+	*** 0004a9	50 			push	ax
+	*** 0004aa	e8 00 00 		call	_XmsQueryA20
+	*** 0004ad	83 c4 02 		add	sp,2
+	*** 0004b0	89 46 f4 		mov	WORD PTR [bp-12],ax	;xmsError
+	*** 0004b3	0b c0 			or	ax,ax
+	*** 0004b5	74 19 			je	$I701
+;|***         {
+;|***             printf( "Error querying A20 status - %s\n", 
+;|***                 XmsErrorString(xmsError) );
+; Line 505
+	*** 0004b7	50 			push	ax
+	*** 0004b8	e8 00 00 		call	_XmsErrorString
+	*** 0004bb	83 c4 02 		add	sp,2
+	*** 0004be	50 			push	ax
+	*** 0004bf	68 00 00 		push	OFFSET DGROUP:$SG702
+	*** 0004c2	e8 00 00 		call	_printf
+	*** 0004c5	83 c4 04 		add	sp,4
+;|***             ret = 3;
+; Line 506
+	*** 0004c8	c7 46 e2 03 00 		mov	WORD PTR [bp-30],3	;ret
+;|***             goto main_error;
+; Line 507
+	*** 0004cd	e9 18 01 		jmp	$main_error639
+;|***         }
+;|*** 
+;|***         if( bEnabled )
+; Line 510
+					$I701:
+	*** 0004d0	83 7e f2 00 		cmp	WORD PTR [bp-14],0	;bEnabled
+	*** 0004d4	74 09 			je	$I703
+;|***         {
+;|***             printf( "Warning A20 line already enabled\n" );
+; Line 512
+	*** 0004d6	68 00 00 		push	OFFSET DGROUP:$SG704
+	*** 0004d9	e8 00 00 		call	_printf
+	*** 0004dc	83 c4 02 		add	sp,2
+;|***         }
+;|***     }
+; Line 514
+					$I703:
+;|*** 
+;|***     // Check if PCI Bios is available, if so find out config mechanism
+;|*** 
+;|***     BootArgs.ucPCIConfigType = GetPCIConfigMechanism();
+; Line 518
+	*** 0004df	e8 00 00 		call	GetPCIConfigMechanism
+	*** 0004e2	a2 03 00 		mov	BYTE PTR _BootArgs+3,al
+;|*** 
+;|***     // Load the boot image
+;|*** 
+;|***     if( !LoadImage( bVerbose, bParallelDownload, pszFileName, &ulEntryPoint) )
+; Line 522
+	*** 0004e5	8d 46 fa 		lea	ax,WORD PTR [bp-6]	;ulEntryPoint
+	*** 0004e8	50 			push	ax
+	*** 0004e9	ff 76 fe 		push	WORD PTR [bp-2]	;pszFileName
+	*** 0004ec	ff 76 ee 		push	WORD PTR [bp-18]	;bParallelDownload
+	*** 0004ef	ff 76 f0 		push	WORD PTR [bp-16]	;bVerbose
+	*** 0004f2	e8 00 00 		call	LoadImage
+	*** 0004f5	83 c4 08 		add	sp,8
+	*** 0004f8	0b c0 			or	ax,ax
+	*** 0004fa	75 08 			jne	$I705
+;|***     {
+;|***         ret = 4;
+; Line 524
+	*** 0004fc	c7 46 e2 04 00 		mov	WORD PTR [bp-30],4	;ret
+;|***         goto main_error;
+; Line 525
+	*** 000501	e9 e4 00 		jmp	$main_error639
+;|***     }
+;|*** 
+;|***     // Enable A20 line
+;|*** 
+;|***     if( (xmsError = XmsLocalEnableA20()) != XMS_SUCCESS )
+; Line 530
+					$I705:
+	*** 000504	e8 00 00 		call	_XmsLocalEnableA20
+	*** 000507	89 46 f4 		mov	WORD PTR [bp-12],ax	;xmsError
+	*** 00050a	0b c0 			or	ax,ax
+	*** 00050c	74 12 			je	$I706
+;|***     {
+;|***         printf("Can't enable A20 line, error = 0x%4.4X\n", xmsError);
+; Line 532
+	*** 00050e	50 			push	ax
+	*** 00050f	68 00 00 		push	OFFSET DGROUP:$SG707
+	*** 000512	e8 00 00 		call	_printf
+	*** 000515	83 c4 04 		add	sp,4
+;|*** 
+;|***         ret = 5;
+; Line 534
+	*** 000518	c7 46 e2 05 00 		mov	WORD PTR [bp-30],5	;ret
+;|***         goto main_error;
+; Line 535
+	*** 00051d	e9 c8 00 		jmp	$main_error639
+;|***     }
+;|*** 
+;|***     // Set the video mode
+;|*** 
+;|***     BootArgs.ucVideoMode = SetVideoMode( iDesiredMode );
+; Line 540
+					$I706:
+	*** 000520	ff 36 00 00 		push	WORD PTR _iDesiredMode
+	*** 000524	e8 00 00 		call	_SetVideoMode
+	*** 000527	83 c4 02 		add	sp,2
+	*** 00052a	a2 00 00 		mov	BYTE PTR _BootArgs,al
+;|*** 
+;|***     if( BootArgs.ucVideoMode == 0 )
+; Line 542
+	*** 00052d	0a c0 			or	al,al
+	*** 00052f	75 29 			jne	$I708
+;|***     {
+;|***         // if using default mode set params for flat framebuffer driver.
+;|*** 
+;|***         BootArgs.cxDisplayScreen     = 320; 
+;|***         BootArgs.cyDisplayScreen     = 200;
+;|***         BootArgs.cxPhysicalScreen    = 320; 
+;|***         BootArgs.cyPhysicalScreen    = 200;
+; Line 549
+	*** 000531	b8 c8 00 		mov	ax,200	;00c8H
+	*** 000534	a3 70 00 		mov	WORD PTR _BootArgs+112,ax
+	*** 000537	a3 74 00 		mov	WORD PTR _BootArgs+116,ax
+;|***         BootArgs.bppScreen           = 8;
+; Line 550
+	*** 00053a	c7 06 78 00 08 00 	mov	WORD PTR _BootArgs+120,8
+;|***         BootArgs.cbScanLineLength    = 320;
+; Line 551
+	*** 000540	b8 40 01 		mov	ax,320	;0140H
+	*** 000543	a3 6e 00 		mov	WORD PTR _BootArgs+110,ax
+	*** 000546	a3 72 00 		mov	WORD PTR _BootArgs+114,ax
+	*** 000549	a3 76 00 		mov	WORD PTR _BootArgs+118,ax
+;|***         BootArgs.pvFlatFrameBuffer   = 0x800A0000;
+; Line 552
+	*** 00054c	c7 06 68 00 00 00 	mov	WORD PTR _BootArgs+104,0
+	*** 000552	c7 06 6a 00 0a 80 	mov	WORD PTR _BootArgs+106,-32758	;800aH
+;|***     }
+;|***     else if( BootArgs.ucVideoMode != 0xFF )
+; Line 554
+	*** 000558	eb 21 			jmp	SHORT $I710
+					$I708:
+	*** 00055a	80 3e 00 00 ff 		cmp	BYTE PTR _BootArgs,255	;00ffH
+	*** 00055f	74 1a 			je	$I710
+;|***     {
+;|***         // if not using VESA mode clear these so flat 
+;|***         // framebuffer driver sees all zeroes and faults.
+;|*** 
+;|***         BootArgs.cxDisplayScreen     = 0;   
+;|***         BootArgs.cyDisplayScreen     = 0;
+;|***         BootArgs.cxPhysicalScreen    = 0;   
+;|***         BootArgs.cyPhysicalScreen    = 0;
+;|***         BootArgs.bppScreen           = 0;
+;|***         BootArgs.cbScanLineLength    = 0;
+; Line 564
+	*** 000561	33 c0 			xor	ax,ax
+	*** 000563	a3 6e 00 		mov	WORD PTR _BootArgs+110,ax
+	*** 000566	a3 70 00 		mov	WORD PTR _BootArgs+112,ax
+	*** 000569	a3 72 00 		mov	WORD PTR _BootArgs+114,ax
+	*** 00056c	a3 74 00 		mov	WORD PTR _BootArgs+116,ax
+	*** 00056f	a3 78 00 		mov	WORD PTR _BootArgs+120,ax
+	*** 000572	a3 76 00 		mov	WORD PTR _BootArgs+118,ax
+;|***         BootArgs.pvFlatFrameBuffer   = 0;
+; Line 565
+	*** 000575	a3 6a 00 		mov	WORD PTR _BootArgs+106,ax
+	*** 000578	a3 68 00 		mov	WORD PTR _BootArgs+104,ax
+;|***     }
+;|*** 
+;|***     if( bSerialDownload )
+; Line 568
+					$I710:
+	*** 00057b	83 3e 00 00 00 		cmp	WORD PTR _bSerialDownload,0
+	*** 000580	74 05 			je	$I711
+;|***     {
+;|***         BootArgs.ucBaudDivisor|=0x80;
+; Line 570
+	*** 000582	80 0e 02 00 80 		or	BYTE PTR _BootArgs+2,128	;0080H
+;|***     }
+;|*** 
+;|***     if( bParallelDownload )
+; Line 573
+					$I711:
+	*** 000587	83 7e ee 00 		cmp	WORD PTR [bp-18],0	;bParallelDownload
+	*** 00058b	74 06 			je	$I712
+;|***     {
+;|***         BootArgs.KitlTransport = GetJumpFlags();
+; Line 575
+	*** 00058d	e8 00 00 		call	GetJumpFlags
+	*** 000590	a3 5a 00 		mov	WORD PTR _BootArgs+90,ax
+;|***     }
+;|*** 
+;|***     if( bBackupImage )
+; Line 578
+					$I712:
+	*** 000593	83 7e ec 00 		cmp	WORD PTR [bp-20],0	;bBackupImage
+	*** 000597	74 05 			je	$I713
+;|***     {
+;|***         BootArgs.ucLoaderFlags |= LDRFL_FLASH_BACKUP;
+; Line 580
+	*** 000599	80 0e 0c 00 80 		or	BYTE PTR _BootArgs+12,128	;0080H
+;|***     }
+;|*** 
+;|***     if( bVerbose )
+; Line 583
+					$I713:
+	*** 00059e	83 7e f0 00 		cmp	WORD PTR [bp-16],0	;bVerbose
+	*** 0005a2	74 0f 			je	$I714
+;|***     {
+;|***         printf( "Jumping to 0x%8.8lX\n", ulEntryPoint );
+; Line 585
+	*** 0005a4	ff 76 fc 		push	WORD PTR [bp-4]
+	*** 0005a7	ff 76 fa 		push	WORD PTR [bp-6]	;ulEntryPoint
+	*** 0005aa	68 00 00 		push	OFFSET DGROUP:$SG715
+	*** 0005ad	e8 00 00 		call	_printf
+	*** 0005b0	83 c4 06 		add	sp,6
+;|***     }
+;|*** 
+;|***     // Convert arguments to linear addres
+;|*** 
+;|***     ulArguments = (((ULONG)(void far *)&BootArgs) >> 16) << 4;
+; Line 590
+					$I714:
+;|***     ulArguments += ((ULONG)(void far *)&BootArgs) & 0xFFFF;
+;|*** 
+;|***     // Execute the image
+;|*** 
+;|***     Launch( ulEntryPoint, ulArguments );
+; Line 595
+	*** 0005b3	8c d8 			mov	ax,ds
+	*** 0005b5	2b d2 			sub	dx,dx
+	*** 0005b7	03 c0 			add	ax,ax
+	*** 0005b9	13 d2 			adc	dx,dx
+	*** 0005bb	03 c0 			add	ax,ax
+	*** 0005bd	13 d2 			adc	dx,dx
+	*** 0005bf	03 c0 			add	ax,ax
+	*** 0005c1	13 d2 			adc	dx,dx
+	*** 0005c3	03 c0 			add	ax,ax
+	*** 0005c5	13 d2 			adc	dx,dx
+	*** 0005c7	05 00 00 		add	ax,OFFSET DGROUP:_BootArgs
+	*** 0005ca	83 d2 00 		adc	dx,0
+	*** 0005cd	89 46 f6 		mov	WORD PTR [bp-10],ax	;ulArguments
+	*** 0005d0	89 56 f8 		mov	WORD PTR [bp-8],dx
+	*** 0005d3	52 			push	dx
+	*** 0005d4	50 			push	ax
+	*** 0005d5	ff 76 fc 		push	WORD PTR [bp-4]
+	*** 0005d8	ff 76 fa 		push	WORD PTR [bp-6]	;ulEntryPoint
+	*** 0005db	e8 00 00 		call	_Launch
+	*** 0005de	83 c4 08 		add	sp,8
+;|*** 
+;|***     // Launch should not return
+;|*** 
+;|***     return( 0 );
+; Line 599
+	*** 0005e1	33 c0 			xor	ax,ax
+	*** 0005e3	5e 			pop	si
+	*** 0005e4	5f 			pop	di
+	*** 0005e5	c9 			leave	
+	*** 0005e6	c3 			ret	
+	*** 0005e7	90 			nop	
+;|*** 
+;|*** 
+;|***     // Main Error Handler
+;|*** 
+;|*** main_error:
+; Line 604
+					$main_error639:
+;|*** 
+;|***     // Make sure we unlock and free extended memory
+;|*** 
+;|***     if( usBlockHandle )
+; Line 608
+	*** 0005e8	83 3e 00 00 00 		cmp	WORD PTR _usBlockHandle,0
+	*** 0005ed	74 14 			je	$I716
+;|***     {
+;|***         XmsUnlockExtendedMemory(usBlockHandle);
+; Line 610
+	*** 0005ef	ff 36 00 00 		push	WORD PTR _usBlockHandle
+	*** 0005f3	e8 00 00 		call	_XmsUnlockExtendedMemory
+	*** 0005f6	83 c4 02 		add	sp,2
+;|***         XmsFreeExtendedMemory(usBlockHandle);
+; Line 611
+	*** 0005f9	ff 36 00 00 		push	WORD PTR _usBlockHandle
+	*** 0005fd	e8 00 00 		call	_XmsFreeExtendedMemory
+	*** 000600	83 c4 02 		add	sp,2
+;|***     }
+;|*** 
+;|***     printf("\n\n               Press any key to cancel.\n");
+; Line 614
+					$I716:
+	*** 000603	68 00 00 		push	OFFSET DGROUP:$SG717
+	*** 000606	e8 00 00 		call	_printf
+	*** 000609	83 c4 02 		add	sp,2
+;|*** 	__asm
+;|***     {
+;|***         push    dx
+; Line 617
+	*** 00060c	52 			push	dx
+;|***         xor     ax,ax
+; Line 618
+	*** 00060d	33 c0 			xor	ax,ax
+;|***         int     0x16
+; Line 619
+	*** 00060f	cd 16 			int	22	;0016H
+;|***         pop     dx
+; Line 620
+	*** 000611	5a 			pop	dx
+;|***     }
+; Line 621
+;|***     // Indicate status
+;|*** 
+;|***     return( ret );
+; Line 624
+	*** 000612	8b 46 e2 		mov	ax,WORD PTR [bp-30]	;ret
+;|*** }
+; Line 625
+	*** 000615	5e 			pop	si
+	*** 000616	5f 			pop	di
+	*** 000617	c9 			leave	
+	*** 000618	c3 			ret	
+	*** 000619	90 			nop	
+
+_main	ENDP
+
+usage	PROC NEAR
+;|*** 
+;|*** //------------------------------------------------------------------------------
+;|*** //
+;|*** //  Function Name:  usage( char *pszProgramNameArg )
+;|*** //  Description..:  This function displays program usage information.
+;|*** //  Inputs.......:  char *      ProgramName
+;|*** //  Outputs......:  none
+;|*** //
+;|*** //------------------------------------------------------------------------------
+;|*** 
+;|*** static void usage( char *pszProgramNameArg ) 
+;|*** {
+; Line 637
+	*** 00061a	c8 02 00 00 		enter	2,0
+;	pszProgram = -2
+;	pszProgramNameArg = 4
+;|***     char *pszProgram;
+;|*** 
+;|***     pszProgram = strrchr(pszProgramNameArg, '\\');
+;|*** 
+;|***     if( pszProgram != NULL )
+; Line 642
+	*** 00061e	6a 5c 			push	92	;005cH
+	*** 000620	ff 76 04 		push	WORD PTR [bp+4]	;pszProgramNameArg
+	*** 000623	e8 00 00 		call	_strrchr
+	*** 000626	83 c4 04 		add	sp,4
+	*** 000629	89 46 fe 		mov	WORD PTR [bp-2],ax	;pszProgram
+	*** 00062c	0b c0 			or	ax,ax
+	*** 00062e	74 04 			je	$I722
+;|***     {
+;|***         pszProgram++;
+; Line 644
+	*** 000630	40 			inc	ax
+	*** 000631	eb 04 			jmp	SHORT $L1010
+	*** 000633	90 			nop	
+					$I722:
+;|***     }
+;|***     else
+;|***     {
+;|***         pszProgram = pszProgramNameArg;
+; Line 648
+	*** 000634	8b 46 04 		mov	ax,WORD PTR [bp+4]	;pszProgramNameArg
+					$L1010:
+	*** 000637	89 46 fe 		mov	WORD PTR [bp-2],ax	;pszProgram
+;|***     }
+;|*** 
+;|***     printf(
+;|***           "\n"
+;|***           "%s: Loads a BIN image into memory and boots it.\n"
+;|***           "\n"
+;|***           "Usage:%s /B:baud /C:Port /D:display /P /H /V /N:name\n"
+;|***           "  (/E|/K):IO:IRQ[:<dotted IP>] /L:VXxVYxBPP[:PXxPY] <file name>\n"
+;|***           "\n"
+;|***           "  /B  Baud Rate [9600|19200|38400(default)|57600|115200]"
+;|***           "\n"
+;|***           "  /C  Communications Port [0=disable|1|2|3|4]"
+;|***           "\n"
+;|***           "  /D  Display Resolution (for VESA modes, use the /L option instead).\n"
+;|***           "      0 = 320x200x256 (default), 1 = 480x240x256,\n"
+;|***           "      2 = 640x480x256, 3 = 800x600x256, 4 = 1024x768x256\n"
+;|***           "      5 = 240x320x256, 6 = 208x240x256\n"
+;|***           "\n"
+;|***           "  /P  Parallel port boot download.\n"
+;|***           "\n"
+;|***           "  /A  Use permanent storage device to store NK image.\n"
+;|***           "\n"
+;|***           "  /H  Help - displays this message.\n"
+;|***           "\n"
+;|***           "  Default <file name> is NK.BIN except for /P option which uses\n"
+;|***           "  default on host unless <file name> specified.\n"
+;|***           "\n"
+;|***           "Press any key for more options...",
+;|*** 
+;|***           pszProgram, pszProgram );
+; Line 678
+	*** 00063a	50 			push	ax
+	*** 00063b	50 			push	ax
+	*** 00063c	68 00 00 		push	OFFSET DGROUP:$SG724
+	*** 00063f	e8 00 00 		call	_printf
+	*** 000642	83 c4 06 		add	sp,6
+;|*** 
+;|***     __asm
+;|***     {
+;|***         push    dx
+; Line 682
+	*** 000645	52 			push	dx
+;|***         xor     ax,ax
+; Line 683
+	*** 000646	33 c0 			xor	ax,ax
+;|***         int     0x16
+; Line 684
+	*** 000648	cd 16 			int	22	;0016H
+;|***         pop     dx
+; Line 685
+	*** 00064a	5a 			pop	dx
+;|***     }
+; Line 686
+;|*** 
+;|***     printf(
+;|***           "\n"
+;|***           "\n"
+;|***           "\n"
+;|***           "Usage:%s /B:baud /C:Port /D:display /P /H /V /N:name\n"
+;|***           "  (/E|/K):IO:IRQ[:<dotted IP>] /L:VXxVYxBPP[:PXxPY] <file name>\n"
+;|***           "\n"
+;|***           "  /V  Verbose - displays extra status information during boot.\n"
+;|***           "\n"
+;|***           "  /E:IO:IRQ[:<dotted IP>]  (Debug Ethernet Card parameters)\n"
+;|***           "      IO - IO Base Address (specified in hexadecimal)\n"
+;|***           "      IRQ - Interrupt (specified in decimal or hexadecimal)\n"
+;|***           "      Dotted IP - (optional) static IP address (No DHCP)\n"
+;|***           "    NOTE: The /E and /K options are mutually exclusive.\n"
+;|***           "\n"
+;|***           "  /K:IO:IRQ[:<dotted IP>]  (RNDIS Card parameters)\n"
+;|***           "      IO - IO Base Address (specified in hexadecimal)\n"
+;|***           "      IRQ - Interrupt (specified in decimal or hexadecimal)\n"
+;|***           "      Dotted IP - (optional) static IP address (No DHCP)\n"
+;|***           "    NOTE: The /E and /K options are mutually exclusive.\n"
+;|***           "\n"
+;|***           "  /L:DXxDYxBPP[:PXxPY] (Use VESA VBE Linear/Flat Framebuffer video mode)\n"
+;|***           "      DX, DY  - Display X and Y Sizes\n"
+;|***           "      BPP - Bits Per Pixel Color Depth (8, 16, 24, or 32)\n"
+;|***           "      PX, PY  - (optional) Physical Screen X and Y Sizes to simulate a\n"
+;|***           "                small device display (PX & PY should be greater than DX & DY)."
+;|***           "\n"
+;|***           " /N:name  Optionally specify a device name to be used when creating\n"
+;|***           "          the Ethernet debug name (for host-side connectivity).\n"
+;|***           "\n"
+;|***           "Press any key for more options...",
+;|*** 
+;|***           pszProgram );
+; Line 720
+	*** 00064b	ff 76 fe 		push	WORD PTR [bp-2]	;pszProgram
+	*** 00064e	68 00 00 		push	OFFSET DGROUP:$SG725
+	*** 000651	e8 00 00 		call	_printf
+	*** 000654	83 c4 04 		add	sp,4
+;|*** 
+;|***     __asm
+;|***     {
+;|***         push    dx
+; Line 724
+	*** 000657	52 			push	dx
+;|***         xor     ax,ax
+; Line 725
+	*** 000658	33 c0 			xor	ax,ax
+;|***         int     0x16
+; Line 726
+	*** 00065a	cd 16 			int	22	;0016H
+;|***         pop     dx
+; Line 727
+	*** 00065c	5a 			pop	dx
+;|***     }
+; Line 728
+;|*** 
+;|***     printf(
+;|***           "\n"
+;|***           "Usage: %s -s[:]<pattern> -(g|r|u)[[:]<pattern> [<destination>]\n"
+;|***           "-s    Show a directory of files matching <pattern>.\n"
+;|***           "\n"
+;|***           "-g    Get files matching <pattern> and copy them to the\n"
+;|***           "      optionally specified <destination>.  Any existing file with\n"
+;|***           "      the same name will be overwritten.\n"
+;|***           "\n"
+;|***           "-r    Refresh files matching <pattern> which already exist in <destination>\n"
+;|***           "      and have a timestamp newer than the one in <destination>.\n"
+;|***           "\n"
+;|***           "-u    Update files matching <pattern> which don't already exist in\n"
+;|***           "      <destination> or those that have a timestamp newer than those\n"
+;|***           "      in <destination>.\n"
+;|***           "\n"
+;|***           "<pattern> Windows filename path with optional wildcard characters.\n"
+;|***           "\n"
+;|***           "<destination> If not specified then the current directory is the default.\n"
+;|***           "      If specified and it doesn't exist and the last character is \\,\n"
+;|***           "      then the directory is created.  Otherwise <destination> is\n"
+;|***           "      treated as the name of the file.\n"
+;|***           "      It is an error for <pattern> to match multiple files\n"
+;|***           "      when <destination> specifies a file.\n"
+;|*** 		  "For CE Collections - Last built with ver.2.01-Beta1-02",
+;|*** 
+;|***           pszProgram );
+; Line 756
+	*** 00065d	ff 76 fe 		push	WORD PTR [bp-2]	;pszProgram
+	*** 000660	68 00 00 		push	OFFSET DGROUP:$SG726
+	*** 000663	e8 00 00 		call	_printf
+;|*** }
+; Line 757
+	*** 000666	c9 			leave	
+	*** 000667	c3 			ret	
+
+usage	ENDP
+
+ExitSigHandler	PROC NEAR
+;|*** 
+;|*** //------------------------------------------------------------------------------
+;|*** //
+;|*** //  Function Name:  ExitSigHandler( int sig )
+;|*** //  Description..:  This function handles Ctrl_c/Ctrl+Break while downloading.
+;|*** //                  XMS must be freed or unlocked or we can't execute loadcepc
+;|*** //                  again without rebooting.
+;|*** //  Inputs.......:  int     sig         exit signal number
+;|*** //  Outputs......:  none
+;|*** //
+;|*** //------------------------------------------------------------------------------
+;|*** 
+;|*** static void ExitSigHandler( int sig )
+;|*** {
+; Line 771
+	*** 000668	55 			push	bp
+	*** 000669	8b ec 			mov	bp,sp
+;	sig = 4
+;|***     if( usBlockHandle )
+; Line 772
+	*** 00066b	83 3e 00 00 00 		cmp	WORD PTR _usBlockHandle,0
+	*** 000670	74 12 			je	$I730
+;|***     {
+;|***         XmsUnlockExtendedMemory(usBlockHandle);
+; Line 774
+	*** 000672	ff 36 00 00 		push	WORD PTR _usBlockHandle
+	*** 000676	e8 00 00 		call	_XmsUnlockExtendedMemory
+	*** 000679	8b e5 			mov	sp,bp
+;|***         XmsFreeExtendedMemory(usBlockHandle);
+; Line 775
+	*** 00067b	ff 36 00 00 		push	WORD PTR _usBlockHandle
+	*** 00067f	e8 00 00 		call	_XmsFreeExtendedMemory
+	*** 000682	8b e5 			mov	sp,bp
+;|***     }
+;|*** 	
+;|***     exit (sig);
+; Line 778
+					$I730:
+	*** 000684	ff 76 04 		push	WORD PTR [bp+4]	;sig
+	*** 000687	e8 00 00 		call	_exit
+;|*** }
+; Line 779
+	*** 00068a	c9 			leave	
+	*** 00068b	c3 			ret	
+
+ExitSigHandler	ENDP
+
+DownloadRead	PROC NEAR
+;|*** 
+;|*** //------------------------------------------------------------------------------
+;|*** //
+;|*** //  Function Name:  DownloadRead( ... )
+;|*** //  Description..:  This function is used to read download data. It 
+;|*** //                  encapsulates the device we are reading from. 
+;|*** //  Inputs.......:  int     hImage          handle to image, may be zero.
+;|*** //                  UCHAR   *ucBuffer       pntr to dst buffer
+;|*** //                  USHORT  usReadSize      number of bytes to read
+;|*** //                  BOOL                    parallel port switch
+;|*** //  Outputs......:  
+;|*** //
+;|*** //------------------------------------------------------------------------------
+;|*** 
+;|*** static USHORT DownloadRead( int     hImage, 
+;|***                             UCHAR  *ucBuffer, 
+;|***                             USHORT  usReadSize, 
+;|***                             BOOL    bParallelDownload )
+;|*** {
+; Line 798
+	*** 00068c	55 			push	bp
+	*** 00068d	8b ec 			mov	bp,sp
+	*** 00068f	57 			push	di
+	*** 000690	56 			push	si
+;	hImage = 4
+;	ucBuffer = 6
+;	usReadSize = 8
+;	bParallelDownload = 10
+;	register si = loop
+;|***     USHORT  loop;
+;|*** 
+;|***     if( bParallelDownload )
+; Line 801
+	*** 000691	83 7e 0a 00 		cmp	WORD PTR [bp+10],0	;bParallelDownload
+	*** 000695	74 2b 			je	$I741
+;|***     {
+;|***         // Parallel download 
+;|*** 
+;|***         for( loop = 0; loop < usReadSize; loop++ )
+; Line 805
+	*** 000697	33 f6 			xor	si,si
+	*** 000699	39 76 08 		cmp	WORD PTR [bp+8],si	;usReadSize
+	*** 00069c	74 16 			je	$FB744
+	*** 00069e	8b 7e 06 		mov	di,WORD PTR [bp+6]	;ucBuffer
+					$F742:
+;|***         {
+;|***             ucBuffer[loop]= (UCHAR)OEMParallelPortGetByte();
+; Line 807
+	*** 0006a1	e8 00 00 		call	_OEMParallelPortGetByte
+	*** 0006a4	88 05 			mov	BYTE PTR [di],al
+;|*** 
+;|***             if( NoPPFS )
+; Line 809
+	*** 0006a6	83 3e 00 00 00 		cmp	WORD PTR _NoPPFS,0
+	*** 0006ab	75 0f 			jne	$L985
+;|***         for( loop = 0; loop < usReadSize; loop++ )
+; Line 805
+	*** 0006ad	47 			inc	di
+	*** 0006ae	46 			inc	si
+	*** 0006af	3b 76 08 		cmp	si,WORD PTR [bp+8]	;usReadSize
+	*** 0006b2	72 ed 			jb	$F742
+					$FB744:
+;|***         {
+;|***             ucBuffer[loop]= (UCHAR)OEMParallelPortGetByte();
+;|*** 
+;|***             if( NoPPFS )
+;|***             {
+;|***                 return 0;
+;|***             }
+;|***         }
+;|***         return usReadSize;
+; Line 814
+	*** 0006b4	8b 46 08 		mov	ax,WORD PTR [bp+8]	;usReadSize
+	*** 0006b7	5e 			pop	si
+	*** 0006b8	5f 			pop	di
+	*** 0006b9	c9 			leave	
+	*** 0006ba	c3 			ret	
+	*** 0006bb	90 			nop	
+					$L985:
+;|***                 return 0;
+; Line 811
+	*** 0006bc	33 c0 			xor	ax,ax
+	*** 0006be	5e 			pop	si
+	*** 0006bf	5f 			pop	di
+	*** 0006c0	c9 			leave	
+	*** 0006c1	c3 			ret	
+;|***             }
+;|***         }
+;|***         return usReadSize;
+;|***     }
+;|***     else if( bSerialDownload )
+; Line 816
+					$I741:
+	*** 0006c2	83 3e 00 00 00 		cmp	WORD PTR _bSerialDownload,0
+	*** 0006c7	74 13 			je	$I747
+	*** 0006c9	8b 76 08 		mov	si,WORD PTR [bp+8]	;usReadSize
+;|***     {
+;|***         // Serial download
+;|*** 
+;|***         OEMReadDebugBytes( ucBuffer,usReadSize );
+; Line 820
+	*** 0006cc	56 			push	si
+	*** 0006cd	ff 76 06 		push	WORD PTR [bp+6]	;ucBuffer
+	*** 0006d0	e8 00 00 		call	_OEMReadDebugBytes
+	*** 0006d3	83 c4 04 		add	sp,4
+;|***         return usReadSize;
+; Line 821
+	*** 0006d6	8b c6 			mov	ax,si
+	*** 0006d8	5e 			pop	si
+	*** 0006d9	5f 			pop	di
+	*** 0006da	c9 			leave	
+	*** 0006db	c3 			ret	
+;|***     }
+;|***     else
+; Line 823
+					$I747:
+;|***     {
+;|***         // Ethernet?
+;|*** 
+;|***         return _read( hImage, ucBuffer, usReadSize );
+; Line 827
+	*** 0006dc	ff 76 08 		push	WORD PTR [bp+8]	;usReadSize
+	*** 0006df	ff 76 06 		push	WORD PTR [bp+6]	;ucBuffer
+	*** 0006e2	ff 76 04 		push	WORD PTR [bp+4]	;hImage
+	*** 0006e5	e8 00 00 		call	__read
+	*** 0006e8	83 c4 06 		add	sp,6
+;|***     }
+;|*** }
+; Line 829
+	*** 0006eb	5e 			pop	si
+	*** 0006ec	5f 			pop	di
+	*** 0006ed	c9 			leave	
+	*** 0006ee	c3 			ret	
+	*** 0006ef	90 			nop	
+
+DownloadRead	ENDP
+
+LoadImage	PROC NEAR
+;|*** 
+;|*** //------------------------------------------------------------------------------
+;|*** //
+;|*** //  Function Name:  LoadImage
+;|*** //  Description..:  This function is responsible for getting and loading 
+;|*** //                  the image into memory.
+;|*** //  Inputs.......:  BOOL    Verbose                 set verbose tracing flag
+;|*** //                  BOOL    ParallelDownLoad        use parallel port flag
+;|*** //                  char *  FileName                image file name
+;|*** //                  PULONG  EntryPoint              memory entry point
+;|*** //  Outputs......:  TRUE on success, FALSE on failure.
+;|*** //
+;|*** //------------------------------------------------------------------------------
+;|*** 
+;|*** static int LoadImage( BOOL     bVerbose, 
+;|***                       BOOL     bParallelDownload, 
+;|***                       char    *pszFileName, 
+;|***                       PULONG   pulEntryPoint )
+;|*** {
+; Line 848
+	*** 0006f0	c8 44 01 00 		enter	324,0
+	*** 0006f4	57 			push	di
+	*** 0006f5	56 			push	si
+;	ulChecksum = -36
+;	usReadSize = -38
+;	usAmountRead = -40
+;	ulReadTotal = -44
+;	ulReadProgress = -48
+;	usIndex = -50
+;	i = -52
+;	BootPacket = -308
+;	pDestByte = -310
+;	pTemp = -312
+;	chksum = -314
+;	uiTemp = -318
+;	bootType = -322
+;	len = -324
+;	hImage = -2
+;	lImageSize = -6
+;	xmsError = -8
+;	usTotalFree = -10
+;	usLargestBlock = -12
+;	ulLinearAddress = -16
+;	ulSectionAddress = -20
+;	ulSectionSize = -24
+;	ulSectionChecksum = -28
+;	ulSectionOffset = -32
+;	pulEntryPoint = 10
+;	pszFileName = 8
+;	bParallelDownload = 6
+;	bVerbose = 4
+;|***     int             hImage;
+;|***     long            lImageSize;
+;|***     int             xmsError;
+;|***     USHORT          usTotalFree;
+;|***     USHORT          usLargestBlock;
+;|***     ULONG           ulLinearAddress;
+;|***     ULONG           ulSectionAddress;
+;|***     ULONG           ulSectionSize;
+;|***     ULONG           ulSectionChecksum;
+;|***     ULONG           ulSectionOffset;
+;|***     ULONG           ulChecksum;
+;|***     USHORT          usReadSize;
+;|***     USHORT          usAmountRead;
+;|***     ULONG           ulReadTotal=0;
+; Line 862
+	*** 0006f6	2b c0 			sub	ax,ax
+	*** 0006f8	89 46 d6 		mov	WORD PTR [bp-42],ax
+	*** 0006fb	89 46 d4 		mov	WORD PTR [bp-44],ax	;ulReadTotal
+;|***     ULONG           ulReadProgress=0;
+; Line 863
+	*** 0006fe	89 46 d2 		mov	WORD PTR [bp-46],ax
+	*** 000701	89 46 d0 		mov	WORD PTR [bp-48],ax	;ulReadProgress
+;|***     USHORT          usIndex;
+;|***     static UCHAR    ucBuffer[ CHUNKSIZE ];
+;|***     static UCHAR    ucSignature[] = { 'B', '0', '0', '0', 'F', 'F', '\n'};
+;|***     int             i;
+;|***     UCHAR           BootPacket[256];
+;|***     UCHAR           *pDestByte;
+;|***     UCHAR           *pTemp;
+;|***     unsigned int    chksum;
+;|***     long int        uiTemp;
+;|***     long int        bootType;
+;|***     unsigned        len;
+;|*** 
+;|*** 
+;|***     // Find the largest Extended Memory block and allocate it
+;|*** 
+;|***     xmsError = XmsQueryFreeExtendedMemory(&usLargestBlock, &usTotalFree);
+;|*** 
+;|***     if( xmsError != XMS_SUCCESS )
+; Line 881
+	*** 000704	8d 46 f6 		lea	ax,WORD PTR [bp-10]	;usTotalFree
+	*** 000707	50 			push	ax
+	*** 000708	8d 46 f4 		lea	ax,WORD PTR [bp-12]	;usLargestBlock
+	*** 00070b	50 			push	ax
+	*** 00070c	e8 00 00 		call	_XmsQueryFreeExtendedMemory
+	*** 00070f	83 c4 04 		add	sp,4
+	*** 000712	89 46 f8 		mov	WORD PTR [bp-8],ax	;xmsError
+	*** 000715	0b c0 			or	ax,ax
+	*** 000717	74 2d 			je	$I786
+;|***     { 
+;|***         printf("Error querying free extended memory - %s\n", XmsErrorString(xmsError));
+; Line 883
+	*** 000719	50 			push	ax
+	*** 00071a	e8 00 00 		call	_XmsErrorString
+	*** 00071d	83 c4 02 		add	sp,2
+	*** 000720	50 			push	ax
+	*** 000721	68 00 00 		push	OFFSET DGROUP:$SG787
+					$L1022:
+	*** 000724	e8 00 00 		call	_printf
+	*** 000727	83 c4 04 		add	sp,4
+;|*** 
+;|***         if( !bParallelDownload && !bSerialDownload )
+; Line 885
+					$L1023:
+	*** 00072a	83 7e 06 00 		cmp	WORD PTR [bp+6],0	;bParallelDownload
+	*** 00072e	75 10 			jne	$I788
+	*** 000730	83 3e 00 00 00 		cmp	WORD PTR _bSerialDownload,0
+	*** 000735	75 09 			jne	$I788
+;|***         {
+;|***             _close(hImage);
+; Line 887
+	*** 000737	ff 76 fe 		push	WORD PTR [bp-2]	;hImage
+	*** 00073a	e8 00 00 		call	__close
+	*** 00073d	83 c4 02 		add	sp,2
+;|***         }
+;|*** 
+;|***         return FALSE;
+; Line 890
+					$I788:
+	*** 000740	33 c0 			xor	ax,ax
+	*** 000742	5e 			pop	si
+	*** 000743	5f 			pop	di
+	*** 000744	c9 			leave	
+	*** 000745	c3 			ret	
+;|***     }
+;|*** 
+;|*** 	printf("               ImageName:......: %s\n",pszFileName );
+; Line 893
+					$I786:
+	*** 000746	ff 76 08 		push	WORD PTR [bp+8]	;pszFileName
+	*** 000749	68 00 00 		push	OFFSET DGROUP:$SG789
+	*** 00074c	e8 00 00 		call	_printf
+	*** 00074f	83 c4 04 		add	sp,4
+;|*** 	printf("               FLATMode........: %d\n",iDesiredMode);
+; Line 894
+	*** 000752	ff 36 00 00 		push	WORD PTR _iDesiredMode
+	*** 000756	68 00 00 		push	OFFSET DGROUP:$SG790
+	*** 000759	e8 00 00 		call	_printf
+	*** 00075c	83 c4 04 		add	sp,4
+;|***     printf("               VESAMode........: 0x%x\n", BootArgs.vesaMode );
+; Line 895
+	*** 00075f	ff 36 6c 00 		push	WORD PTR _BootArgs+108
+	*** 000763	68 00 00 		push	OFFSET DGROUP:$SG791
+	*** 000766	e8 00 00 		call	_printf
+	*** 000769	83 c4 04 		add	sp,4
+;|*** 	printf("               FreeEMSMem......: %u\n",usTotalFree);
+; Line 896
+	*** 00076c	ff 76 f6 		push	WORD PTR [bp-10]	;usTotalFree
+	*** 00076f	68 00 00 		push	OFFSET DGROUP:$SG792
+	*** 000772	e8 00 00 		call	_printf
+	*** 000775	83 c4 04 		add	sp,4
+;|*** 	printf("               LagestBlock.....: %u\n",usLargestBlock);
+; Line 897
+	*** 000778	ff 76 f4 		push	WORD PTR [bp-12]	;usLargestBlock
+	*** 00077b	68 00 00 		push	OFFSET DGROUP:$SG793
+	*** 00077e	e8 00 00 		call	_printf
+	*** 000781	83 c4 04 		add	sp,4
+;|*** 	printf("             ==========Booting - Press CTRL+C to cancel=========\n ");
+; Line 898
+	*** 000784	68 00 00 		push	OFFSET DGROUP:$SG794
+	*** 000787	e8 00 00 		call	_printf
+	*** 00078a	83 c4 02 		add	sp,2
+;|*** 	fprintf(stderr, "                            ");
+; Line 899
+	*** 00078d	68 00 00 		push	OFFSET DGROUP:$SG795
+	*** 000790	68 10 00 		push	OFFSET __iob+16
+	*** 000793	e8 00 00 		call	_fprintf
+	*** 000796	83 c4 04 		add	sp,4
+;|*** 	fprintf(stderr, "             ");
+; Line 900
+	*** 000799	68 00 00 		push	OFFSET DGROUP:$SG796
+	*** 00079c	68 10 00 		push	OFFSET __iob+16
+	*** 00079f	e8 00 00 		call	_fprintf
+	*** 0007a2	83 c4 04 		add	sp,4
+;|***     if( bVerbose )
+; Line 901
+	*** 0007a5	83 7e 04 00 		cmp	WORD PTR [bp+4],0	;bVerbose
+	*** 0007a9	74 0f 			je	$I797
+;|***     {
+;|***         // Print info about memory available
+;|*** 
+;|***         printf( "Total free extended memory = %u, largest block = %u\n",
+;|***                 usTotalFree, usLargestBlock);
+; Line 906
+	*** 0007ab	ff 76 f4 		push	WORD PTR [bp-12]	;usLargestBlock
+	*** 0007ae	ff 76 f6 		push	WORD PTR [bp-10]	;usTotalFree
+	*** 0007b1	68 00 00 		push	OFFSET DGROUP:$SG798
+	*** 0007b4	e8 00 00 		call	_printf
+	*** 0007b7	83 c4 06 		add	sp,6
+;|***     }
+;|*** 
+;|***     // Allocate the extended block
+;|*** 
+;|***     xmsError = XmsAllocateExtendedMemory(usLargestBlock, &usBlockHandle);
+; Line 911
+					$I797:
+;|*** 
+;|***     if( xmsError != XMS_SUCCESS )
+; Line 913
+	*** 0007ba	68 00 00 		push	OFFSET DGROUP:_usBlockHandle
+	*** 0007bd	ff 76 f4 		push	WORD PTR [bp-12]	;usLargestBlock
+	*** 0007c0	e8 00 00 		call	_XmsAllocateExtendedMemory
+	*** 0007c3	83 c4 04 		add	sp,4
+	*** 0007c6	89 46 f8 		mov	WORD PTR [bp-8],ax	;xmsError
+	*** 0007c9	0b c0 			or	ax,ax
+	*** 0007cb	74 0f 			je	$I799
+;|***     {
+;|***         printf( "Error allocating extended memory - %s\n", 
+;|***                XmsErrorString(xmsError));
+; Line 916
+	*** 0007cd	50 			push	ax
+	*** 0007ce	e8 00 00 		call	_XmsErrorString
+	*** 0007d1	83 c4 02 		add	sp,2
+	*** 0007d4	50 			push	ax
+	*** 0007d5	68 00 00 		push	OFFSET DGROUP:$SG800
+	*** 0007d8	e9 49 ff 		jmp	$L1022
+	*** 0007db	90 			nop	
+;|*** 
+;|***         if( !bParallelDownload && !bSerialDownload )
+;|***         {
+;|***             _close(hImage);
+;|***         }
+;|*** 
+;|***         return FALSE;
+;|***     }
+;|*** 
+;|***     //printf("XMS usBlockHandle = 0x%x\n", usBlockHandle);
+;|*** 
+;|***     // Lock the block and obtain its linear address.  
+;|***     // Then ensure that the image fits into it.
+;|*** 
+;|***     xmsError = XmsLockExtendedMemory(usBlockHandle, &ulLinearAddress);
+; Line 931
+					$I799:
+;|*** 
+;|***     if( xmsError != XMS_SUCCESS )
+; Line 933
+	*** 0007dc	8d 46 f0 		lea	ax,WORD PTR [bp-16]	;ulLinearAddress
+	*** 0007df	50 			push	ax
+	*** 0007e0	ff 36 00 00 		push	WORD PTR _usBlockHandle
+	*** 0007e4	e8 00 00 		call	_XmsLockExtendedMemory
+	*** 0007e7	83 c4 04 		add	sp,4
+	*** 0007ea	89 46 f8 		mov	WORD PTR [bp-8],ax	;xmsError
+	*** 0007ed	0b c0 			or	ax,ax
+	*** 0007ef	74 33 			je	$I802
+;|***     {
+;|***         fprintf(stderr, "\r                                                                         \r");
+; Line 935
+	*** 0007f1	68 00 00 		push	OFFSET DGROUP:$SG803
+	*** 0007f4	68 10 00 		push	OFFSET __iob+16
+	*** 0007f7	e8 00 00 		call	_fprintf
+	*** 0007fa	83 c4 04 		add	sp,4
+;|***         printf("Error locking extended memory - %s\n", XmsErrorString(xmsError));
+; Line 936
+	*** 0007fd	ff 76 f8 		push	WORD PTR [bp-8]	;xmsError
+	*** 000800	e8 00 00 		call	_XmsErrorString
+	*** 000803	83 c4 02 		add	sp,2
+	*** 000806	50 			push	ax
+	*** 000807	68 00 00 		push	OFFSET DGROUP:$SG804
+	*** 00080a	e8 00 00 		call	_printf
+	*** 00080d	83 c4 04 		add	sp,4
+;|*** 
+;|***         XmsFreeExtendedMemory(usBlockHandle);
+; Line 938
+	*** 000810	ff 36 00 00 		push	WORD PTR _usBlockHandle
+	*** 000814	e8 00 00 		call	_XmsFreeExtendedMemory
+	*** 000817	83 c4 02 		add	sp,2
+;|***         usBlockHandle = 0;
+; Line 939
+	*** 00081a	c7 06 00 00 00 00 	mov	WORD PTR _usBlockHandle,0
+	*** 000820	e9 07 ff 		jmp	$L1023
+	*** 000823	90 			nop	
+;|*** 
+;|***         if( !bParallelDownload && !bSerialDownload )
+;|***         {
+;|***             _close(hImage);
+;|***         }
+;|*** 
+;|***         return FALSE;
+;|***     }
+;|*** 
+;|***     // Print info about block allocated
+;|*** 
+;|***     if( bVerbose )
+; Line 951
+					$I802:
+	*** 000824	83 7e 04 00 		cmp	WORD PTR [bp+4],0	;bVerbose
+	*** 000828	74 1b 			je	$I806
+;|***     {
+;|***         fprintf(stderr, "\r                                                                         \r");
+; Line 953
+	*** 00082a	68 00 00 		push	OFFSET DGROUP:$SG807
+	*** 00082d	68 10 00 		push	OFFSET __iob+16
+	*** 000830	e8 00 00 		call	_fprintf
+	*** 000833	83 c4 04 		add	sp,4
+;|***         printf("Block allocated at 0x%lX\n", ulLinearAddress);
+; Line 954
+	*** 000836	ff 76 f2 		push	WORD PTR [bp-14]
+	*** 000839	ff 76 f0 		push	WORD PTR [bp-16]	;ulLinearAddress
+	*** 00083c	68 00 00 		push	OFFSET DGROUP:$SG808
+	*** 00083f	e8 00 00 		call	_printf
+	*** 000842	83 c4 06 		add	sp,6
+;|***     }
+;|*** 
+;|***     // Zero upper memory in CHUNKSIZE chunks
+;|*** 
+;|***     memset(ucBuffer, 0, sizeof(ucBuffer));
+; Line 959
+					$I806:
+	*** 000845	33 c0 			xor	ax,ax
+	*** 000847	bb 00 00 		mov	bx,OFFSET DGROUP:$S775_?ucBuffer@?1??LoadImage@@9@9
+	*** 00084a	b9 00 40 		mov	cx,16384	;4000H
+	*** 00084d	8b fb 			mov	di,bx
+	*** 00084f	1e 			push	ds
+	*** 000850	07 			pop	es
+	*** 000851	f3 			rep
+	*** 000852	ab 			stosw
+;|***     ulSectionSize = (ULONG)usLargestBlock * 1024;
+; Line 960
+	*** 000853	8b 46 f4 		mov	ax,WORD PTR [bp-12]	;usLargestBlock
+	*** 000856	2b d2 			sub	dx,dx
+	*** 000858	8a d4 			mov	dl,ah
+	*** 00085a	8a e0 			mov	ah,al
+	*** 00085c	2a c0 			sub	al,al
+	*** 00085e	03 c0 			add	ax,ax
+	*** 000860	13 d2 			adc	dx,dx
+	*** 000862	03 c0 			add	ax,ax
+	*** 000864	13 d2 			adc	dx,dx
+	*** 000866	89 46 e8 		mov	WORD PTR [bp-24],ax	;ulSectionSize
+	*** 000869	89 56 ea 		mov	WORD PTR [bp-22],dx
+;|*** 
+;|***     for( ulSectionOffset = 0; ulSectionOffset < ulSectionSize; ulSectionOffset += usReadSize )
+; Line 962
+	*** 00086c	2b c0 			sub	ax,ax
+	*** 00086e	89 46 e2 		mov	WORD PTR [bp-30],ax
+	*** 000871	89 46 e0 		mov	WORD PTR [bp-32],ax	;ulSectionOffset
+	*** 000874	eb 4f 			jmp	SHORT $F809
+					$I812:
+;|***     {
+;|***         if( (ulSectionSize - ulSectionOffset) < CHUNKSIZE )
+;|***         {
+;|***             usReadSize = (USHORT)(ulSectionSize - ulSectionOffset);
+;|***         }
+;|***         else
+;|***         {
+;|***             usReadSize = CHUNKSIZE;
+; Line 970
+	*** 000876	c7 46 da 00 80 		mov	WORD PTR [bp-38],-32768	;8000H	;usReadSize
+;|***         }
+; Line 971
+					$I813:
+;|*** 
+;|***         xmsError = XmsMoveExtendedMemory(
+;|***                                         0, (ULONG)(UCHAR far *)ucBuffer,
+;|***                                         usBlockHandle, ulSectionOffset, usReadSize);
+;|*** 
+;|***         if( xmsError != XMS_SUCCESS )
+; Line 977
+	*** 00087b	6a 00 			push	0
+	*** 00087d	ff 76 da 		push	WORD PTR [bp-38]	;usReadSize
+	*** 000880	ff 76 e2 		push	WORD PTR [bp-30]
+	*** 000883	ff 76 e0 		push	WORD PTR [bp-32]	;ulSectionOffset
+	*** 000886	ff 36 00 00 		push	WORD PTR _usBlockHandle
+	*** 00088a	1e 			push	ds
+	*** 00088b	68 00 00 		push	OFFSET DGROUP:$S775_?ucBuffer@?1??LoadImage@@9@9
+	*** 00088e	6a 00 			push	0
+	*** 000890	e8 00 00 		call	_XmsMoveExtendedMemory
+	*** 000893	83 c4 10 		add	sp,16	;0010H
+	*** 000896	89 46 f8 		mov	WORD PTR [bp-8],ax	;xmsError
+	*** 000899	0b c0 			or	ax,ax
+	*** 00089b	74 1d 			je	$FC810
+;|***         {
+;|***             fprintf(stderr, "\r                                                                         \r");
+; Line 979
+	*** 00089d	68 00 00 		push	OFFSET DGROUP:$SG815
+	*** 0008a0	68 10 00 		push	OFFSET __iob+16
+	*** 0008a3	e8 00 00 		call	_fprintf
+	*** 0008a6	83 c4 04 		add	sp,4
+;|***             printf("Error zeroing extended memory - %s\n", XmsErrorString(xmsError));
+; Line 980
+	*** 0008a9	ff 76 f8 		push	WORD PTR [bp-8]	;xmsError
+	*** 0008ac	e8 00 00 		call	_XmsErrorString
+	*** 0008af	83 c4 02 		add	sp,2
+	*** 0008b2	50 			push	ax
+	*** 0008b3	68 00 00 		push	OFFSET DGROUP:$SG816
+	*** 0008b6	e9 6b fe 		jmp	$L1022
+;|***             if( !bParallelDownload && !bSerialDownload )
+;|***                 _close(hImage);
+;|*** 
+;|***             return FALSE;
+;|***         }
+;|***     }
+; Line 986
+	*** 0008b9	90 			nop	
+					$FC810:
+	*** 0008ba	8b 46 da 		mov	ax,WORD PTR [bp-38]	;usReadSize
+	*** 0008bd	2b d2 			sub	dx,dx
+	*** 0008bf	01 46 e0 		add	WORD PTR [bp-32],ax	;ulSectionOffset
+	*** 0008c2	11 56 e2 		adc	WORD PTR [bp-30],dx
+					$F809:
+	*** 0008c5	8b 46 e8 		mov	ax,WORD PTR [bp-24]	;ulSectionSize
+	*** 0008c8	8b 56 ea 		mov	dx,WORD PTR [bp-22]
+	*** 0008cb	39 56 e2 		cmp	WORD PTR [bp-30],dx
+	*** 0008ce	77 22 			ja	$FB811
+	*** 0008d0	72 05 			jb	$L987
+	*** 0008d2	39 46 e0 		cmp	WORD PTR [bp-32],ax	;ulSectionOffset
+	*** 0008d5	73 1b 			jae	$FB811
+					$L987:
+;|***         if( (ulSectionSize - ulSectionOffset) < CHUNKSIZE )
+; Line 964
+	*** 0008d7	2b 46 e0 		sub	ax,WORD PTR [bp-32]	;ulSectionOffset
+	*** 0008da	1b 56 e2 		sbb	dx,WORD PTR [bp-30]
+	*** 0008dd	0b d2 			or	dx,dx
+	*** 0008df	75 95 			jne	$I812
+	*** 0008e1	3d 00 80 		cmp	ax,-32768	;8000H
+	*** 0008e4	73 90 			jae	$I812
+;|***         {
+;|***             usReadSize = (USHORT)(ulSectionSize - ulSectionOffset);
+; Line 966
+	*** 0008e6	8b 46 e8 		mov	ax,WORD PTR [bp-24]	;ulSectionSize
+	*** 0008e9	2b 46 e0 		sub	ax,WORD PTR [bp-32]	;ulSectionOffset
+	*** 0008ec	89 46 da 		mov	WORD PTR [bp-38],ax	;usReadSize
+;|***         }
+;|***         else
+; Line 968
+	*** 0008ef	eb 8a 			jmp	SHORT $I813
+	*** 0008f1	90 			nop	
+					$FB811:
+;|***         {
+;|***             usReadSize = CHUNKSIZE;
+;|***         }
+;|*** 
+;|***         xmsError = XmsMoveExtendedMemory(
+;|***                                         0, (ULONG)(UCHAR far *)ucBuffer,
+;|***                                         usBlockHandle, ulSectionOffset, usReadSize);
+;|*** 
+;|***         if( xmsError != XMS_SUCCESS )
+;|***         {
+;|***             fprintf(stderr, "\r                                                                         \r");
+;|***             printf("Error zeroing extended memory - %s\n", XmsErrorString(xmsError));
+;|***             if( !bParallelDownload && !bSerialDownload )
+;|***                 _close(hImage);
+;|*** 
+;|***             return FALSE;
+;|***         }
+;|***     }
+;|*** 
+;|***     // Open image file
+;|*** 
+;|***     // If this is a serial download, initialize the serial port
+;|*** 
+;|***     if( bSerialDownload )
+; Line 992
+	*** 0008f2	83 3e 00 00 00 		cmp	WORD PTR _bSerialDownload,0
+	*** 0008f7	74 03 			je	$I818
+;|***     {
+;|***         OEMInitDebugSerial();
+; Line 994
+	*** 0008f9	e8 00 00 		call	_OEMInitDebugSerial
+;|***     }
+;|*** 
+;|***     if( bParallelDownload || bSerialDownload )
+; Line 997
+					$I818:
+	*** 0008fc	83 7e 06 00 		cmp	WORD PTR [bp+6],0	;bParallelDownload
+	*** 000900	75 0a 			jne	$I820
+	*** 000902	83 3e 00 00 00 		cmp	WORD PTR _bSerialDownload,0
+	*** 000907	75 03 			jne	$JCC2311
+	*** 000909	e9 2e 02 		jmp	$I819
+					$JCC2311:
+					$I820:
+;|***     {
+;|***         // Prepare boot packet
+;|***         
+;|***         pDestByte = BootPacket;
+; Line 1001
+	*** 00090c	8d 86 cc fe 		lea	ax,WORD PTR [bp-308]	;BootPacket
+	*** 000910	89 86 ca fe 		mov	WORD PTR [bp-310],ax	;pDestByte
+;|*** 
+;|***         for( i = 0; i < BOOT_HEADER_SIZE; i++ )
+; Line 1003
+	*** 000914	c7 46 cc 00 00 		mov	WORD PTR [bp-52],0	;i
+					$FC822:
+;|***         {
+;|***             *pDestByte++ = BootHeader[i];
+; Line 1005
+	*** 000919	8b 5e cc 		mov	bx,WORD PTR [bp-52]	;i
+	*** 00091c	8a 87 00 00 		mov	al,BYTE PTR $S519_BootHeader[bx]
+	*** 000920	8b 9e ca fe 		mov	bx,WORD PTR [bp-310]	;pDestByte
+	*** 000924	ff 86 ca fe 		inc	WORD PTR [bp-310]	;pDestByte
+	*** 000928	88 07 			mov	BYTE PTR [bx],al
+;|***         }
+; Line 1006
+	*** 00092a	ff 46 cc 		inc	WORD PTR [bp-52]	;i
+	*** 00092d	83 7e cc 06 		cmp	WORD PTR [bp-52],6	;i
+	*** 000931	72 e6 			jb	$FC822
+;|*** 
+;|***         chksum = 0;
+; Line 1008
+	*** 000933	c7 86 c6 fe 00 00 	mov	WORD PTR [bp-314],0	;chksum
+;|***         len = 9;
+; Line 1009
+	*** 000939	c7 86 bc fe 09 00 	mov	WORD PTR [bp-324],9	;len
+;|*** 
+;|***         if( pszFileName )
+; Line 1011
+	*** 00093f	83 7e 08 00 		cmp	WORD PTR [bp+8],0	;pszFileName
+	*** 000943	74 53 			je	$I824
+;|***         {
+;|***             if( bSerialDownload )
+; Line 1013
+	*** 000945	83 3e 00 00 00 		cmp	WORD PTR _bSerialDownload,0
+	*** 00094a	74 08 			je	$I825
+;|***                 printf("Loading image %s via serial port.\r\n",pszFileName);
+; Line 1014
+	*** 00094c	ff 76 08 		push	WORD PTR [bp+8]	;pszFileName
+	*** 00094f	68 00 00 		push	OFFSET DGROUP:$SG826
+	*** 000952	eb 06 			jmp	SHORT $L1012
+					$I825:
+;|***             else
+;|***                 printf("Loading image %s via parallel port.\r\n",pszFileName);
+; Line 1016
+	*** 000954	ff 76 08 		push	WORD PTR [bp+8]	;pszFileName
+	*** 000957	68 00 00 		push	OFFSET DGROUP:$SG828
+					$L1012:
+	*** 00095a	e8 00 00 		call	_printf
+	*** 00095d	83 c4 04 		add	sp,4
+;|*** 
+;|***             bootType = 1;              // The NULL byte
+; Line 1018
+	*** 000960	c7 86 be fe 01 00 	mov	WORD PTR [bp-322],1	;bootType
+	*** 000966	c7 86 c0 fe 00 00 	mov	WORD PTR [bp-320],0
+;|*** 
+;|***             for( pTemp = (UCHAR*)pszFileName; *pTemp; pTemp++ )
+; Line 1020
+	*** 00096c	8b 46 08 		mov	ax,WORD PTR [bp+8]	;pszFileName
+	*** 00096f	89 86 c8 fe 		mov	WORD PTR [bp-312],ax	;pTemp
+	*** 000973	eb 0f 			jmp	SHORT $F829
+	*** 000975	90 			nop	
+					$FC830:
+;|***             {
+;|***                 bootType++;
+; Line 1022
+	*** 000976	83 86 be fe 01 		add	WORD PTR [bp-322],1	;bootType
+	*** 00097b	83 96 c0 fe 00 		adc	WORD PTR [bp-320],0
+;|***             }
+; Line 1023
+	*** 000980	ff 86 c8 fe 		inc	WORD PTR [bp-312]	;pTemp
+					$F829:
+	*** 000984	8b 9e c8 fe 		mov	bx,WORD PTR [bp-312]	;pTemp
+	*** 000988	80 3f 00 		cmp	BYTE PTR [bx],0
+	*** 00098b	75 e9 			jne	$FC830
+;|*** 
+;|***             len += (unsigned)bootType;
+; Line 1025
+	*** 00098d	8b 86 be fe 		mov	ax,WORD PTR [bp-322]	;bootType
+	*** 000991	01 86 bc fe 		add	WORD PTR [bp-324],ax	;len
+;|*** 
+;|***         }
+;|***         else
+; Line 1028
+	*** 000995	eb 22 			jmp	SHORT $I832
+	*** 000997	90 			nop	
+					$I824:
+;|***         {
+;|***             if( bSerialDownload )
+; Line 1030
+	*** 000998	83 3e 00 00 00 		cmp	WORD PTR _bSerialDownload,0
+	*** 00099d	74 05 			je	$I833
+;|***                 printf("Loading host default image via serial port.\r\n");
+; Line 1031
+	*** 00099f	68 00 00 		push	OFFSET DGROUP:$SG834
+	*** 0009a2	eb 03 			jmp	SHORT $L1014
+					$I833:
+;|***             else
+;|***                 printf("Loading host default image via parallel port.\r\n");
+; Line 1033
+	*** 0009a4	68 00 00 		push	OFFSET DGROUP:$SG836
+					$L1014:
+	*** 0009a7	e8 00 00 		call	_printf
+	*** 0009aa	83 c4 02 		add	sp,2
+;|*** 
+;|***             bootType = BOOT_TYPE;
+; Line 1035
+	*** 0009ad	c7 86 be fe fc ff 	mov	WORD PTR [bp-322],-4	;fffcH	;bootType
+	*** 0009b3	c7 86 c0 fe ff ff 	mov	WORD PTR [bp-320],-1	;ffffH
+;|***         }
+; Line 1036
+					$I832:
+;|*** 
+;|***         uiTemp = len;
+; Line 1038
+	*** 0009b9	8b 86 bc fe 		mov	ax,WORD PTR [bp-324]	;len
+	*** 0009bd	89 86 c2 fe 		mov	WORD PTR [bp-318],ax	;uiTemp
+	*** 0009c1	c7 86 c4 fe 00 00 	mov	WORD PTR [bp-316],0
+;|*** 
+;|***         for( i = 0; i < 2; i++ )
+; Line 1040
+	*** 0009c7	c7 46 cc 00 00 		mov	WORD PTR [bp-52],0	;i
+					$FC838:
+;|***         {
+;|***             *pDestByte++ = (unsigned char)(uiTemp & 0xFF);
+; Line 1042
+	*** 0009cc	8b c8 			mov	cx,ax
+	*** 0009ce	8b 9e ca fe 		mov	bx,WORD PTR [bp-310]	;pDestByte
+	*** 0009d2	ff 86 ca fe 		inc	WORD PTR [bp-310]	;pDestByte
+	*** 0009d6	88 07 			mov	BYTE PTR [bx],al
+;|***             chksum += (unsigned int)(uiTemp & 0xFF);
+; Line 1043
+	*** 0009d8	2a ed 			sub	ch,ch
+	*** 0009da	01 8e c6 fe 		add	WORD PTR [bp-314],cx	;chksum
+;|***             uiTemp >>= 8;
+; Line 1044
+	*** 0009de	8b 86 c2 fe 		mov	ax,WORD PTR [bp-318]	;uiTemp
+	*** 0009e2	8b 96 c4 fe 		mov	dx,WORD PTR [bp-316]
+	*** 0009e6	8a c4 			mov	al,ah
+	*** 0009e8	8a e2 			mov	ah,dl
+	*** 0009ea	8a d6 			mov	dl,dh
+	*** 0009ec	02 f6 			add	dh,dh
+	*** 0009ee	1a f6 			sbb	dh,dh
+	*** 0009f0	89 86 c2 fe 		mov	WORD PTR [bp-318],ax	;uiTemp
+	*** 0009f4	89 96 c4 fe 		mov	WORD PTR [bp-316],dx
+;|***         }
+; Line 1045
+	*** 0009f8	ff 46 cc 		inc	WORD PTR [bp-52]	;i
+	*** 0009fb	83 7e cc 02 		cmp	WORD PTR [bp-52],2	;i
+	*** 0009ff	7c cb 			jl	$FC838
+;|*** 
+;|***         uiTemp = bootType;
+; Line 1047
+	*** 000a01	8b 86 be fe 		mov	ax,WORD PTR [bp-322]	;bootType
+	*** 000a05	8b 96 c0 fe 		mov	dx,WORD PTR [bp-320]
+	*** 000a09	89 86 c2 fe 		mov	WORD PTR [bp-318],ax	;uiTemp
+	*** 000a0d	89 96 c4 fe 		mov	WORD PTR [bp-316],dx
+;|*** 
+;|***         for( i = 0; i < 4; i++ )
+; Line 1049
+	*** 000a11	c7 46 cc 00 00 		mov	WORD PTR [bp-52],0	;i
+					$FC841:
+;|***         {
+;|***             *pDestByte++ = (unsigned char)(uiTemp & 0xFF);
+; Line 1051
+	*** 000a16	8b c8 			mov	cx,ax
+	*** 000a18	8b 9e ca fe 		mov	bx,WORD PTR [bp-310]	;pDestByte
+	*** 000a1c	ff 86 ca fe 		inc	WORD PTR [bp-310]	;pDestByte
+	*** 000a20	88 07 			mov	BYTE PTR [bx],al
+;|***             chksum += (unsigned int)(uiTemp & 0xFF);
+; Line 1052
+	*** 000a22	2a ed 			sub	ch,ch
+	*** 000a24	01 8e c6 fe 		add	WORD PTR [bp-314],cx	;chksum
+;|***             uiTemp >>= 8;
+; Line 1053
+	*** 000a28	8b 86 c2 fe 		mov	ax,WORD PTR [bp-318]	;uiTemp
+	*** 000a2c	8b 96 c4 fe 		mov	dx,WORD PTR [bp-316]
+	*** 000a30	8a c4 			mov	al,ah
+	*** 000a32	8a e2 			mov	ah,dl
+	*** 000a34	8a d6 			mov	dl,dh
+	*** 000a36	02 f6 			add	dh,dh
+	*** 000a38	1a f6 			sbb	dh,dh
+	*** 000a3a	89 86 c2 fe 		mov	WORD PTR [bp-318],ax	;uiTemp
+	*** 000a3e	89 96 c4 fe 		mov	WORD PTR [bp-316],dx
+;|***         }
+; Line 1054
+	*** 000a42	ff 46 cc 		inc	WORD PTR [bp-52]	;i
+	*** 000a45	83 7e cc 04 		cmp	WORD PTR [bp-52],4	;i
+	*** 000a49	7c cb 			jl	$FC841
+;|*** 
+;|***         if( bootType > 0 )
+; Line 1056
+	*** 000a4b	83 be c0 fe 00 		cmp	WORD PTR [bp-320],0
+	*** 000a50	7c 3e 			jl	$I843
+	*** 000a52	7f 07 			jg	$L989
+	*** 000a54	83 be be fe 00 		cmp	WORD PTR [bp-322],0	;bootType
+	*** 000a59	74 35 			je	$I843
+					$L989:
+;|***         {
+;|***             for( pTemp = (UCHAR*)pszFileName; *pTemp; pTemp++ )
+; Line 1058
+	*** 000a5b	8b 46 08 		mov	ax,WORD PTR [bp+8]	;pszFileName
+	*** 000a5e	89 86 c8 fe 		mov	WORD PTR [bp-312],ax	;pTemp
+	*** 000a62	eb 18 			jmp	SHORT $F844
+					$FC845:
+;|***             {
+;|***                 *pDestByte++ = *pTemp;
+; Line 1060
+	*** 000a64	8a 07 			mov	al,BYTE PTR [bx]
+	*** 000a66	8b b6 ca fe 		mov	si,WORD PTR [bp-310]	;pDestByte
+	*** 000a6a	ff 86 ca fe 		inc	WORD PTR [bp-310]	;pDestByte
+	*** 000a6e	88 04 			mov	BYTE PTR [si],al
+;|***                 chksum += *pTemp;
+; Line 1061
+	*** 000a70	8a 07 			mov	al,BYTE PTR [bx]
+	*** 000a72	2a e4 			sub	ah,ah
+	*** 000a74	01 86 c6 fe 		add	WORD PTR [bp-314],ax	;chksum
+;|***             }
+; Line 1062
+	*** 000a78	ff 86 c8 fe 		inc	WORD PTR [bp-312]	;pTemp
+					$F844:
+	*** 000a7c	8b 9e c8 fe 		mov	bx,WORD PTR [bp-312]	;pTemp
+	*** 000a80	80 3f 00 		cmp	BYTE PTR [bx],0
+	*** 000a83	75 df 			jne	$FC845
+;|***             *pDestByte++ = 0;
+; Line 1063
+	*** 000a85	8b 9e ca fe 		mov	bx,WORD PTR [bp-310]	;pDestByte
+	*** 000a89	ff 86 ca fe 		inc	WORD PTR [bp-310]	;pDestByte
+	*** 000a8d	c6 07 00 		mov	BYTE PTR [bx],0
+;|***         }
+;|*** 
+;|***         *pDestByte++ = (unsigned char)((~chksum) & 0xFF);
+; Line 1066
+					$I843:
+	*** 000a90	8a 86 c6 fe 		mov	al,BYTE PTR [bp-314]	;chksum
+	*** 000a94	f6 d0 			not	al
+	*** 000a96	8b 9e ca fe 		mov	bx,WORD PTR [bp-310]	;pDestByte
+	*** 000a9a	ff 86 ca fe 		inc	WORD PTR [bp-310]	;pDestByte
+	*** 000a9e	88 07 			mov	BYTE PTR [bx],al
+;|*** 
+;|***         for( i = 0; i < BOOT_TAIL_SIZE; i++ )
+; Line 1068
+	*** 000aa0	c7 46 cc 00 00 		mov	WORD PTR [bp-52],0	;i
+					$FC848:
+;|***         {
+;|***             *pDestByte++ = BootTail[i];
+; Line 1070
+	*** 000aa5	8b 5e cc 		mov	bx,WORD PTR [bp-52]	;i
+	*** 000aa8	8a 87 00 00 		mov	al,BYTE PTR $S520_BootTail[bx]
+	*** 000aac	8b 9e ca fe 		mov	bx,WORD PTR [bp-310]	;pDestByte
+	*** 000ab0	ff 86 ca fe 		inc	WORD PTR [bp-310]	;pDestByte
+	*** 000ab4	88 07 			mov	BYTE PTR [bx],al
+;|***         }
+; Line 1071
+	*** 000ab6	ff 46 cc 		inc	WORD PTR [bp-52]	;i
+	*** 000ab9	83 7e cc 04 		cmp	WORD PTR [bp-52],4	;i
+	*** 000abd	72 e6 			jb	$FC848
+;|*** 
+;|*** 
+;|***         if( bVerbose ) printf("Sending boot packet: ");
+; Line 1074
+	*** 000abf	83 7e 04 00 		cmp	WORD PTR [bp+4],0	;bVerbose
+	*** 000ac3	74 09 			je	$I850
+	*** 000ac5	68 00 00 		push	OFFSET DGROUP:$SG851
+	*** 000ac8	e8 00 00 		call	_printf
+	*** 000acb	83 c4 02 		add	sp,2
+;|*** 
+;|***         usIndex=0;
+; Line 1076
+					$I850:
+	*** 000ace	c7 46 ce 00 00 		mov	WORD PTR [bp-50],0	;usIndex
+;|*** 
+;|***         while( &BootPacket[usIndex] < pDestByte )
+; Line 1078
+	*** 000ad3	eb 46 			jmp	SHORT $L1020
+	*** 000ad5	90 			nop	
+					$FC853:
+;|***         {
+;|***             if( NoPPFS )
+; Line 1080
+	*** 000ad6	83 3e 00 00 00 		cmp	WORD PTR _NoPPFS,0
+	*** 000adb	74 03 			je	$JCC2779
+	*** 000add	e9 60 fc 		jmp	$I788
+					$JCC2779:
+;|***             {
+;|***                 return FALSE;
+;|***             }
+;|*** 
+;|***             if( bVerbose ) printf("%x ",BootPacket[usIndex]);
+; Line 1085
+	*** 000ae0	83 7e 04 00 		cmp	WORD PTR [bp+4],0	;bVerbose
+	*** 000ae4	74 10 			je	$I856
+	*** 000ae6	8a 82 cc fe 		mov	al,BYTE PTR [bp-308][si]
+	*** 000aea	2a e4 			sub	ah,ah
+	*** 000aec	50 			push	ax
+	*** 000aed	68 00 00 		push	OFFSET DGROUP:$SG857
+	*** 000af0	e8 00 00 		call	_printf
+	*** 000af3	83 c4 04 		add	sp,4
+;|*** 
+;|***             if( bSerialDownload )
+; Line 1087
+					$I856:
+	*** 000af6	83 3e 00 00 00 		cmp	WORD PTR _bSerialDownload,0
+	*** 000afb	74 0d 			je	$I858
+;|***             {
+;|***                 OEMWriteDebugByte(BootPacket[usIndex]);
+; Line 1089
+	*** 000afd	8b 76 ce 		mov	si,WORD PTR [bp-50]	;usIndex
+	*** 000b00	8a 82 cc fe 		mov	al,BYTE PTR [bp-308][si]
+	*** 000b04	50 			push	ax
+	*** 000b05	e8 00 00 		call	_OEMWriteDebugByte
+	*** 000b08	eb 0b 			jmp	SHORT $L1019
+					$I858:
+;|***             }
+;|***             else
+;|***             {
+;|***                 OEMParallelPortSendByte(BootPacket[usIndex]);
+; Line 1093
+	*** 000b0a	8b 76 ce 		mov	si,WORD PTR [bp-50]	;usIndex
+	*** 000b0d	8a 82 cc fe 		mov	al,BYTE PTR [bp-308][si]
+	*** 000b11	50 			push	ax
+	*** 000b12	e8 00 00 		call	_OEMParallelPortSendByte
+					$L1019:
+	*** 000b15	83 c4 02 		add	sp,2
+;|***             }
+;|***             usIndex++;
+; Line 1095
+	*** 000b18	ff 46 ce 		inc	WORD PTR [bp-50]	;usIndex
+;|***         }
+; Line 1096
+					$L1020:
+	*** 000b1b	8b 76 ce 		mov	si,WORD PTR [bp-50]	;usIndex
+	*** 000b1e	8d 82 cc fe 		lea	ax,WORD PTR [bp-308][si]
+	*** 000b22	3b 86 ca fe 		cmp	ax,WORD PTR [bp-310]	;pDestByte
+	*** 000b26	72 ae 			jb	$FC853
+;|*** 
+;|***         if( bVerbose ) printf("Sent.\r\n");
+; Line 1098
+	*** 000b28	83 7e 04 00 		cmp	WORD PTR [bp+4],0	;bVerbose
+	*** 000b2c	75 03 			jne	$JCC2860
+	*** 000b2e	e9 80 00 		jmp	$I868
+					$JCC2860:
+	*** 000b31	68 00 00 		push	OFFSET DGROUP:$SG861
+	*** 000b34	e8 00 00 		call	_printf
+	*** 000b37	eb 75 			jmp	SHORT $L1024
+	*** 000b39	90 			nop	
+					$I819:
+;|***     }
+;|***     else
+;|***     {
+;|***         hImage = _open(pszFileName, _O_BINARY | _O_RDONLY);
+;|*** 
+;|***         if( hImage == -1 )
+; Line 1104
+	*** 000b3a	68 00 80 		push	-32768	;8000H
+	*** 000b3d	ff 76 08 		push	WORD PTR [bp+8]	;pszFileName
+	*** 000b40	e8 00 00 		call	__open
+	*** 000b43	83 c4 04 		add	sp,4
+	*** 000b46	89 46 fe 		mov	WORD PTR [bp-2],ax	;hImage
+	*** 000b49	40 			inc	ax
+	*** 000b4a	75 18 			jne	$I863
+;|***         {
+;|***             printf("%s: Error opening file - %s\n", pszFileName, _strerror(NULL));
+; Line 1106
+	*** 000b4c	6a 00 			push	0
+	*** 000b4e	e8 00 00 		call	__strerror
+	*** 000b51	83 c4 02 		add	sp,2
+	*** 000b54	50 			push	ax
+	*** 000b55	ff 76 08 		push	WORD PTR [bp+8]	;pszFileName
+	*** 000b58	68 00 00 		push	OFFSET DGROUP:$SG864
+	*** 000b5b	e8 00 00 		call	_printf
+	*** 000b5e	83 c4 06 		add	sp,6
+	*** 000b61	e9 dc fb 		jmp	$I788
+;|***             return FALSE;
+;|***         }
+;|*** 
+;|***         if( (lImageSize = _filelength(hImage)) == -1 )
+; Line 1110
+					$I863:
+	*** 000b64	ff 76 fe 		push	WORD PTR [bp-2]	;hImage
+	*** 000b67	e8 00 00 		call	__filelength
+	*** 000b6a	83 c4 02 		add	sp,2
+	*** 000b6d	89 46 fa 		mov	WORD PTR [bp-6],ax	;lImageSize
+	*** 000b70	89 56 fc 		mov	WORD PTR [bp-4],dx
+	*** 000b73	3d ff ff 		cmp	ax,-1	;ffffH
+	*** 000b76	75 1c 			jne	$I865
+	*** 000b78	3b d0 			cmp	dx,ax
+	*** 000b7a	75 18 			jne	$I865
+;|***         {
+;|***             printf("%s: Error obtaining file size - %s\n", pszFileName, _strerror(NULL));
+; Line 1112
+	*** 000b7c	6a 00 			push	0
+	*** 000b7e	e8 00 00 		call	__strerror
+	*** 000b81	83 c4 02 		add	sp,2
+	*** 000b84	50 			push	ax
+	*** 000b85	ff 76 08 		push	WORD PTR [bp+8]	;pszFileName
+	*** 000b88	68 00 00 		push	OFFSET DGROUP:$SG866
+	*** 000b8b	e8 00 00 		call	_printf
+	*** 000b8e	83 c4 06 		add	sp,6
+	*** 000b91	e9 96 fb 		jmp	$L1023
+;|***             if( !bParallelDownload && !bSerialDownload )
+;|***                 _close(hImage);
+;|*** 
+;|***             return FALSE;
+;|***         }
+;|*** 
+;|***         if( bVerbose )
+; Line 1119
+					$I865:
+	*** 000b94	83 7e 04 00 		cmp	WORD PTR [bp+4],0	;bVerbose
+	*** 000b98	74 17 			je	$I868
+;|***         {
+;|***             printf("Loading %s, size = %ld\n", pszFileName, lImageSize);
+; Line 1121
+	*** 000b9a	52 			push	dx
+	*** 000b9b	50 			push	ax
+	*** 000b9c	ff 76 08 		push	WORD PTR [bp+8]	;pszFileName
+	*** 000b9f	68 00 00 		push	OFFSET DGROUP:$SG869
+	*** 000ba2	e8 00 00 		call	_printf
+	*** 000ba5	83 c4 08 		add	sp,8
+;|*** 	    DisplayCEOSVersion( pszFileName );  // Extract Version Number from image if available
+; Line 1122
+	*** 000ba8	ff 76 08 		push	WORD PTR [bp+8]	;pszFileName
+	*** 000bab	e8 00 00 		call	DisplayCEOSVersion
+					$L1024:
+	*** 000bae	83 c4 02 		add	sp,2
+;|*** 	}
+;|***     }
+; Line 1124
+					$I868:
+;|*** 
+;|***     // Read initial signature and physical start and size
+;|*** 
+;|***     usReadSize = sizeof(ucSignature) + 2 * sizeof(ULONG);
+;|*** 
+;|***     if( DownloadRead( hImage, ucBuffer, usReadSize, bParallelDownload) != usReadSize )
+; Line 1130
+	*** 000bb1	ff 76 06 		push	WORD PTR [bp+6]	;bParallelDownload
+	*** 000bb4	b8 0f 00 		mov	ax,15	;000fH
+	*** 000bb7	89 46 da 		mov	WORD PTR [bp-38],ax	;usReadSize
+	*** 000bba	50 			push	ax
+	*** 000bbb	68 00 00 		push	OFFSET DGROUP:$S775_?ucBuffer@?1??LoadImage@@9@9
+	*** 000bbe	ff 76 fe 		push	WORD PTR [bp-2]	;hImage
+	*** 000bc1	e8 c8 fa 		call	DownloadRead
+	*** 000bc4	83 c4 08 		add	sp,8
+	*** 000bc7	3d 0f 00 		cmp	ax,15	;000fH
+	*** 000bca	74 10 			je	$I870
+;|***     {
+;|***         printf("Error reading signature - %s\n", _strerror(NULL));
+; Line 1132
+	*** 000bcc	6a 00 			push	0
+	*** 000bce	e8 00 00 		call	__strerror
+	*** 000bd1	83 c4 02 		add	sp,2
+	*** 000bd4	50 			push	ax
+	*** 000bd5	68 00 00 		push	OFFSET DGROUP:$SG871
+	*** 000bd8	e9 49 fb 		jmp	$L1022
+	*** 000bdb	90 			nop	
+;|***         if( !bParallelDownload && !bSerialDownload )
+;|***             _close(hImage);
+;|*** 
+;|***         return FALSE;
+;|***     }
+;|*** 
+;|***     if( memcmp(ucBuffer, ucSignature, sizeof(ucSignature)) != 0 )
+; Line 1139
+					$I870:
+	*** 000bdc	b8 00 00 		mov	ax,OFFSET DGROUP:$S775_?ucBuffer@?1??LoadImage@@9@9
+	*** 000bdf	ba 00 00 		mov	dx,OFFSET DGROUP:$S777_?ucSignature@?1??LoadImage@@9@9
+	*** 000be2	b9 07 00 		mov	cx,7
+	*** 000be5	8b fa 			mov	di,dx
+	*** 000be7	8b f0 			mov	si,ax
+	*** 000be9	1e 			push	ds
+	*** 000bea	07 			pop	es
+	*** 000beb	d1 e9 			shr	cx,1
+	*** 000bed	1b c0 			sbb	ax,ax
+	*** 000bef	3b c9 			cmp	cx,cx
+	*** 000bf1	f3 			repz
+	*** 000bf2	a7 			cmpsw
+	*** 000bf3	75 04 			jne	$L990
+	*** 000bf5	2b c8 			sub	cx,ax
+	*** 000bf7	f3 			repz
+	*** 000bf8	a6 			cmpsb
+					$L990:
+	*** 000bf9	74 3b 			je	$I873
+;|***     {
+;|***         printf("Error invalid signature\nData: ");
+; Line 1141
+	*** 000bfb	68 00 00 		push	OFFSET DGROUP:$SG874
+	*** 000bfe	e8 00 00 		call	_printf
+	*** 000c01	83 c4 02 		add	sp,2
+;|***         for( i = 0; i < (int)usReadSize; i++ )
+; Line 1142
+	*** 000c04	c7 46 cc 00 00 		mov	WORD PTR [bp-52],0	;i
+	*** 000c09	eb 17 			jmp	SHORT $F875
+	*** 000c0b	90 			nop	
+					$FC876:
+;|***             printf("%x ",ucBuffer[i]);
+; Line 1143
+	*** 000c0c	8b 5e cc 		mov	bx,WORD PTR [bp-52]	;i
+	*** 000c0f	2a e4 			sub	ah,ah
+	*** 000c11	8a 87 00 00 		mov	al,BYTE PTR $S775_?ucBuffer@?1??LoadImage@@9@9[bx]
+	*** 000c15	50 			push	ax
+	*** 000c16	68 00 00 		push	OFFSET DGROUP:$SG878
+	*** 000c19	e8 00 00 		call	_printf
+	*** 000c1c	83 c4 04 		add	sp,4
+	*** 000c1f	ff 46 cc 		inc	WORD PTR [bp-52]	;i
+					$F875:
+	*** 000c22	8b 46 da 		mov	ax,WORD PTR [bp-38]	;usReadSize
+	*** 000c25	39 46 cc 		cmp	WORD PTR [bp-52],ax	;i
+	*** 000c28	7c e2 			jl	$FC876
+;|***         printf("\r\n");
+; Line 1144
+	*** 000c2a	68 00 00 		push	OFFSET DGROUP:$SG879
+	*** 000c2d	e8 00 00 		call	_printf
+	*** 000c30	83 c4 02 		add	sp,2
+	*** 000c33	e9 f4 fa 		jmp	$L1023
+;|***         if( !bParallelDownload && !bSerialDownload )
+;|***             _close(hImage);
+;|*** 
+;|***         return FALSE;
+;|***     }
+;|*** 
+;|***     ulReadTotal=*(PULONG)&ucBuffer[sizeof(ucSignature) + sizeof(ULONG)];
+; Line 1151
+					$I873:
+	*** 000c36	a1 0b 00 		mov	ax,WORD PTR $S775_?ucBuffer@?1??LoadImage@@9@9+11
+	*** 000c39	8b 16 0d 00 		mov	dx,WORD PTR $S775_?ucBuffer@?1??LoadImage@@9@9+13
+	*** 000c3d	89 46 d4 		mov	WORD PTR [bp-44],ax	;ulReadTotal
+	*** 000c40	89 56 d6 		mov	WORD PTR [bp-42],dx
+;|*** 
+;|***     // Print Physical start and size
+;|*** 
+;|***     if( bVerbose )
+; Line 1155
+	*** 000c43	83 7e 04 00 		cmp	WORD PTR [bp+4],0	;bVerbose
+	*** 000c47	74 13 			je	$I881
+;|***     {
+;|***         printf( "Image physical start = 0x%8.8lX, size = %ld\n",
+;|***               *(PULONG)&ucBuffer[sizeof(ucSignature)],
+;|***               *(PULONG)&ucBuffer[sizeof(ucSignature) + sizeof(ULONG)]);
+; Line 1159
+	*** 000c49	52 			push	dx
+	*** 000c4a	50 			push	ax
+	*** 000c4b	ff 36 09 00 		push	WORD PTR $S775_?ucBuffer@?1??LoadImage@@9@9+9
+	*** 000c4f	ff 36 07 00 		push	WORD PTR $S775_?ucBuffer@?1??LoadImage@@9@9+7
+	*** 000c53	68 00 00 		push	OFFSET DGROUP:$SG882
+	*** 000c56	e8 00 00 		call	_printf
+	*** 000c59	83 c4 0a 		add	sp,10	;000aH
+;|***     }
+;|*** 
+;|***     // Initialize the percent thingie.
+;|*** 
+;|***     DrawPercent( (DWORD)-1, (DWORD)"");
+; Line 1164
+					$I881:
+	*** 000c5c	1e 			push	ds
+	*** 000c5d	68 00 00 		push	OFFSET DGROUP:$SG883
+	*** 000c60	6a ff 			push	-1	;ffffH
+	*** 000c62	6a ff 			push	-1	;ffffH
+	*** 000c64	e8 00 00 		call	_DrawPercent
+	*** 000c67	83 c4 08 		add	sp,8
+;|*** 
+;|***     // Copy file to upper memory in CHUNKSIZE chunks
+;|*** 
+;|***     for(;;)
+; Line 1168
+					$FC885:
+;|***     {
+;|***         usAmountRead = DownloadRead(hImage, ucBuffer, 3 * sizeof(ULONG), bParallelDownload);
+;|***         ulReadProgress+=12;
+; Line 1171
+	*** 000c6a	83 46 d0 0c 		add	WORD PTR [bp-48],12	;000cH	;ulReadProgress
+	*** 000c6e	83 56 d2 00 		adc	WORD PTR [bp-46],0
+;|*** 
+;|***         if( usAmountRead != 3 * sizeof(ULONG) )
+; Line 1173
+	*** 000c72	ff 76 06 		push	WORD PTR [bp+6]	;bParallelDownload
+	*** 000c75	6a 0c 			push	12	;000cH
+	*** 000c77	68 00 00 		push	OFFSET DGROUP:$S775_?ucBuffer@?1??LoadImage@@9@9
+	*** 000c7a	ff 76 fe 		push	WORD PTR [bp-2]	;hImage
+	*** 000c7d	e8 0c fa 		call	DownloadRead
+	*** 000c80	83 c4 08 		add	sp,8
+	*** 000c83	89 46 d8 		mov	WORD PTR [bp-40],ax	;usAmountRead
+	*** 000c86	3d 0c 00 		cmp	ax,12	;000cH
+	*** 000c89	74 1d 			je	$I887
+;|***         {
+;|***             fprintf(stderr, "\r                                                                         \r");
+; Line 1175
+	*** 000c8b	68 00 00 		push	OFFSET DGROUP:$SG888
+	*** 000c8e	68 10 00 		push	OFFSET __iob+16
+	*** 000c91	e8 00 00 		call	_fprintf
+	*** 000c94	83 c4 04 		add	sp,4
+;|***             printf("Error reading header - %s\n", XmsErrorString(xmsError));
+; Line 1176
+	*** 000c97	ff 76 f8 		push	WORD PTR [bp-8]	;xmsError
+	*** 000c9a	e8 00 00 		call	_XmsErrorString
+	*** 000c9d	83 c4 02 		add	sp,2
+	*** 000ca0	50 			push	ax
+	*** 000ca1	68 00 00 		push	OFFSET DGROUP:$SG889
+	*** 000ca4	e9 7d fa 		jmp	$L1022
+	*** 000ca7	90 			nop	
+;|***             if( !bParallelDownload && !bSerialDownload )
+;|***                 _close(hImage);
+;|*** 
+;|***             return FALSE;
+;|***         }
+;|*** 
+;|***         ulSectionAddress = *(PULONG)&ucBuffer[0];
+; Line 1183
+					$I887:
+	*** 000ca8	a1 00 00 		mov	ax,WORD PTR $S775_?ucBuffer@?1??LoadImage@@9@9
+	*** 000cab	8b 16 02 00 		mov	dx,WORD PTR $S775_?ucBuffer@?1??LoadImage@@9@9+2
+	*** 000caf	89 46 ec 		mov	WORD PTR [bp-20],ax	;ulSectionAddress
+	*** 000cb2	89 56 ee 		mov	WORD PTR [bp-18],dx
+;|***         ulSectionSize = *(PULONG)&ucBuffer[4];
+; Line 1184
+	*** 000cb5	8b 0e 04 00 		mov	cx,WORD PTR $S775_?ucBuffer@?1??LoadImage@@9@9+4
+	*** 000cb9	8b 1e 06 00 		mov	bx,WORD PTR $S775_?ucBuffer@?1??LoadImage@@9@9+6
+	*** 000cbd	89 4e e8 		mov	WORD PTR [bp-24],cx	;ulSectionSize
+	*** 000cc0	89 5e ea 		mov	WORD PTR [bp-22],bx
+;|***         ulSectionChecksum = *(PULONG)&ucBuffer[8];
+; Line 1185
+	*** 000cc3	8b 36 08 00 		mov	si,WORD PTR $S775_?ucBuffer@?1??LoadImage@@9@9+8
+	*** 000cc7	8b 3e 0a 00 		mov	di,WORD PTR $S775_?ucBuffer@?1??LoadImage@@9@9+10
+	*** 000ccb	89 76 e4 		mov	WORD PTR [bp-28],si	;ulSectionChecksum
+	*** 000cce	89 7e e6 		mov	WORD PTR [bp-26],di
+;|*** 
+;|***         if( ulSectionAddress == 0 )
+; Line 1187
+	*** 000cd1	0b d0 			or	dx,ax
+	*** 000cd3	75 0b 			jne	$I891
+;|***         {
+;|***             *pulEntryPoint = ulSectionSize;
+; Line 1189
+	*** 000cd5	8b 76 0a 		mov	si,WORD PTR [bp+10]	;pulEntryPoint
+	*** 000cd8	89 0c 			mov	WORD PTR [si],cx
+	*** 000cda	89 5c 02 		mov	WORD PTR [si+2],bx
+;|*** 
+;|***             break;
+; Line 1191
+	*** 000cdd	e9 a0 01 		jmp	$FB886
+;|***         }
+;|*** 
+;|***         if( ulSectionAddress < ulLinearAddress ||
+; Line 1194
+					$I891:
+;|***             (ulSectionAddress + ulSectionSize) >
+;|***             (ulLinearAddress + (ULONG)usLargestBlock * 1024) )
+; Line 1196
+	*** 000ce0	8b 46 f0 		mov	ax,WORD PTR [bp-16]	;ulLinearAddress
+	*** 000ce3	8b 56 f2 		mov	dx,WORD PTR [bp-14]
+	*** 000ce6	39 56 ee 		cmp	WORD PTR [bp-18],dx
+	*** 000ce9	72 36 			jb	$L993
+	*** 000ceb	77 05 			ja	$L991
+	*** 000ced	39 46 ec 		cmp	WORD PTR [bp-20],ax	;ulSectionAddress
+	*** 000cf0	72 2f 			jb	$L993
+					$L991:
+	*** 000cf2	8b 46 f4 		mov	ax,WORD PTR [bp-12]	;usLargestBlock
+	*** 000cf5	2b d2 			sub	dx,dx
+	*** 000cf7	8a d4 			mov	dl,ah
+	*** 000cf9	8a e0 			mov	ah,al
+	*** 000cfb	2a c0 			sub	al,al
+	*** 000cfd	03 c0 			add	ax,ax
+	*** 000cff	13 d2 			adc	dx,dx
+	*** 000d01	03 c0 			add	ax,ax
+	*** 000d03	13 d2 			adc	dx,dx
+	*** 000d05	03 46 f0 		add	ax,WORD PTR [bp-16]	;ulLinearAddress
+	*** 000d08	13 56 f2 		adc	dx,WORD PTR [bp-14]
+	*** 000d0b	8b 4e e8 		mov	cx,WORD PTR [bp-24]	;ulSectionSize
+	*** 000d0e	8b 5e ea 		mov	bx,WORD PTR [bp-22]
+	*** 000d11	03 4e ec 		add	cx,WORD PTR [bp-20]	;ulSectionAddress
+	*** 000d14	13 5e ee 		adc	bx,WORD PTR [bp-18]
+	*** 000d17	3b d3 			cmp	dx,bx
+	*** 000d19	77 45 			ja	$I892
+	*** 000d1b	72 04 			jb	$L993
+	*** 000d1d	3b c1 			cmp	ax,cx
+	*** 000d1f	73 3f 			jae	$I892
+					$L993:
+;|***         {
+;|***             fprintf(stderr, "\r                                                                         \r");
+; Line 1198
+	*** 000d21	68 00 00 		push	OFFSET DGROUP:$SG894
+	*** 000d24	68 10 00 		push	OFFSET __iob+16
+	*** 000d27	e8 00 00 		call	_fprintf
+	*** 000d2a	83 c4 04 		add	sp,4
+;|***             printf(
+;|***                   "Error image section doesn't fit in allocated block\n"
+;|***                   "Block allocated at 0x%lX, size = %ld\n"
+;|***                   "Section physical start = 0x%8.8lX, size = %ld\n"
+;|*** 				  "Memory too low in your VM might cause this.\n"
+;|*** 				  "\n"
+;|*** 				  ">> Increase memory may fix this.\n",
+;|***                   ulLinearAddress, (ULONG)usLargestBlock * 1024,
+;|***                   ulSectionAddress, ulSectionSize);
+; Line 1207
+	*** 000d2d	ff 76 ea 		push	WORD PTR [bp-22]
+	*** 000d30	ff 76 e8 		push	WORD PTR [bp-24]	;ulSectionSize
+	*** 000d33	ff 76 ee 		push	WORD PTR [bp-18]
+	*** 000d36	ff 76 ec 		push	WORD PTR [bp-20]	;ulSectionAddress
+	*** 000d39	8b 46 f4 		mov	ax,WORD PTR [bp-12]	;usLargestBlock
+	*** 000d3c	2b d2 			sub	dx,dx
+	*** 000d3e	8a d4 			mov	dl,ah
+	*** 000d40	8a e0 			mov	ah,al
+	*** 000d42	2a c0 			sub	al,al
+	*** 000d44	03 c0 			add	ax,ax
+	*** 000d46	13 d2 			adc	dx,dx
+	*** 000d48	03 c0 			add	ax,ax
+	*** 000d4a	13 d2 			adc	dx,dx
+	*** 000d4c	52 			push	dx
+	*** 000d4d	50 			push	ax
+	*** 000d4e	ff 76 f2 		push	WORD PTR [bp-14]
+	*** 000d51	ff 76 f0 		push	WORD PTR [bp-16]	;ulLinearAddress
+	*** 000d54	68 00 00 		push	OFFSET DGROUP:$SG895
+	*** 000d57	e8 00 00 		call	_printf
+	*** 000d5a	83 c4 12 		add	sp,18	;0012H
+	*** 000d5d	e9 ca f9 		jmp	$L1023
+;|*** 
+;|***             if( !bParallelDownload && !bSerialDownload )
+;|***                 _close(hImage);
+;|*** 
+;|***             return FALSE;
+;|***         }
+;|*** 
+;|***         if( bVerbose )
+; Line 1215
+					$I892:
+	*** 000d60	83 7e 04 00 		cmp	WORD PTR [bp+4],0	;bVerbose
+	*** 000d64	74 21 			je	$I897
+;|***         {
+;|***             fprintf(stderr, "\r                                                                         \r");
+; Line 1217
+	*** 000d66	68 00 00 		push	OFFSET DGROUP:$SG898
+	*** 000d69	68 10 00 		push	OFFSET __iob+16
+	*** 000d6c	e8 00 00 		call	_fprintf
+	*** 000d6f	83 c4 04 		add	sp,4
+;|***             printf(
+;|***                   "Section physical start = 0x%8.8lX, size = %ld\n",
+;|***                   ulSectionAddress, ulSectionSize);
+; Line 1220
+	*** 000d72	ff 76 ea 		push	WORD PTR [bp-22]
+	*** 000d75	ff 76 e8 		push	WORD PTR [bp-24]	;ulSectionSize
+	*** 000d78	ff 76 ee 		push	WORD PTR [bp-18]
+	*** 000d7b	ff 76 ec 		push	WORD PTR [bp-20]	;ulSectionAddress
+	*** 000d7e	68 00 00 		push	OFFSET DGROUP:$SG899
+	*** 000d81	e8 00 00 		call	_printf
+	*** 000d84	83 c4 0a 		add	sp,10	;000aH
+;|***         }
+;|*** 
+;|***         ulChecksum = 0;
+; Line 1223
+					$I897:
+	*** 000d87	2b c0 			sub	ax,ax
+	*** 000d89	89 46 de 		mov	WORD PTR [bp-34],ax
+	*** 000d8c	89 46 dc 		mov	WORD PTR [bp-36],ax	;ulChecksum
+;|*** 
+;|***         for( ulSectionOffset = 0; ulSectionOffset < ulSectionSize; )
+; Line 1225
+	*** 000d8f	89 46 e2 		mov	WORD PTR [bp-30],ax
+	*** 000d92	89 46 e0 		mov	WORD PTR [bp-32],ax	;ulSectionOffset
+					$FC901:
+	*** 000d95	8b 46 e8 		mov	ax,WORD PTR [bp-24]	;ulSectionSize
+	*** 000d98	8b 56 ea 		mov	dx,WORD PTR [bp-22]
+	*** 000d9b	39 56 e2 		cmp	WORD PTR [bp-30],dx
+	*** 000d9e	76 03 			jbe	$JCC3486
+	*** 000da0	e9 c7 fe 		jmp	$FC885
+					$JCC3486:
+	*** 000da3	72 08 			jb	$L994
+	*** 000da5	39 46 e0 		cmp	WORD PTR [bp-32],ax	;ulSectionOffset
+	*** 000da8	72 03 			jb	$JCC3496
+	*** 000daa	e9 bd fe 		jmp	$FC885
+					$JCC3496:
+					$L994:
+;|***         {
+;|***             if( (ulSectionSize - ulSectionOffset) < CHUNKSIZE )
+; Line 1227
+	*** 000dad	2b 46 e0 		sub	ax,WORD PTR [bp-32]	;ulSectionOffset
+	*** 000db0	1b 56 e2 		sbb	dx,WORD PTR [bp-30]
+	*** 000db3	0b d2 			or	dx,dx
+	*** 000db5	75 11 			jne	$I903
+	*** 000db7	3d 00 80 		cmp	ax,-32768	;8000H
+	*** 000dba	73 0c 			jae	$I903
+;|***             {
+;|***                 usReadSize = (USHORT)(ulSectionSize - ulSectionOffset);
+; Line 1229
+	*** 000dbc	8b 46 e8 		mov	ax,WORD PTR [bp-24]	;ulSectionSize
+	*** 000dbf	2b 46 e0 		sub	ax,WORD PTR [bp-32]	;ulSectionOffset
+	*** 000dc2	89 46 da 		mov	WORD PTR [bp-38],ax	;usReadSize
+;|***             }
+;|***             else
+; Line 1231
+	*** 000dc5	eb 06 			jmp	SHORT $I904
+	*** 000dc7	90 			nop	
+					$I903:
+;|***             {
+;|***                 usReadSize = CHUNKSIZE;
+; Line 1233
+	*** 000dc8	c7 46 da 00 80 		mov	WORD PTR [bp-38],-32768	;8000H	;usReadSize
+;|***             }
+; Line 1234
+					$I904:
+;|***             usAmountRead = DownloadRead(hImage, ucBuffer, usReadSize,bParallelDownload);
+;|*** 
+;|***             if( usAmountRead != usReadSize )
+; Line 1237
+	*** 000dcd	ff 76 06 		push	WORD PTR [bp+6]	;bParallelDownload
+	*** 000dd0	ff 76 da 		push	WORD PTR [bp-38]	;usReadSize
+	*** 000dd3	68 00 00 		push	OFFSET DGROUP:$S775_?ucBuffer@?1??LoadImage@@9@9
+	*** 000dd6	ff 76 fe 		push	WORD PTR [bp-2]	;hImage
+	*** 000dd9	e8 b0 f8 		call	DownloadRead
+	*** 000ddc	83 c4 08 		add	sp,8
+	*** 000ddf	89 46 d8 		mov	WORD PTR [bp-40],ax	;usAmountRead
+	*** 000de2	3b 46 da 		cmp	ax,WORD PTR [bp-38]	;usReadSize
+	*** 000de5	74 1d 			je	$I905
+;|***             {
+;|***                 fprintf(stderr, "\r                                                                         \r");
+; Line 1239
+	*** 000de7	68 00 00 		push	OFFSET DGROUP:$SG906
+	*** 000dea	68 10 00 		push	OFFSET __iob+16
+	*** 000ded	e8 00 00 		call	_fprintf
+	*** 000df0	83 c4 04 		add	sp,4
+;|***                 printf("Error reading section - %s\n", XmsErrorString(xmsError));
+; Line 1240
+	*** 000df3	ff 76 f8 		push	WORD PTR [bp-8]	;xmsError
+	*** 000df6	e8 00 00 		call	_XmsErrorString
+	*** 000df9	83 c4 02 		add	sp,2
+	*** 000dfc	50 			push	ax
+	*** 000dfd	68 00 00 		push	OFFSET DGROUP:$SG907
+	*** 000e00	e9 21 f9 		jmp	$L1022
+	*** 000e03	90 			nop	
+;|***                 if( !bParallelDownload && !bSerialDownload )
+;|***                     _close(hImage);
+;|*** 
+;|***                 return FALSE;
+;|***             }
+;|***             ulReadProgress+= usReadSize;
+; Line 1246
+					$I905:
+;|***             DrawPercent(ulReadProgress, ulReadTotal);
+; Line 1247
+	*** 000e04	ff 76 d6 		push	WORD PTR [bp-42]
+	*** 000e07	ff 76 d4 		push	WORD PTR [bp-44]	;ulReadTotal
+	*** 000e0a	8b 46 da 		mov	ax,WORD PTR [bp-38]	;usReadSize
+	*** 000e0d	2b d2 			sub	dx,dx
+	*** 000e0f	01 46 d0 		add	WORD PTR [bp-48],ax	;ulReadProgress
+	*** 000e12	11 56 d2 		adc	WORD PTR [bp-46],dx
+	*** 000e15	ff 76 d2 		push	WORD PTR [bp-46]
+	*** 000e18	ff 76 d0 		push	WORD PTR [bp-48]	;ulReadProgress
+	*** 000e1b	e8 00 00 		call	_DrawPercent
+	*** 000e1e	83 c4 08 		add	sp,8
+;|*** 
+;|*** #if 0
+;|***             for( usIndex = 0; usIndex < usAmountRead; usIndex++ )
+;|***             {
+;|***                 ulChecksum += ucBuffer[usIndex];
+;|***             }
+;|*** #endif
+;|*** 
+;|*** #if 1
+;|***             xmsError = XmsMoveExtendedMemory(
+;|***                                             0, (ULONG)(UCHAR far *)ucBuffer,
+;|***                                             usBlockHandle, ulSectionAddress - ulLinearAddress + ulSectionOffset,
+;|***                                             (usAmountRead + 1) & ~1U);
+;|*** 
+;|***             if( xmsError != XMS_SUCCESS )
+; Line 1262
+	*** 000e21	8b 46 d8 		mov	ax,WORD PTR [bp-40]	;usAmountRead
+	*** 000e24	40 			inc	ax
+	*** 000e25	24 fe 			and	al,254	;00feH
+	*** 000e27	6a 00 			push	0
+	*** 000e29	50 			push	ax
+	*** 000e2a	8b 46 e0 		mov	ax,WORD PTR [bp-32]	;ulSectionOffset
+	*** 000e2d	8b 56 e2 		mov	dx,WORD PTR [bp-30]
+	*** 000e30	2b 46 f0 		sub	ax,WORD PTR [bp-16]	;ulLinearAddress
+	*** 000e33	1b 56 f2 		sbb	dx,WORD PTR [bp-14]
+	*** 000e36	03 46 ec 		add	ax,WORD PTR [bp-20]	;ulSectionAddress
+	*** 000e39	13 56 ee 		adc	dx,WORD PTR [bp-18]
+	*** 000e3c	52 			push	dx
+	*** 000e3d	50 			push	ax
+	*** 000e3e	ff 36 00 00 		push	WORD PTR _usBlockHandle
+	*** 000e42	1e 			push	ds
+	*** 000e43	68 00 00 		push	OFFSET DGROUP:$S775_?ucBuffer@?1??LoadImage@@9@9
+	*** 000e46	6a 00 			push	0
+	*** 000e48	e8 00 00 		call	_XmsMoveExtendedMemory
+	*** 000e4b	83 c4 10 		add	sp,16	;0010H
+	*** 000e4e	89 46 f8 		mov	WORD PTR [bp-8],ax	;xmsError
+	*** 000e51	0b c0 			or	ax,ax
+	*** 000e53	74 1d 			je	$I909
+;|***             {
+;|***                 fprintf(stderr, "\r                                                                         \r");
+; Line 1264
+	*** 000e55	68 00 00 		push	OFFSET DGROUP:$SG910
+	*** 000e58	68 10 00 		push	OFFSET __iob+16
+	*** 000e5b	e8 00 00 		call	_fprintf
+	*** 000e5e	83 c4 04 		add	sp,4
+;|***                 printf("Error moving extended memory - %s\n", XmsErrorString(xmsError));
+; Line 1265
+	*** 000e61	ff 76 f8 		push	WORD PTR [bp-8]	;xmsError
+	*** 000e64	e8 00 00 		call	_XmsErrorString
+	*** 000e67	83 c4 02 		add	sp,2
+	*** 000e6a	50 			push	ax
+	*** 000e6b	68 00 00 		push	OFFSET DGROUP:$SG911
+	*** 000e6e	e9 b3 f8 		jmp	$L1022
+	*** 000e71	90 			nop	
+;|***                 if( !bParallelDownload && !bSerialDownload )
+;|***                     _close(hImage);
+;|*** 
+;|***                 return FALSE;
+;|***             }
+;|*** #endif
+;|***             ulSectionOffset += usAmountRead;
+; Line 1272
+					$I909:
+	*** 000e72	8b 46 d8 		mov	ax,WORD PTR [bp-40]	;usAmountRead
+	*** 000e75	2b d2 			sub	dx,dx
+	*** 000e77	01 46 e0 		add	WORD PTR [bp-32],ax	;ulSectionOffset
+	*** 000e7a	11 56 e2 		adc	WORD PTR [bp-30],dx
+;|***         }
+; Line 1273
+	*** 000e7d	e9 15 ff 		jmp	$FC901
+					$FB886:
+;|*** #if 0
+;|***         if( ulChecksum != ulSectionChecksum )
+;|***         {
+;|***             fprintf(stderr, "\r                                                                         \r");
+;|***             printf(
+;|***                   "Bad checksum 0x%8.8lX, expected 0x%8.8lX\n",
+;|***                   ulChecksum, ulSectionChecksum);
+;|*** 
+;|***             if( !bParallelDownload && !bSerialDownload )
+;|***                 _close(hImage);
+;|*** 
+;|***             return FALSE;
+;|***         }
+;|*** #endif
+;|***     }
+;|*** 
+;|***     DrawPercent(ulReadTotal, ulReadTotal);
+; Line 1290
+	*** 000e80	ff 76 d6 		push	WORD PTR [bp-42]
+	*** 000e83	ff 76 d4 		push	WORD PTR [bp-44]	;ulReadTotal
+	*** 000e86	ff 76 d6 		push	WORD PTR [bp-42]
+	*** 000e89	ff 76 d4 		push	WORD PTR [bp-44]	;ulReadTotal
+	*** 000e8c	e8 00 00 		call	_DrawPercent
+	*** 000e8f	83 c4 08 		add	sp,8
+;|*** 
+;|***     if( !bParallelDownload && !bSerialDownload )
+; Line 1292
+	*** 000e92	83 7e 06 00 		cmp	WORD PTR [bp+6],0	;bParallelDownload
+	*** 000e96	75 10 			jne	$I913
+	*** 000e98	83 3e 00 00 00 		cmp	WORD PTR _bSerialDownload,0
+	*** 000e9d	75 09 			jne	$I913
+;|***     {
+;|***         _close(hImage);
+; Line 1294
+	*** 000e9f	ff 76 fe 		push	WORD PTR [bp-2]	;hImage
+	*** 000ea2	e8 00 00 		call	__close
+	*** 000ea5	83 c4 02 		add	sp,2
+;|***     }
+;|*** 
+;|***     // Stop the floppy motor in case it contained the image file
+;|*** 
+;|***     __asm
+; Line 1299
+					$I913:
+;|***     {
+;|***         push    dx
+; Line 1301
+	*** 000ea8	52 			push	dx
+;|***         mov     dx, 03F2h   ; Floppy motor and DMA control
+; Line 1302
+	*** 000ea9	ba f2 03 		mov	dx,1010	;03f2H
+;|***         in      al, dx
+; Line 1303
+	*** 000eac	ec 			in	al,dx
+;|***         and     al, 00Fh    ; Clear motor on bits
+; Line 1304
+	*** 000ead	24 0f 			and	al,15	;000fH
+;|***         out     dx, al
+; Line 1305
+	*** 000eaf	ee 			out	dx, al
+
+;|***         pop     dx
+; Line 1306
+	*** 000eb0	5a 			pop	dx
+;|***     }
+; Line 1307
+;|***     fprintf(stderr, "\r                                                                         \r");
+; Line 1308
+	*** 000eb1	68 00 00 		push	OFFSET DGROUP:$SG914
+	*** 000eb4	68 10 00 		push	OFFSET __iob+16
+	*** 000eb7	e8 00 00 		call	_fprintf
+	*** 000eba	83 c4 04 		add	sp,4
+;|*** 
+;|***     // Indicate success
+;|*** 
+;|***     return( TRUE );
+; Line 1312
+	*** 000ebd	b8 01 00 		mov	ax,1
+;|*** }
+; Line 1313
+	*** 000ec0	5e 			pop	si
+	*** 000ec1	5f 			pop	di
+	*** 000ec2	c9 			leave	
+	*** 000ec3	c3 			ret	
+
+LoadImage	ENDP
+
+GetPCIConfigMechanism	PROC NEAR
+;|*** 
+;|*** //------------------------------------------------------------------------------
+;|*** //
+;|*** //  Function Name:  GetPCIConfigMechanism()
+;|*** //  Description..:  Execute trap to obtain PCI configuration Mechanism.
+;|*** //  Inputs.......:  none
+;|*** //  Outputs......:  UCHAR  0 indicates no PCI bus, else PCI configuration mech.
+;|*** //
+;|*** //------------------------------------------------------------------------------
+;|*** 
+;|*** static UCHAR GetPCIConfigMechanism()
+;|*** {
+; Line 1325
+	*** 000ec4	c8 08 00 00 		enter	8,0
+;	ucPCIVersionMajor = -2
+;	ucPCIVersionMinor = -4
+;	ucPCIBus = -6
+;	ucPCIConfigMech = -8
+;|***     UCHAR   ucPCIVersionMajor;
+;|***     UCHAR   ucPCIVersionMinor;
+;|***     UCHAR   ucPCIBus;
+;|***     UCHAR   ucPCIConfigMech;
+;|*** 
+;|***     __asm
+;|***     {
+;|***         mov     ax, 0xB101
+; Line 1333
+	*** 000ec8	b8 01 b1 		mov	ax,-20223	;b101H
+;|***         int     0x1A
+; Line 1334
+	*** 000ecb	cd 1a 			int	26	;001aH
+;|*** 
+;|***         jc      noPCI
+; Line 1336
+	*** 000ecd	72 23 			jb	$noPCI920
+;|*** 
+;|***         cmp     dx, 0x4350     ; 'CP'
+; Line 1338
+	*** 000ecf	81 fa 50 43 		cmp	dx,17232	;4350H
+;|*** 
+;|***         jne     noPCI
+; Line 1340
+	*** 000ed3	75 1d 			jne	$noPCI920
+;|*** 
+;|***         or      ah, ah
+; Line 1342
+	*** 000ed5	0a e4 			or	ah,ah
+;|***         jnz     noPCI
+; Line 1343
+	*** 000ed7	75 19 			jne	$noPCI920
+;|*** 
+;|***         mov     ucPCIVersionMajor, bh
+; Line 1345
+	*** 000ed9	88 7e fe 		mov	BYTE PTR [bp-2],bh	;ucPCIVersionMajor
+;|***         mov     ucPCIVersionMinor, bl
+; Line 1346
+	*** 000edc	88 5e fc 		mov	BYTE PTR [bp-4],bl	;ucPCIVersionMinor
+;|***         mov     ucPCIBus, cl
+; Line 1347
+	*** 000edf	88 4e fa 		mov	BYTE PTR [bp-6],cl	;ucPCIBus
+;|*** 
+;|***         and     al, 0x03
+; Line 1349
+	*** 000ee2	24 03 			and	al,3
+;|***         mov     ucPCIConfigMech, al
+; Line 1350
+	*** 000ee4	88 46 f8 		mov	BYTE PTR [bp-8],al	;ucPCIConfigMech
+;|***     }
+; Line 1351
+;|*** 
+;|***     // Indicate PCI bus info
+;|*** 
+;|***     /*printf( "%d PCI bus%s (Version %X.%2.2X) using Configuration Mechanism # %d\n",
+;|***         ucPCIBus + 1, ucPCIBus == 0 ? "" : "ses",
+;|***         ucPCIVersionMajor, ucPCIVersionMinor, ucPCIConfigMech);*/
+;|*** 
+;|*** 
+;|***     // Indicate Configuration mechanism
+;|*** 
+;|***     return( UCHAR)((ucPCIBus << 2) | ucPCIConfigMech );
+; Line 1362
+	*** 000ee7	8a 46 fa 		mov	al,BYTE PTR [bp-6]	;ucPCIBus
+	*** 000eea	c0 e0 02 		shl	al,2
+	*** 000eed	0a 46 f8 		or	al,BYTE PTR [bp-8]	;ucPCIConfigMech
+	*** 000ef0	c9 			leave	
+	*** 000ef1	c3 			ret	
+;|*** 
+;|***     // Indicate no PCI bus
+;|*** 
+;|***     noPCI: printf( "PCI bus not detected\n" );
+; Line 1366
+					$noPCI920:
+	*** 000ef2	68 00 00 		push	OFFSET DGROUP:$SG921
+	*** 000ef5	e8 00 00 		call	_printf
+;|***     return( 0 );
+; Line 1367
+	*** 000ef8	32 c0 			xor	al,al
+;|*** }
+; Line 1368
+	*** 000efa	c9 			leave	
+	*** 000efb	c3 			ret	
+
+GetPCIConfigMechanism	ENDP
+
+GetJumpFlags	PROC NEAR
+;|*** 
+;|*** //------------------------------------------------------------------------------
+;|*** //
+;|*** //  Type Name..:    JUMP_PACKET    
+;|*** //  Description:    Defines the JUMP_PACKET type. Type is byte aligned.
+;|*** //
+;|*** //------------------------------------------------------------------------------
+;|*** 
+;|*** #pragma pack(1)
+;|*** 
+;|*** typedef struct JUMP_PACKET 
+;|*** {
+;|***     UCHAR   Header[BOOT_HEADER_SIZE];
+;|***     WORD    wLen;
+;|***     DWORD   dwTransport;
+;|***     UCHAR   ucChkSum;
+;|***     UCHAR   Tail[BOOT_TAIL_SIZE];
+;|*** } 
+;|*** JUMP_PACKET, *PJUMP_PACKET;
+;|*** 
+;|*** #pragma pack()
+;|*** 
+;|*** 
+;|*** //------------------------------------------------------------------------------
+;|*** //
+;|*** //  Function Name:  GetJumpFlags(void)
+;|*** //  Description..:  This function validates the JUMP_PACKET and if valid
+;|*** //                  indicates the transport parameter.
+;|*** //  Inputs.......:  none
+;|*** //  Outputs......:  0 indicates JUMP_PACKET failure, else Transport parameter
+;|*** //
+;|*** //------------------------------------------------------------------------------
+;|*** 
+;|*** static WORD GetJumpFlags(void)
+;|*** {
+; Line 1403
+	*** 000efc	c8 12 00 00 		enter	18,0
+	*** 000f00	57 			push	di
+	*** 000f01	56 			push	si
+;	Packet = -18
+;	usRead = -20
+;	register si = pData
+;	CheckSum = -1
+;	i = -26
+;|***     JUMP_PACKET Packet;
+;|***     USHORT usRead;
+;|***     UCHAR *pData;
+;|***     UCHAR CheckSum;
+;|***     int i;
+;|*** 
+;|***     usRead = DownloadRead( 0, (UCHAR *)&Packet, sizeof(Packet), TRUE );
+;|*** 
+;|***     // check read size
+;|*** 
+;|***     if( usRead != sizeof(Packet) )
+; Line 1414
+	*** 000f02	6a 01 			push	1
+	*** 000f04	6a 11 			push	17	;0011H
+	*** 000f06	8d 46 ee 		lea	ax,WORD PTR [bp-18]	;Packet
+	*** 000f09	50 			push	ax
+	*** 000f0a	6a 00 			push	0
+	*** 000f0c	e8 7d f7 		call	DownloadRead
+	*** 000f0f	83 c4 08 		add	sp,8
+	*** 000f12	3d 11 00 		cmp	ax,17	;0011H
+	*** 000f15	74 07 			je	$I931
+;|***     {
+;|***         printf( "Read Packet Failed\n" );
+; Line 1416
+	*** 000f17	68 00 00 		push	OFFSET DGROUP:$SG932
+	*** 000f1a	e9 80 00 		jmp	$L1029
+	*** 000f1d	90 			nop	
+;|***         return 0;       // KTS_DEFAULT
+;|***     }
+;|*** 
+;|***     // check header/tail valid
+;|*** 
+;|***     if( (memcmp(Packet.Header, BootHeader, 4) != 0) ||
+; Line 1422
+					$I931:
+;|***         (memcmp(Packet.Tail,   BootTail,   4) != 0) )
+; Line 1423
+	*** 000f1e	b8 00 00 		mov	ax,OFFSET DGROUP:$S519_BootHeader
+	*** 000f21	b9 04 00 		mov	cx,4
+	*** 000f24	8b f8 			mov	di,ax
+	*** 000f26	8d 76 ee 		lea	si,WORD PTR [bp-18]	;Packet
+	*** 000f29	1e 			push	ds
+	*** 000f2a	07 			pop	es
+	*** 000f2b	d1 e9 			shr	cx,1
+	*** 000f2d	1b c0 			sbb	ax,ax
+	*** 000f2f	3b c9 			cmp	cx,cx
+	*** 000f31	f3 			repz
+	*** 000f32	a7 			cmpsw
+	*** 000f33	75 65 			jne	$I934
+	*** 000f35	2b c8 			sub	cx,ax
+	*** 000f37	f3 			repz
+	*** 000f38	a6 			cmpsb
+	*** 000f39	75 5f 			jne	$I934
+	*** 000f3b	b8 00 00 		mov	ax,OFFSET DGROUP:$S520_BootTail
+	*** 000f3e	b9 04 00 		mov	cx,4
+	*** 000f41	8b f8 			mov	di,ax
+	*** 000f43	8d 76 fb 		lea	si,WORD PTR [bp-5]
+	*** 000f46	d1 e9 			shr	cx,1
+	*** 000f48	1b c0 			sbb	ax,ax
+	*** 000f4a	3b c9 			cmp	cx,cx
+	*** 000f4c	f3 			repz
+	*** 000f4d	a7 			cmpsw
+	*** 000f4e	75 4a 			jne	$I934
+	*** 000f50	2b c8 			sub	cx,ax
+	*** 000f52	f3 			repz
+	*** 000f53	a6 			cmpsb
+	*** 000f54	75 44 			jne	$I934
+;|***     {
+;|***         printf( "Read Header/Tail failed\n");
+;|***         return 0;
+;|***     }
+;|*** 
+;|***     // check command
+;|*** 
+;|***     if( Packet.Header[4] != 0x00 || Packet.Header[5] != 0x00 )
+; Line 1431
+	*** 000f56	80 7e f2 00 		cmp	BYTE PTR [bp-14],0
+	*** 000f5a	75 38 			jne	$I937
+	*** 000f5c	80 7e f3 00 		cmp	BYTE PTR [bp-13],0
+	*** 000f60	75 32 			jne	$I937
+;|***     {
+;|***         printf("Invalid Command\n");
+;|***         return 0;
+;|***     }
+;|*** 
+;|***     // check wlen
+;|*** 
+;|***     if( Packet.wLen != 9 )
+; Line 1439
+	*** 000f62	83 7e f4 09 		cmp	WORD PTR [bp-12],9
+	*** 000f66	74 06 			je	$I939
+;|***     {
+;|***         printf("Invalid Length\n");
+; Line 1441
+	*** 000f68	68 00 00 		push	OFFSET DGROUP:$SG940
+	*** 000f6b	eb 30 			jmp	SHORT $L1029
+	*** 000f6d	90 			nop	
+;|***         return 0;
+;|***     }
+;|*** 
+;|***     // check checksum
+;|*** 
+;|***     CheckSum = 0;
+; Line 1447
+					$I939:
+	*** 000f6e	c6 46 ff 00 		mov	BYTE PTR [bp-1],0	;CheckSum
+;|*** 
+;|***     for( i=0, pData = (UCHAR *)&Packet.dwTransport; i < sizeof(Packet.dwTransport); i++, pData++ )
+; Line 1449
+	*** 000f72	8d 76 f6 		lea	si,WORD PTR [bp-10]
+	*** 000f75	ba 04 00 		mov	dx,4
+					$F941:
+;|***     {
+;|***         CheckSum += *pData;
+; Line 1451
+	*** 000f78	ac 			lodsb
+	*** 000f79	00 46 ff 		add	BYTE PTR [bp-1],al	;CheckSum
+	*** 000f7c	4a 			dec	dx
+	*** 000f7d	75 f9 			jne	$F941
+;|***     }
+;|*** 
+;|***     if( CheckSum != Packet.ucChkSum )
+; Line 1454
+	*** 000f7f	8a 46 fa 		mov	al,BYTE PTR [bp-6]
+	*** 000f82	38 46 ff 		cmp	BYTE PTR [bp-1],al	;CheckSum
+	*** 000f85	74 05 			je	$I944
+;|***     {
+;|***         printf("Invalid checksum\n");
+; Line 1456
+	*** 000f87	68 00 00 		push	OFFSET DGROUP:$SG945
+	*** 000f8a	eb 11 			jmp	SHORT $L1029
+;|***         return 0;
+;|***     }
+;|*** 
+;|***     // Packet is valid - indicate Transport
+;|*** 
+;|***     return( (WORD)Packet.dwTransport );
+; Line 1462
+					$I944:
+	*** 000f8c	8b 46 f6 		mov	ax,WORD PTR [bp-10]
+	*** 000f8f	5e 			pop	si
+	*** 000f90	5f 			pop	di
+	*** 000f91	c9 			leave	
+	*** 000f92	c3 			ret	
+	*** 000f93	90 			nop	
+;|***     if( Packet.Header[4] != 0x00 || Packet.Header[5] != 0x00 )
+; Line 1431
+					$I937:
+;|***     {
+;|***         printf("Invalid Command\n");
+; Line 1433
+	*** 000f94	68 00 00 		push	OFFSET DGROUP:$SG938
+	*** 000f97	eb 04 			jmp	SHORT $L1029
+	*** 000f99	90 			nop	
+;|***         (memcmp(Packet.Tail,   BootTail,   4) != 0) )
+; Line 1423
+					$I934:
+;|***     {
+;|***         printf( "Read Header/Tail failed\n");
+; Line 1425
+	*** 000f9a	68 00 00 		push	OFFSET DGROUP:$SG935
+					$L1029:
+	*** 000f9d	e8 00 00 		call	_printf
+	*** 000fa0	83 c4 02 		add	sp,2
+;|***         return 0;
+; Line 1426
+	*** 000fa3	33 c0 			xor	ax,ax
+;|***     }
+;|*** 
+;|***     // check command
+;|*** 
+;|***     if( Packet.Header[4] != 0x00 || Packet.Header[5] != 0x00 )
+;|***     {
+;|***         printf("Invalid Command\n");
+;|***         return 0;
+;|***     }
+;|*** 
+;|***     // check wlen
+;|*** 
+;|***     if( Packet.wLen != 9 )
+;|***     {
+;|***         printf("Invalid Length\n");
+;|***         return 0;
+;|***     }
+;|*** 
+;|***     // check checksum
+;|*** 
+;|***     CheckSum = 0;
+;|*** 
+;|***     for( i=0, pData = (UCHAR *)&Packet.dwTransport; i < sizeof(Packet.dwTransport); i++, pData++ )
+;|***     {
+;|***         CheckSum += *pData;
+;|***     }
+;|*** 
+;|***     if( CheckSum != Packet.ucChkSum )
+;|***     {
+;|***         printf("Invalid checksum\n");
+;|***         return 0;
+;|***     }
+;|*** 
+;|***     // Packet is valid - indicate Transport
+;|*** 
+;|***     return( (WORD)Packet.dwTransport );
+;|*** }
+; Line 1463
+	*** 000fa5	5e 			pop	si
+	*** 000fa6	5f 			pop	di
+	*** 000fa7	c9 			leave	
+	*** 000fa8	c3 			ret	
+	*** 000fa9	90 			nop	
+
+GetJumpFlags	ENDP
+
+DisplayCEOSVersion	PROC NEAR
+;|*** 
+;|*** 
+;|*** //------------------------------------------------------------------------------
+;|*** //
+;|*** //  Function Name:  DisplayCEOSVersion(void)
+;|*** //  Description..:  This function searches through the Image binary (e.g. eboot.bin) looking for
+;|*** //		    a Windows CE Version number, delimited by a unique string--> "$@( VER $@("
+;|*** //  Inputs.......:  char *pszFileName, denotes the image being loaded by LoadImage
+;|*** //  Outputs......:  none, simply prints debug info to the user
+;|*** //
+;|*** //------------------------------------------------------------------------------
+;|*** 
+;|*** static void DisplayCEOSVersion(char *pszFileName)
+;|*** {
+; Line 1477
+	*** 000faa	c8 10 00 00 		enter	16,0
+	*** 000fae	57 			push	di
+	*** 000faf	56 			push	si
+;	pszFileName = 4
+;	delim = -16
+;	register si = delim_ptr
+;	delim_end = -2
+;	align32bit = -10
+;	lImageFile = -4
+;	ver_lo = -10
+;	ver_hi = -12
+;	done = -6
+;	iterations = -8
+;	cnt = -22
+;|*** 
+;|*** #define DELIM_LEN 3
+;|*** 
+;|***     char delim[] = "$@(";		// To change delimiter, modify delim & DELIM_LEN!
+; Line 1481
+	*** 000fb0	a1 00 00 		mov	ax,WORD PTR $SG950
+	*** 000fb3	8b 16 02 00 		mov	dx,WORD PTR $SG950+2
+	*** 000fb7	89 46 f0 		mov	WORD PTR [bp-16],ax	;delim
+	*** 000fba	89 56 f2 		mov	WORD PTR [bp-14],dx
+;|***     char *delim_ptr = delim;
+; Line 1482
+	*** 000fbd	8d 76 f0 		lea	si,WORD PTR [bp-16]	;delim
+;|***     char *delim_end = delim + DELIM_LEN;
+; Line 1483
+	*** 000fc0	8d 46 f3 		lea	ax,WORD PTR [bp-13]
+	*** 000fc3	89 46 fe 		mov	WORD PTR [bp-2],ax	;delim_end
+;|***     int  align32bit = 4 - ( DELIM_LEN % 4 );
+;|*** 
+;|***     FILE *lImageFile = NULL;	
+;|***     int  ver_lo,ver_hi;			
+;|***     int  done = 0;			// Loop exit condition, done = 1 denotes version found
+;|***     int  iterations = 0;		// Used to limit search length
+; Line 1489
+	*** 000fc6	33 c0 			xor	ax,ax
+	*** 000fc8	89 46 fa 		mov	WORD PTR [bp-6],ax	;done
+	*** 000fcb	89 46 f8 		mov	WORD PTR [bp-8],ax	;iterations
+;|***     int  cnt;					
+;|*** 
+;|***     lImageFile = fopen( pszFileName, "rb" );
+;|*** 
+;|***     // Algorithm to search through image for 'delim' (version) 'delim'
+;|***     // If successful, sets done = 1.
+;|***     if( lImageFile ) {
+; Line 1496
+	*** 000fce	68 00 00 		push	OFFSET DGROUP:$SG960
+	*** 000fd1	ff 76 04 		push	WORD PTR [bp+4]	;pszFileName
+	*** 000fd4	e8 00 00 		call	_fopen
+	*** 000fd7	83 c4 04 		add	sp,4
+	*** 000fda	89 46 fc 		mov	WORD PTR [bp-4],ax	;lImageFile
+	*** 000fdd	0b c0 			or	ax,ax
+	*** 000fdf	75 03 			jne	$JCC4063
+	*** 000fe1	e9 b8 00 		jmp	$I961
+					$JCC4063:
+;|*** 
+;|***         while( !feof(lImageFile)  &&  !done  &&  (iterations++ < 512) ) {
+; Line 1498
+	*** 000fe4	8b d8 			mov	bx,ax
+	*** 000fe6	f6 47 06 10 		test	BYTE PTR [bx+6],16	;0010H
+	*** 000fea	74 03 			je	$JCC4074
+	*** 000fec	e9 a4 00 		jmp	$FB964
+					$JCC4074:
+					$FC963:
+	*** 000fef	83 7e fa 00 		cmp	WORD PTR [bp-6],0	;done
+	*** 000ff3	74 03 			je	$JCC4083
+	*** 000ff5	e9 9b 00 		jmp	$FB964
+					$JCC4083:
+	*** 000ff8	8b 46 f8 		mov	ax,WORD PTR [bp-8]	;iterations
+	*** 000ffb	ff 46 f8 		inc	WORD PTR [bp-8]	;iterations
+	*** 000ffe	3d 00 02 		cmp	ax,512	;0200H
+	*** 001001	7c 03 			jl	$JCC4097
+	*** 001003	e9 8d 00 		jmp	$FB964
+					$JCC4097:
+;|*** 
+;|***             if( fgetc(lImageFile) == *delim_ptr ) {
+; Line 1500
+	*** 001006	53 			push	bx
+	*** 001007	e8 00 00 		call	_fgetc
+	*** 00100a	83 c4 02 		add	sp,2
+	*** 00100d	8b c8 			mov	cx,ax
+	*** 00100f	8a 04 			mov	al,BYTE PTR [si]
+	*** 001011	98 			cbw	
+	*** 001012	3b c8 			cmp	cx,ax
+	*** 001014	75 04 			jne	$I965
+;|***                 delim_ptr++;
+; Line 1501
+	*** 001016	46 			inc	si
+;|***             } else {
+; Line 1502
+	*** 001017	eb 04 			jmp	SHORT $I966
+	*** 001019	90 			nop	
+					$I965:
+;|***                 delim_ptr = delim;
+; Line 1503
+	*** 00101a	8d 76 f0 		lea	si,WORD PTR [bp-16]	;delim
+;|***             }
+; Line 1504
+					$I966:
+;|*** 			
+;|***             if( delim_ptr == delim_end ) {
+; Line 1506
+	*** 00101d	8d 46 f3 		lea	ax,WORD PTR [bp-13]
+	*** 001020	3b f0 			cmp	si,ax
+	*** 001022	75 63 			jne	$L1003
+;|*** 
+;|***                 // Initial delimiter string found, collect data:
+;|***                 fseek(lImageFile, align32bit, SEEK_CUR);    // next 32-bit boundary	
+; Line 1509
+	*** 001024	6a 01 			push	1
+	*** 001026	6a 00 			push	0
+	*** 001028	6a 01 			push	1
+	*** 00102a	ff 76 fc 		push	WORD PTR [bp-4]	;lImageFile
+	*** 00102d	e8 00 00 		call	_fseek
+	*** 001030	83 c4 08 		add	sp,8
+;|*** 		ver_lo = fgetc(lImageFile);                 // Get two bytes (in a DWORD)
+; Line 1510
+	*** 001033	ff 76 fc 		push	WORD PTR [bp-4]	;lImageFile
+	*** 001036	e8 00 00 		call	_fgetc
+	*** 001039	83 c4 02 		add	sp,2
+	*** 00103c	89 46 f6 		mov	WORD PTR [bp-10],ax	;align32bit
+;|***                 ver_hi = fgetc(lImageFile);					
+; Line 1511
+	*** 00103f	ff 76 fc 		push	WORD PTR [bp-4]	;lImageFile
+	*** 001042	e8 00 00 		call	_fgetc
+	*** 001045	83 c4 02 		add	sp,2
+	*** 001048	89 46 f4 		mov	WORD PTR [bp-12],ax	;ver_hi
+;|***                 fseek(lImageFile, 2, SEEK_CUR);             // Skip two bytes to next 32-bit boundary
+; Line 1512
+	*** 00104b	6a 01 			push	1
+	*** 00104d	6a 00 			push	0
+	*** 00104f	6a 02 			push	2
+	*** 001051	ff 76 fc 		push	WORD PTR [bp-4]	;lImageFile
+	*** 001054	e8 00 00 		call	_fseek
+	*** 001057	83 c4 08 		add	sp,8
+;|*** 
+;|***                 delim_ptr = delim;
+; Line 1514
+	*** 00105a	8d 76 f0 		lea	si,WORD PTR [bp-16]	;delim
+	*** 00105d	c7 46 fe 03 00 		mov	WORD PTR [bp-2],3	;delim_end
+;|*** {
+; Line 1477
+	*** 001062	8b 7e fe 		mov	di,WORD PTR [bp-2]	;delim_end
+;|*** 
+;|*** #define DELIM_LEN 3
+;|*** 
+;|***     char delim[] = "$@(";		// To change delimiter, modify delim & DELIM_LEN!
+;|***     char *delim_ptr = delim;
+;|***     char *delim_end = delim + DELIM_LEN;
+;|***     int  align32bit = 4 - ( DELIM_LEN % 4 );
+;|*** 
+;|***     FILE *lImageFile = NULL;	
+;|***     int  ver_lo,ver_hi;			
+;|***     int  done = 0;			// Loop exit condition, done = 1 denotes version found
+;|***     int  iterations = 0;		// Used to limit search length
+;|***     int  cnt;					
+;|*** 
+;|***     lImageFile = fopen( pszFileName, "rb" );
+;|*** 
+;|***     // Algorithm to search through image for 'delim' (version) 'delim'
+;|***     // If successful, sets done = 1.
+;|***     if( lImageFile ) {
+;|*** 
+;|***         while( !feof(lImageFile)  &&  !done  &&  (iterations++ < 512) ) {
+;|*** 
+;|***             if( fgetc(lImageFile) == *delim_ptr ) {
+;|***                 delim_ptr++;
+;|***             } else {
+;|***                 delim_ptr = delim;
+;|***             }
+;|*** 			
+;|***             if( delim_ptr == delim_end ) {
+;|*** 
+;|***                 // Initial delimiter string found, collect data:
+;|***                 fseek(lImageFile, align32bit, SEEK_CUR);    // next 32-bit boundary	
+;|*** 		ver_lo = fgetc(lImageFile);                 // Get two bytes (in a DWORD)
+;|***                 ver_hi = fgetc(lImageFile);					
+;|***                 fseek(lImageFile, 2, SEEK_CUR);             // Skip two bytes to next 32-bit boundary
+;|*** 
+;|***                 delim_ptr = delim;
+;|***            
+;|***                 for( cnt=0; cnt < DELIM_LEN; cnt++) {
+; Line 1516
+					$F968:
+;|***                     if( fgetc(lImageFile) == *delim_ptr ) {
+; Line 1517
+	*** 001065	ff 76 fc 		push	WORD PTR [bp-4]	;lImageFile
+	*** 001068	e8 00 00 		call	_fgetc
+	*** 00106b	83 c4 02 		add	sp,2
+	*** 00106e	8b c8 			mov	cx,ax
+	*** 001070	8a 04 			mov	al,BYTE PTR [si]
+	*** 001072	98 			cbw	
+	*** 001073	3b c8 			cmp	cx,ax
+	*** 001075	75 01 			jne	$FC969
+;|***                         delim_ptr++;
+; Line 1518
+	*** 001077	46 			inc	si
+;|***                 for( cnt=0; cnt < DELIM_LEN; cnt++) {
+; Line 1516
+					$FC969:
+	*** 001078	4f 			dec	di
+	*** 001079	75 ea 			jne	$F968
+;|***                     if( fgetc(lImageFile) == *delim_ptr ) {
+;|***                         delim_ptr++;
+;|***                     }
+;|***                 }
+;|*** 
+;|***                 if( delim_ptr == delim_end ) {
+; Line 1522
+	*** 00107b	8d 46 f3 		lea	ax,WORD PTR [bp-13]
+	*** 00107e	3b f0 			cmp	si,ax
+	*** 001080	75 05 			jne	$L1003
+;|***                     done = 1;
+; Line 1523
+	*** 001082	c7 46 fa 01 00 		mov	WORD PTR [bp-6],1	;done
+					$L1003:
+;|***                 }
+;|***             }
+;|***         }
+; Line 1526
+	*** 001087	8b 5e fc 		mov	bx,WORD PTR [bp-4]	;lImageFile
+	*** 00108a	f6 47 06 10 		test	BYTE PTR [bx+6],16	;0010H
+	*** 00108e	75 03 			jne	$JCC4238
+	*** 001090	e9 5c ff 		jmp	$FC963
+					$JCC4238:
+					$FB964:
+;|*** 
+;|***         fclose( lImageFile );
+; Line 1528
+	*** 001093	ff 76 fc 		push	WORD PTR [bp-4]	;lImageFile
+	*** 001096	e8 00 00 		call	_fclose
+	*** 001099	83 c4 02 		add	sp,2
+;|***     }
+;|*** 
+;|***     if (done) {
+; Line 1531
+					$I961:
+	*** 00109c	83 7e fa 00 		cmp	WORD PTR [bp-6],0	;done
+	*** 0010a0	74 1a 			je	$I973
+;|***         printf("Booting %s compiled with Windows CE Version %d\n", pszFileName, (ver_lo | (ver_hi << 8)) );
+; Line 1532
+	*** 0010a2	8a 66 f4 		mov	ah,BYTE PTR [bp-12]	;ver_hi
+	*** 0010a5	2a c0 			sub	al,al
+	*** 0010a7	0b 46 f6 		or	ax,WORD PTR [bp-10]	;align32bit
+	*** 0010aa	50 			push	ax
+	*** 0010ab	ff 76 04 		push	WORD PTR [bp+4]	;pszFileName
+	*** 0010ae	68 00 00 		push	OFFSET DGROUP:$SG974
+	*** 0010b1	e8 00 00 		call	_printf
+	*** 0010b4	83 c4 06 		add	sp,6
+;|***     } else { 
+; Line 1533
+	*** 0010b7	5e 			pop	si
+	*** 0010b8	5f 			pop	di
+	*** 0010b9	c9 			leave	
+	*** 0010ba	c3 			ret	
+	*** 0010bb	90 			nop	
+					$I973:
+;|***         printf("%s: Unknown or old version of bootloader\n", pszFileName);
+; Line 1534
+	*** 0010bc	ff 76 04 		push	WORD PTR [bp+4]	;pszFileName
+	*** 0010bf	68 00 00 		push	OFFSET DGROUP:$SG976
+	*** 0010c2	e8 00 00 		call	_printf
+	*** 0010c5	83 c4 04 		add	sp,4
+;|***     }
+;|*** 
+;|*** }; Line 1537
+	*** 0010c8	5e 			pop	si
+	*** 0010c9	5f 			pop	di
+	*** 0010ca	c9 			leave	
+	*** 0010cb	c3 			ret	
+
+DisplayCEOSVersion	ENDP
+_TEXT	ENDS
+END

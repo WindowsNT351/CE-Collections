@@ -1,0 +1,394 @@
+;	Static Name Aliases
+;
+	TITLE   debug.c
+	.286p
+	.287
+INCLUDELIB      SLIBCE
+INCLUDELIB	OLDNAMES.LIB
+_TEXT	SEGMENT  WORD PUBLIC 'CODE'
+_TEXT	ENDS
+_DATA	SEGMENT  WORD PUBLIC 'DATA'
+_DATA	ENDS
+CONST	SEGMENT  WORD PUBLIC 'CONST'
+CONST	ENDS
+_BSS	SEGMENT  WORD PUBLIC 'BSS'
+_BSS	ENDS
+$$SYMBOLS	SEGMENT  BYTE PUBLIC 'DEBSYM'
+$$SYMBOLS	ENDS
+$$TYPES	SEGMENT  BYTE PUBLIC 'DEBTYP'
+$$TYPES	ENDS
+DGROUP	GROUP	CONST, _BSS, _DATA
+	ASSUME DS: DGROUP, SS: DGROUP
+PUBLIC  _iComTotal
+EXTRN	_printf:NEAR
+EXTRN	_BootArgs:DWORD
+_DATA      SEGMENT
+_iComTotal	DW	00H
+$SG370	DB	'port status error=%xh i=%u',  0dH,  00H
+_DATA      ENDS
+_TEXT      SEGMENT
+	ASSUME	CS: _TEXT
+	PUBLIC	_OEMInitDebugSerial
+_OEMInitDebugSerial	PROC NEAR
+;|*** //
+;|*** // Copyright (c) Microsoft Corporation.  All rights reserved.
+;|*** //
+;|*** //
+;|*** // Use of this sample source code is subject to the terms of the Microsoft
+;|*** // license agreement under which you licensed this sample source code. If
+;|*** // you did not accept the terms of the license agreement, you are not
+;|*** // authorized to use this sample source code. For the terms of the license,
+;|*** // please see the license agreement between you and Microsoft or, if applicable,
+;|*** // see the LICENSE.RTF on your install media or the root of your tools installation.
+;|*** // THE SAMPLE SOURCE CODE IS PROVIDED "AS IS", WITH NO WARRANTIES.
+;|*** //
+;|*** /*++
+;|*** THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
+;|*** ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+;|*** THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+;|*** PARTICULAR PURPOSE.
+;|*** 
+;|*** Module Name:  
+;|*** 
+;|*** Abstract:  
+;|*** 
+;|*** Functions:
+;|*** 
+;|*** 
+;|*** Notes: 
+;|*** 
+;|*** --*/
+;|*** 
+;|*** #include <windows.h>
+;|*** 
+;|*** unsigned char __inline READ_PORT_UCHAR(unsigned char *port)
+;|*** {
+;|***     return _inp((unsigned short)port);
+;|*** }
+;|*** 
+;|*** void __inline WRITE_PORT_UCHAR(unsigned char * port, unsigned char value)
+;|*** {
+;|***     _outp((unsigned short)port, (value));
+;|*** }
+;|*** 
+;|*** #define LS_TSR_EMPTY        0x40
+;|*** #define LS_THR_EMPTY        0x20
+;|*** #define LS_RX_BREAK         0x10
+;|*** #define LS_RX_FRAMING_ERR   0x08
+;|*** #define LS_RX_PARITY_ERR    0x04
+;|*** #define LS_RX_OVERRUN       0x02
+;|*** #define LS_RX_DATA_READY    0x01
+;|*** 
+;|*** #define LS_RX_ERRORS        ( LS_RX_FRAMING_ERR | LS_RX_PARITY_ERR | LS_RX_OVERRUN )
+;|*** 
+;|*** #define COM1_BASE           0x03F8
+;|*** #define COM2_BASE           0x02F8
+;|*** 
+;|*** #define comTxBuffer         0x00
+;|*** #define comRxBuffer         0x00
+;|*** #define comDivisorLow       0x00
+;|*** #define comDivisorHigh      0x01
+;|*** #define comIntEnable        0x01
+;|*** #define comIntId            0x02
+;|*** #define comFIFOControl      0x02
+;|*** #define comLineControl      0x03
+;|*** #define comModemControl     0x04
+;|*** #define comLineStatus       0x05
+;|*** #define comModemStatus      0x06
+;|*** 
+;|*** #define IoPortBase          ( (unsigned char *) COM1_BASE )
+;|*** 
+;|*** extern struct  _ARGUMENTS 
+;|*** {
+;|***    unsigned char   ucVideoMode;
+;|***    unsigned char   ucComPort;
+;|***    unsigned char   ucBaudDivisor;
+;|***    unsigned char   ucPCIConfigType;
+;|*** }   BootArgs;
+;|*** 
+;|*** //   14400 = 8
+;|*** //   16457 = 7 +/-
+;|*** //   19200 = 6
+;|*** //   23040 = 5
+;|*** //   28800 = 4
+;|*** //   38400 = 3
+;|*** //   57600 = 2
+;|*** //  115200 = 1
+;|*** 
+;|*** 
+;|*** void OEMInitDebugSerial(void)
+;|*** {
+; Line 88
+;	ucArgs = -4
+;	dwSize = -6
+;|***     unsigned char   ucArgs[3];
+;|***     unsigned int   dwSize;
+;|*** 
+;|***     dwSize = sizeof(ucArgs);
+;|*** 
+;|***     WRITE_PORT_UCHAR(IoPortBase+comLineControl, 0x80);   // Access Baud Divisor
+; Line 94
+	*** 000000	b8 80 00 		mov	ax,128	;0080H
+	*** 000003	ba fb 03 		mov	dx,1019	;03fbH
+	*** 000006	ee 			out	dx, al
+
+;|***     WRITE_PORT_UCHAR(IoPortBase+comDivisorLow, BootArgs.ucBaudDivisor&0x7f);    // 19200
+; Line 95
+	*** 000007	a0 02 00 		mov	al,BYTE PTR _BootArgs+2
+	*** 00000a	25 7f 00 		and	ax,127	;007fH
+	*** 00000d	ba f8 03 		mov	dx,1016	;03f8H
+	*** 000010	ee 			out	dx, al
+
+;|***     WRITE_PORT_UCHAR(IoPortBase+comDivisorHigh, 0x00);
+; Line 96
+	*** 000011	33 c0 			xor	ax,ax
+	*** 000013	ba f9 03 		mov	dx,1017	;03f9H
+	*** 000016	ee 			out	dx, al
+
+;|***     WRITE_PORT_UCHAR(IoPortBase+comFIFOControl, 0x01);   // Enable FIFO if present
+; Line 97
+	*** 000017	b8 01 00 		mov	ax,1
+	*** 00001a	ba fa 03 		mov	dx,1018	;03faH
+	*** 00001d	ee 			out	dx, al
+
+;|***     WRITE_PORT_UCHAR(IoPortBase+comLineControl, 0x03);   // 8 bit, no parity
+; Line 98
+	*** 00001e	b8 03 00 		mov	ax,3
+	*** 000021	ba fb 03 		mov	dx,1019	;03fbH
+	*** 000024	ee 			out	dx, al
+
+;|*** 
+;|***     WRITE_PORT_UCHAR(IoPortBase+comIntEnable, 0x00);     // No interrupts, polled
+; Line 100
+	*** 000025	33 c0 			xor	ax,ax
+	*** 000027	ba f9 03 		mov	dx,1017	;03f9H
+	*** 00002a	ee 			out	dx, al
+
+;|*** 
+;|***     WRITE_PORT_UCHAR(IoPortBase+comModemControl, 0x03);  // Assert DTR, RTS
+; Line 102
+	*** 00002b	b8 03 00 		mov	ax,3
+	*** 00002e	ba fc 03 		mov	dx,1020	;03fcH
+	*** 000031	ee 			out	dx, al
+
+;|*** }
+; Line 103
+	*** 000032	c3 			ret	
+	*** 000033	90 			nop	
+
+_OEMInitDebugSerial	ENDP
+	PUBLIC	_OEMWriteDebugString
+_OEMWriteDebugString	PROC NEAR
+;|*** 
+;|*** void OEMWriteDebugString(unsigned short *str)
+;|*** {
+; Line 106
+	*** 000034	55 			push	bp
+	*** 000035	8b ec 			mov	bp,sp
+	*** 000037	57 			push	di
+;	str = 4
+	*** 000038	8b 5e 04 		mov	bx,WORD PTR [bp+4]	;str
+;|***     while (*str)
+; Line 107
+	*** 00003b	83 3f 00 		cmp	WORD PTR [bx],0
+	*** 00003e	74 1d 			je	$EX337
+					$FC339:
+	*** 000040	89 5e 04 		mov	WORD PTR [bp+4],bx	;str
+;|***     {
+;|***         while (!(READ_PORT_UCHAR(IoPortBase+comLineStatus) & LS_THR_EMPTY))
+; Line 109
+					$L398:
+	*** 000043	ba fd 03 		mov	dx,1021	;03fdH
+	*** 000046	ec 			in	al,dx
+	*** 000047	a8 20 			test	al,32	;0020H
+	*** 000049	74 f8 			je	$L398
+;|***         {
+;|***             ;
+;|***         }
+;|*** 
+;|***         WRITE_PORT_UCHAR(IoPortBase+comTxBuffer, (unsigned char)*str++);
+; Line 114
+	*** 00004b	8b fb 			mov	di,bx
+	*** 00004d	2a e4 			sub	ah,ah
+	*** 00004f	8a 05 			mov	al,BYTE PTR [di]
+	*** 000051	ba f8 03 		mov	dx,1016	;03f8H
+	*** 000054	ee 			out	dx, al
+
+;|***     }
+; Line 115
+	*** 000055	83 c3 02 		add	bx,2
+	*** 000058	83 3f 00 		cmp	WORD PTR [bx],0
+	*** 00005b	75 e3 			jne	$FC339
+;|*** }
+; Line 116
+					$EX337:
+	*** 00005d	5f 			pop	di
+	*** 00005e	c9 			leave	
+	*** 00005f	c3 			ret	
+
+_OEMWriteDebugString	ENDP
+	PUBLIC	_OEMWriteDebugByte
+_OEMWriteDebugByte	PROC NEAR
+;|*** 
+;|*** void OEMWriteDebugByte(BYTE ucChar)
+;|*** {
+; Line 119
+	*** 000060	55 			push	bp
+	*** 000061	8b ec 			mov	bp,sp
+;	ucChar = 4
+;|***     while (!(READ_PORT_UCHAR(IoPortBase+comLineStatus) & LS_THR_EMPTY))
+; Line 120
+					$L408:
+	*** 000063	ba fd 03 		mov	dx,1021	;03fdH
+	*** 000066	ec 			in	al,dx
+	*** 000067	a8 20 			test	al,32	;0020H
+	*** 000069	74 f8 			je	$L408
+;|***     {
+;|***         ;
+;|***     }
+;|*** 
+;|***     WRITE_PORT_UCHAR(IoPortBase+comTxBuffer, ucChar);
+; Line 125
+	*** 00006b	8a 46 04 		mov	al,BYTE PTR [bp+4]	;ucChar
+	*** 00006e	2a e4 			sub	ah,ah
+	*** 000070	ba f8 03 		mov	dx,1016	;03f8H
+	*** 000073	ee 			out	dx, al
+
+;|*** }
+; Line 126
+	*** 000074	c9 			leave	
+	*** 000075	c3 			ret	
+
+_OEMWriteDebugByte	ENDP
+	PUBLIC	_OEMReadDebugBytes
+_OEMReadDebugBytes	PROC NEAR
+;|*** 
+;|*** int iComTotal=0;
+;|*** void OEMReadDebugBytes(unsigned char * ucBuffer, int usReadSize) {
+; Line 129
+	*** 000076	c8 04 00 00 		enter	4,0
+	*** 00007a	57 			push	di
+;	ucBuffer = 4
+;	usReadSize = 6
+;	i = -4
+;	uStat = -1
+;|***     int i=0;
+; Line 130
+	*** 00007b	33 db 			xor	bx,bx
+	*** 00007d	8b 4e 06 		mov	cx,WORD PTR [bp+6]	;usReadSize
+	*** 000080	8b 7e 04 		mov	di,WORD PTR [bp+4]	;ucBuffer
+;|***     unsigned char uStat;
+;|*** 
+;|***     while (usReadSize--) {
+; Line 133
+					$FC361:
+	*** 000083	8b c1 			mov	ax,cx
+	*** 000085	49 			dec	cx
+	*** 000086	0b c0 			or	ax,ax
+	*** 000088	74 38 			je	$EX357
+	*** 00008a	89 4e 06 		mov	WORD PTR [bp+6],cx	;usReadSize
+;|***         do {
+;|***             uStat=READ_PORT_UCHAR(IoPortBase+comLineStatus);
+; Line 135
+					$L414:
+;|***             if (uStat & LS_RX_ERRORS) {
+; Line 136
+	*** 00008d	ba fd 03 		mov	dx,1021	;03fdH
+	*** 000090	ec 			in	al,dx
+	*** 000091	88 46 ff 		mov	BYTE PTR [bp-1],al	;uStat
+	*** 000094	a8 0e 			test	al,14	;000eH
+	*** 000096	75 14 			jne	$L420
+;|***                 while (1)
+;|***                     printf("port status error=%xh i=%u\r",uStat,iComTotal);
+;|***             }
+;|***         } while (!(uStat&LS_RX_DATA_READY));
+; Line 140
+	*** 000098	f6 46 ff 01 		test	BYTE PTR [bp-1],1	;uStat
+	*** 00009c	74 ef 			je	$L414
+;|***         ucBuffer[i++]=READ_PORT_UCHAR(IoPortBase+comRxBuffer);
+; Line 141
+	*** 00009e	ba f8 03 		mov	dx,1016	;03f8H
+	*** 0000a1	ec 			in	al,dx
+	*** 0000a2	88 01 			mov	BYTE PTR [bx][di],al
+	*** 0000a4	43 			inc	bx
+;|***         iComTotal++;
+; Line 142
+	*** 0000a5	ff 06 00 00 		inc	WORD PTR _iComTotal
+;|***     }
+; Line 143
+	*** 0000a9	eb d8 			jmp	SHORT $FC361
+	*** 0000ab	90 			nop	
+					$L420:
+;|***                     printf("port status error=%xh i=%u\r",uStat,iComTotal);
+; Line 138
+	*** 0000ac	ff 36 00 00 		push	WORD PTR _iComTotal
+	*** 0000b0	8a 46 ff 		mov	al,BYTE PTR [bp-1]	;uStat
+	*** 0000b3	2a e4 			sub	ah,ah
+	*** 0000b5	50 			push	ax
+	*** 0000b6	68 00 00 		push	OFFSET DGROUP:$SG370
+	*** 0000b9	e8 00 00 		call	_printf
+	*** 0000bc	83 c4 06 		add	sp,6
+	*** 0000bf	eb eb 			jmp	SHORT $L420
+	*** 0000c1	90 			nop	
+;|***             }
+;|***         } while (!(uStat&LS_RX_DATA_READY));
+;|***         ucBuffer[i++]=READ_PORT_UCHAR(IoPortBase+comRxBuffer);
+;|***         iComTotal++;
+;|***     }
+;|*** }
+; Line 144
+					$EX357:
+	*** 0000c2	5f 			pop	di
+	*** 0000c3	c9 			leave	
+	*** 0000c4	c3 			ret	
+	*** 0000c5	90 			nop	
+
+_OEMReadDebugBytes	ENDP
+	PUBLIC	_OEMReadDebugByte
+_OEMReadDebugByte	PROC NEAR
+;|*** 
+;|*** int OEMReadDebugByte(void)
+;|*** {
+; Line 147
+	*** 0000c6	c8 02 00 00 		enter	2,0
+;	i = -2
+;|***     int i;
+;|***     OEMReadDebugBytes((unsigned char *)&i,1);
+; Line 149
+	*** 0000ca	6a 01 			push	1
+	*** 0000cc	8d 46 fe 		lea	ax,WORD PTR [bp-2]	;i
+	*** 0000cf	50 			push	ax
+	*** 0000d0	e8 a3 ff 		call	_OEMReadDebugBytes
+;|***     return i;
+; Line 150
+	*** 0000d3	8b 46 fe 		mov	ax,WORD PTR [bp-2]	;i
+;|*** }
+; Line 151
+	*** 0000d6	c9 			leave	
+	*** 0000d7	c3 			ret	
+
+_OEMReadDebugByte	ENDP
+	PUBLIC	_OEMClearDebugCommError
+_OEMClearDebugCommError	PROC NEAR
+;|*** 
+;|*** 
+;|*** /*****************************************************************************
+;|*** *
+;|*** *
+;|*** *   @func   void    |   OEMClearDebugComError | Clear a debug communications er
+;|*** or
+;|*** *
+;|*** */
+;|*** void
+;|*** OEMClearDebugCommError(
+;|***     void
+;|***     )
+;|*** {
+;|*** }
+; Line 166
+	*** 0000d8	c3 			ret	
+	*** 0000d9	90 			nop	
+
+_OEMClearDebugCommError	ENDP
+_TEXT	ENDS
+END

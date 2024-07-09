@@ -1,0 +1,1083 @@
+;	Static Name Aliases
+;
+	TITLE   xmsapi.c
+	.286p
+	.287
+INCLUDELIB      SLIBCE
+INCLUDELIB	OLDNAMES.LIB
+_TEXT	SEGMENT  WORD PUBLIC 'CODE'
+_TEXT	ENDS
+_DATA	SEGMENT  WORD PUBLIC 'DATA'
+_DATA	ENDS
+CONST	SEGMENT  WORD PUBLIC 'CONST'
+CONST	ENDS
+_BSS	SEGMENT  WORD PUBLIC 'BSS'
+_BSS	ENDS
+$$SYMBOLS	SEGMENT  BYTE PUBLIC 'DEBSYM'
+$$SYMBOLS	ENDS
+$$TYPES	SEGMENT  BYTE PUBLIC 'DEBTYP'
+$$TYPES	ENDS
+DGROUP	GROUP	CONST, _BSS, _DATA
+	ASSUME DS: DGROUP, SS: DGROUP
+PUBLIC  _XMSControl
+PUBLIC  _XmsErrorMessages
+_DATA      SEGMENT
+_XMSControl	DD	00H
+$SG215	DB	'Success',  00H
+$SG216	DB	'Not implemented',  00H
+$SG217	DB	'VDISK detected',  00H
+$SG218	DB	'A20 error',  00H
+$SG219	DB	'No HMA',  00H
+$SG220	DB	'HMA in use',  00H
+$SG221	DB	'HMA denied',  00H
+$SG222	DB	'HMA not allocated',  00H
+$SG223	DB	'A20 still enabled',  00H
+$SG224	DB	'No free extended memory',  00H
+$SG225	DB	'No free handles',  00H
+$SG226	DB	'Invalid handle',  00H
+$SG227	DB	'Invalid source handle',  00H
+$SG228	DB	'Invalid source offset',  00H
+$SG229	DB	'Invalid destination handle',  00H
+$SG230	DB	'Invalid destination offset',  00H
+$SG231	DB	'Invalid length',  00H
+$SG232	DB	'Invalid overlap',  00H
+$SG233	DB	'Parity error',  00H
+$SG234	DB	'Block locked',  00H
+$SG235	DB	'Handle locked',  00H
+$SG236	DB	'Lock count overflow',  00H
+$SG237	DB	'Lock failed',  00H
+$SG238	DB	'Smaller UMB available',  00H
+$SG239	DB	'No UMBs available',  00H
+$SG240	DB	'Invalid UMB segment',  00H
+_XmsErrorMessages	DW	00H
+	DW	DGROUP:$SG215
+	DW	080H
+	DW	DGROUP:$SG216
+	DW	081H
+	DW	DGROUP:$SG217
+	DW	082H
+	DW	DGROUP:$SG218
+	DW	090H
+	DW	DGROUP:$SG219
+	DW	091H
+	DW	DGROUP:$SG220
+	DW	092H
+	DW	DGROUP:$SG221
+	DW	093H
+	DW	DGROUP:$SG222
+	DW	094H
+	DW	DGROUP:$SG223
+	DW	0a0H
+	DW	DGROUP:$SG224
+	DW	0a1H
+	DW	DGROUP:$SG225
+	DW	0a2H
+	DW	DGROUP:$SG226
+	DW	0a3H
+	DW	DGROUP:$SG227
+	DW	0a4H
+	DW	DGROUP:$SG228
+	DW	0a5H
+	DW	DGROUP:$SG229
+	DW	0a6H
+	DW	DGROUP:$SG230
+	DW	0a7H
+	DW	DGROUP:$SG231
+	DW	0a8H
+	DW	DGROUP:$SG232
+	DW	0a9H
+	DW	DGROUP:$SG233
+	DW	0aaH
+	DW	DGROUP:$SG234
+	DW	0abH
+	DW	DGROUP:$SG235
+	DW	0acH
+	DW	DGROUP:$SG236
+	DW	0adH
+	DW	DGROUP:$SG237
+	DW	0b0H
+	DW	DGROUP:$SG238
+	DW	0b1H
+	DW	DGROUP:$SG239
+	DW	0b2H
+	DW	DGROUP:$SG240
+$SG316	DB	'Unknown error',  00H
+_DATA      ENDS
+_TEXT      SEGMENT
+	ASSUME	CS: _TEXT
+	PUBLIC	_XmsIsInstalled
+_XmsIsInstalled	PROC NEAR
+;|*** //
+;|*** // Copyright (c) Microsoft Corporation.  All rights reserved.
+;|*** //
+;|*** //
+;|*** // Use of this sample source code is subject to the terms of the Microsoft
+;|*** // license agreement under which you licensed this sample source code. If
+;|*** // you did not accept the terms of the license agreement, you are not
+;|*** // authorized to use this sample source code. For the terms of the license,
+;|*** // please see the license agreement between you and Microsoft or, if applicable,
+;|*** // see the LICENSE.RTF on your install media or the root of your tools installation.
+;|*** // THE SAMPLE SOURCE CODE IS PROVIDED "AS IS", WITH NO WARRANTIES.
+;|*** //
+;|*** /*++
+;|*** THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
+;|*** ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+;|*** THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+;|*** PARTICULAR PURPOSE.
+;|*** 
+;|*** Module Name:  
+;|*** 
+;|*** Abstract:  
+;|*** 
+;|*** Functions:
+;|*** 
+;|*** 
+;|*** Notes: 
+;|*** 
+;|*** --*/
+;|*** 
+;|*** #include "xmsapi.h"
+;|*** 
+;|*** #pragma warning(disable:4704)
+;|*** 
+;|*** #pragma pack(1)
+;|*** 
+;|*** typedef struct  _EXTENDED_MEMORY_MOVE
+;|*** {
+;|***     unsigned long   ulLength;
+;|***     unsigned int    uiSourceHandle;
+;|***     unsigned long   ulSourceOffset;
+;|***     unsigned int    uiDestinationHandle;
+;|***     unsigned long   ulDestinationOffset;
+;|*** 
+;|*** }   EXTENDED_MEMORY_MOVE, *PEXTENDED_MEMORY_MOVE;
+;|*** 
+;|*** #pragma pack()
+;|*** 
+;|*** int (far * XMSControl)() = 0;
+;|*** 
+;|*** struct 
+;|*** {
+;|***     int     iErrorCode;
+;|***     char *  pszErrorString;
+;|*** }
+;|*** XmsErrorMessages[] = 
+;|*** {
+;|***     { XMS_SUCCESS, "Success" },
+;|*** 
+;|***     { XMS_E_NOT_IMPLEMENTED, "Not implemented" },
+;|***     { XMS_E_VDISK_DETECTED, "VDISK detected" },
+;|***     { XMS_E_A20_ERROR, "A20 error" },
+;|*** 
+;|***     { XMS_W_NO_HMA, "No HMA" },
+;|***     { XMS_W_HMA_IN_USE, "HMA in use" },
+;|***     { XMS_W_HMA_DENIED, "HMA denied" },
+;|***     { XMS_W_HMA_NOT_ALLOCATED, "HMA not allocated" },
+;|***     { XMS_W_A20_STILL_ENABLED, "A20 still enabled" },
+;|*** 
+;|***     { XMS_S_NO_FREE_EXTENDED_MEMORY, "No free extended memory" },
+;|***     { XMS_S_NO_FREE_HANDLES, "No free handles" },
+;|***     { XMS_S_INVALID_HANDLE, "Invalid handle" },
+;|***     { XMS_S_INVALID_SOURCE_HANDLE, "Invalid source handle" },
+;|***     { XMS_S_INVALID_SOURCE_OFFSET, "Invalid source offset" },
+;|***     { XMS_S_INVALID_DESTINATION_HANDLE, "Invalid destination handle" },
+;|***     { XMS_S_INVALID_DESTINATION_OFFSET, "Invalid destination offset" },
+;|***     { XMS_S_INVALID_LENGTH, "Invalid length" },
+;|***     { XMS_S_INVALID_OVERLAP, "Invalid overlap" },
+;|***     { XMS_S_PARITY_ERROR, "Parity error" },
+;|***     { XMS_S_BLOCK_LOCKED, "Block locked" },
+;|***     { XMS_S_HANDLE_LOCKED, "Handle locked" },
+;|***     { XMS_S_LOCK_COUNT_OVERFLOW, "Lock count overflow" },
+;|***     { XMS_S_LOCK_FAILED, "Lock failed" },
+;|*** 
+;|***     { XMS_I_SMALLER_UMB_AVAILABLE, "Smaller UMB available" },
+;|***     { XMS_I_NO_UMBS_AVAILABLE, "No UMBs available" },
+;|***     { XMS_I_INVALID_UMB_SEGMENT, "Invalid UMB segment" }
+;|*** };
+;|*** 
+;|*** #define N_XMS_ERROR_MESSAGES    (sizeof(XmsErrorMessages) / sizeof(XmsErrorMessages[0]))
+;|*** 
+;|*** int
+;|*** XmsIsInstalled()
+;|*** {
+; Line 93
+	*** 000000	c8 02 00 00 		enter	2,0
+;	bInstalled = -2
+;|***     int bInstalled = 0;
+; Line 94
+	*** 000004	c7 46 fe 00 00 		mov	WORD PTR [bp-2],0	;bInstalled
+;|*** 
+;|***     if (XMSControl != 0)
+; Line 96
+	*** 000009	a1 02 00 		mov	ax,WORD PTR _XMSControl+2
+	*** 00000c	0b 06 00 00 		or	ax,WORD PTR _XMSControl
+	*** 000010	74 06 			je	$I243
+;|***     {
+;|***         return 1;
+; Line 98
+	*** 000012	b8 01 00 		mov	ax,1
+	*** 000015	c9 			leave	
+	*** 000016	c3 			ret	
+	*** 000017	90 			nop	
+;|***     }
+;|*** 
+;|***     _asm
+; Line 101
+					$I243:
+;|***     {
+;|***         mov ax,4300h                        ; Check if XMS is present)
+; Line 103
+	*** 000018	b8 00 43 		mov	ax,17152	;4300H
+;|***         int 2Fh
+; Line 104
+	*** 00001b	cd 2f 			int	47	;002fH
+;|***         xor ah,ah
+; Line 105
+	*** 00001d	32 e4 			xor	ah,ah
+;|***         cmp al,80h
+; Line 106
+	*** 00001f	3c 80 			cmp	al,128	;0080H
+;|***         jne done                            ; Nope - no point in continuing
+; Line 107
+	*** 000021	75 10 			jne	$done244
+;|*** 
+;|***         mov ax,4310h                        ; Get XMS entry point
+; Line 109
+	*** 000023	b8 10 43 		mov	ax,17168	;4310H
+;|***         int 2Fh
+; Line 110
+	*** 000026	cd 2f 			int	47	;002fH
+;|***         mov WORD PTR [XMSControl], bx       ; Save entry point
+; Line 111
+	*** 000028	89 1e 00 00 		mov	WORD PTR _XMSControl,bx
+;|***         mov WORD PTR [XMSControl + 2], es
+; Line 112
+	*** 00002c	8c 06 02 00 		mov	WORD PTR _XMSControl+2,es
+;|*** 
+;|***         inc bInstalled                      ; Indicate installed
+; Line 114
+	*** 000030	ff 46 fe 		inc	WORD PTR [bp-2]	;bInstalled
+;|***     }
+; Line 115
+;|*** 
+;|*** done:
+; Line 117
+					$done244:
+;|***     return bInstalled;
+; Line 118
+	*** 000033	8b 46 fe 		mov	ax,WORD PTR [bp-2]	;bInstalled
+;|*** }
+; Line 119
+	*** 000036	c9 			leave	
+	*** 000037	c3 			ret	
+
+_XmsIsInstalled	ENDP
+	PUBLIC	_XmsLocalEnableA20
+_XmsLocalEnableA20	PROC NEAR
+;|*** 
+;|*** int
+;|*** XmsLocalEnableA20()
+;|*** {
+; Line 123
+	*** 000038	c8 02 00 00 		enter	2,0
+;	xmsError = -2
+;|***     int xmsError = XMS_SUCCESS;
+; Line 124
+	*** 00003c	c7 46 fe 00 00 		mov	WORD PTR [bp-2],0	;xmsError
+;|*** 
+;|***     if (!XmsIsInstalled())
+; Line 126
+	*** 000041	e8 bc ff 		call	_XmsIsInstalled
+	*** 000044	0b c0 			or	ax,ax
+	*** 000046	75 06 			jne	$I247
+;|***     {
+;|***         return XMS_E_NOT_IMPLEMENTED;
+; Line 128
+	*** 000048	b8 80 00 		mov	ax,128	;0080H
+	*** 00004b	c9 			leave	
+	*** 00004c	c3 			ret	
+	*** 00004d	90 			nop	
+;|***     }
+;|*** 
+;|***     _asm
+; Line 131
+					$I247:
+;|***     {
+;|***         mov     ah, 05h
+; Line 133
+	*** 00004e	b4 05 			mov	ah,5
+;|***         call    [XMSControl]
+; Line 134
+	*** 000050	ff 1e 00 00 		call	DWORD PTR _XMSControl
+;|***         clc
+; Line 135
+	*** 000054	f8 			clc	
+;|***         rcr     al, 1
+; Line 136
+	*** 000055	d0 d8 			rcr	al,1
+;|***         jc      done
+; Line 137
+	*** 000057	72 05 			jb	$done248
+;|*** 
+;|***         xor     bh, bh
+; Line 139
+	*** 000059	32 ff 			xor	bh,bh
+;|***         mov     xmsError, bx
+; Line 140
+	*** 00005b	89 5e fe 		mov	WORD PTR [bp-2],bx	;xmsError
+;|***     }
+; Line 141
+;|*** 
+;|*** done:
+; Line 143
+					$done248:
+;|***     return xmsError;
+; Line 144
+	*** 00005e	8b 46 fe 		mov	ax,WORD PTR [bp-2]	;xmsError
+;|*** }
+; Line 145
+	*** 000061	c9 			leave	
+	*** 000062	c3 			ret	
+	*** 000063	90 			nop	
+
+_XmsLocalEnableA20	ENDP
+	PUBLIC	_XmsLocalDisableA20
+_XmsLocalDisableA20	PROC NEAR
+;|*** 
+;|*** int
+;|*** XmsLocalDisableA20()
+;|*** {
+; Line 149
+	*** 000064	c8 02 00 00 		enter	2,0
+;	xmsError = -2
+;|***     int xmsError = XMS_SUCCESS;
+; Line 150
+	*** 000068	c7 46 fe 00 00 		mov	WORD PTR [bp-2],0	;xmsError
+;|*** 
+;|***     if (!XmsIsInstalled())
+; Line 152
+	*** 00006d	e8 90 ff 		call	_XmsIsInstalled
+	*** 000070	0b c0 			or	ax,ax
+	*** 000072	75 06 			jne	$I251
+;|***     {
+;|***         return XMS_E_NOT_IMPLEMENTED;
+; Line 154
+	*** 000074	b8 80 00 		mov	ax,128	;0080H
+	*** 000077	c9 			leave	
+	*** 000078	c3 			ret	
+	*** 000079	90 			nop	
+;|***     }
+;|*** 
+;|***     _asm
+; Line 157
+					$I251:
+;|***     {
+;|***         mov     ah, 06h
+; Line 159
+	*** 00007a	b4 06 			mov	ah,6
+;|***         call    [XMSControl]
+; Line 160
+	*** 00007c	ff 1e 00 00 		call	DWORD PTR _XMSControl
+;|***         clc
+; Line 161
+	*** 000080	f8 			clc	
+;|***         rcr     al, 1
+; Line 162
+	*** 000081	d0 d8 			rcr	al,1
+;|***         jc      done
+; Line 163
+	*** 000083	72 05 			jb	$done252
+;|*** 
+;|***         xor     bh, bh
+; Line 165
+	*** 000085	32 ff 			xor	bh,bh
+;|***         mov     xmsError, bx
+; Line 166
+	*** 000087	89 5e fe 		mov	WORD PTR [bp-2],bx	;xmsError
+;|***     }
+; Line 167
+;|*** 
+;|*** done:
+; Line 169
+					$done252:
+;|***     return xmsError;
+; Line 170
+	*** 00008a	8b 46 fe 		mov	ax,WORD PTR [bp-2]	;xmsError
+;|*** }
+; Line 171
+	*** 00008d	c9 			leave	
+	*** 00008e	c3 			ret	
+	*** 00008f	90 			nop	
+
+_XmsLocalDisableA20	ENDP
+	PUBLIC	_XmsQueryA20
+_XmsQueryA20	PROC NEAR
+;|*** 
+;|*** int
+;|*** XmsQueryA20(
+;|***     int *pbEnabled)
+;|*** {
+; Line 176
+	*** 000090	c8 02 00 00 		enter	2,0
+	*** 000094	56 			push	si
+;	xmsError = -2
+;	pbEnabled = 4
+;|***     int xmsError = XMS_SUCCESS;
+; Line 177
+	*** 000095	c7 46 fe 00 00 		mov	WORD PTR [bp-2],0	;xmsError
+;|*** 
+;|***     if (!XmsIsInstalled())
+; Line 179
+	*** 00009a	e8 63 ff 		call	_XmsIsInstalled
+	*** 00009d	0b c0 			or	ax,ax
+	*** 00009f	75 07 			jne	$I257
+;|***     {
+;|***         return XMS_E_NOT_IMPLEMENTED;
+; Line 181
+	*** 0000a1	b8 80 00 		mov	ax,128	;0080H
+	*** 0000a4	5e 			pop	si
+	*** 0000a5	c9 			leave	
+	*** 0000a6	c3 			ret	
+	*** 0000a7	90 			nop	
+;|***     }
+;|*** 
+;|***     _asm
+; Line 184
+					$I257:
+;|***     {
+;|***         mov     ah, 07h
+; Line 186
+	*** 0000a8	b4 07 			mov	ah,7
+;|***         call    [XMSControl]
+; Line 187
+	*** 0000aa	ff 1e 00 00 		call	DWORD PTR _XMSControl
+;|*** 
+;|***         push    si
+; Line 189
+	*** 0000ae	56 			push	si
+;|***         mov     si, pbEnabled
+; Line 190
+	*** 0000af	8b 76 04 		mov	si,WORD PTR [bp+4]	;pbEnabled
+;|***         mov     WORD PTR [si], ax
+; Line 191
+	*** 0000b2	89 04 			mov	WORD PTR [si],ax
+;|***         pop     si
+; Line 192
+	*** 0000b4	5e 			pop	si
+;|*** 
+;|***         xor     bh, bh
+; Line 194
+	*** 0000b5	32 ff 			xor	bh,bh
+;|***         mov     xmsError, bx
+; Line 195
+	*** 0000b7	89 5e fe 		mov	WORD PTR [bp-2],bx	;xmsError
+;|***     }
+; Line 196
+;|*** 
+;|***     return xmsError;
+; Line 198
+	*** 0000ba	8b 46 fe 		mov	ax,WORD PTR [bp-2]	;xmsError
+;|*** }
+; Line 199
+	*** 0000bd	5e 			pop	si
+	*** 0000be	c9 			leave	
+	*** 0000bf	c3 			ret	
+
+_XmsQueryA20	ENDP
+	PUBLIC	_XmsQueryFreeExtendedMemory
+_XmsQueryFreeExtendedMemory	PROC NEAR
+;|*** 
+;|*** int
+;|*** XmsQueryFreeExtendedMemory(
+;|***     unsigned int *puiLargestFreeBlock,
+;|***     unsigned int *puiTotalFree)
+;|*** {
+; Line 205
+	*** 0000c0	c8 02 00 00 		enter	2,0
+	*** 0000c4	56 			push	si
+;	xmsError = -2
+;	puiTotalFree = 6
+;	puiLargestFreeBlock = 4
+;|***     int xmsError = XMS_SUCCESS;
+; Line 206
+	*** 0000c5	c7 46 fe 00 00 		mov	WORD PTR [bp-2],0	;xmsError
+;|*** 
+;|***     if (!XmsIsInstalled())
+; Line 208
+	*** 0000ca	e8 33 ff 		call	_XmsIsInstalled
+	*** 0000cd	0b c0 			or	ax,ax
+	*** 0000cf	75 07 			jne	$I264
+;|***     {
+;|***         return XMS_E_NOT_IMPLEMENTED;
+; Line 210
+	*** 0000d1	b8 80 00 		mov	ax,128	;0080H
+	*** 0000d4	5e 			pop	si
+	*** 0000d5	c9 			leave	
+	*** 0000d6	c3 			ret	
+	*** 0000d7	90 			nop	
+;|***     }
+;|*** 
+;|***     _asm
+; Line 213
+					$I264:
+;|***     {
+;|***         mov     ah, 08h
+; Line 215
+	*** 0000d8	b4 08 			mov	ah,8
+;|***         call    [XMSControl]
+; Line 216
+	*** 0000da	ff 1e 00 00 		call	DWORD PTR _XMSControl
+;|*** 
+;|***         push    si
+; Line 218
+	*** 0000de	56 			push	si
+;|***         mov     si, puiLargestFreeBlock
+; Line 219
+	*** 0000df	8b 76 04 		mov	si,WORD PTR [bp+4]	;puiLargestFreeBlock
+;|***         mov     WORD PTR [si], ax
+; Line 220
+	*** 0000e2	89 04 			mov	WORD PTR [si],ax
+;|*** 
+;|***         mov     si, puiTotalFree
+; Line 222
+	*** 0000e4	8b 76 06 		mov	si,WORD PTR [bp+6]	;puiTotalFree
+;|***         mov     WORD PTR [si], dx
+; Line 223
+	*** 0000e7	89 14 			mov	WORD PTR [si],dx
+;|***         pop     si
+; Line 224
+	*** 0000e9	5e 			pop	si
+;|*** 
+;|***         xor     bh, bh
+; Line 226
+	*** 0000ea	32 ff 			xor	bh,bh
+;|***         mov     xmsError, bx
+; Line 227
+	*** 0000ec	89 5e fe 		mov	WORD PTR [bp-2],bx	;xmsError
+;|***     }
+; Line 228
+;|*** 
+;|***     return xmsError;
+; Line 230
+	*** 0000ef	8b 46 fe 		mov	ax,WORD PTR [bp-2]	;xmsError
+;|*** }
+; Line 231
+	*** 0000f2	5e 			pop	si
+	*** 0000f3	c9 			leave	
+	*** 0000f4	c3 			ret	
+	*** 0000f5	90 			nop	
+
+_XmsQueryFreeExtendedMemory	ENDP
+	PUBLIC	_XmsAllocateExtendedMemory
+_XmsAllocateExtendedMemory	PROC NEAR
+;|*** 
+;|*** int
+;|*** XmsAllocateExtendedMemory(
+;|***     unsigned int uiBlockSizeK,
+;|***     unsigned int * puiBlockHandle)
+;|*** {
+; Line 237
+	*** 0000f6	c8 02 00 00 		enter	2,0
+	*** 0000fa	56 			push	si
+;	xmsError = -2
+;	puiBlockHandle = 6
+;	uiBlockSizeK = 4
+;|***     int xmsError = XMS_SUCCESS;
+; Line 238
+	*** 0000fb	c7 46 fe 00 00 		mov	WORD PTR [bp-2],0	;xmsError
+;|*** 
+;|***     if (!XmsIsInstalled())
+; Line 240
+	*** 000100	e8 fd fe 		call	_XmsIsInstalled
+	*** 000103	0b c0 			or	ax,ax
+	*** 000105	75 07 			jne	$I271
+;|***     {
+;|***         return XMS_E_NOT_IMPLEMENTED;
+; Line 242
+	*** 000107	b8 80 00 		mov	ax,128	;0080H
+	*** 00010a	5e 			pop	si
+	*** 00010b	c9 			leave	
+	*** 00010c	c3 			ret	
+	*** 00010d	90 			nop	
+;|***     }
+;|*** 
+;|***     _asm
+; Line 245
+					$I271:
+;|***     {
+;|***         mov     ah, 09h
+; Line 247
+	*** 00010e	b4 09 			mov	ah,9
+;|***         mov     dx, uiBlockSizeK
+; Line 248
+	*** 000110	8b 56 04 		mov	dx,WORD PTR [bp+4]	;uiBlockSizeK
+;|***         call    [XMSControl]
+; Line 249
+	*** 000113	ff 1e 00 00 		call	DWORD PTR _XMSControl
+;|*** 
+;|***         push    si
+; Line 251
+	*** 000117	56 			push	si
+;|***         mov     si, puiBlockHandle
+; Line 252
+	*** 000118	8b 76 06 		mov	si,WORD PTR [bp+6]	;puiBlockHandle
+;|***         mov     WORD PTR [si], dx
+; Line 253
+	*** 00011b	89 14 			mov	WORD PTR [si],dx
+;|***         pop     si
+; Line 254
+	*** 00011d	5e 			pop	si
+;|*** 
+;|***         clc
+; Line 256
+	*** 00011e	f8 			clc	
+;|***         rcr     al, 1
+; Line 257
+	*** 00011f	d0 d8 			rcr	al,1
+;|***         jc      done
+; Line 258
+	*** 000121	72 05 			jb	$done272
+;|*** 
+;|***         xor     bh, bh
+; Line 260
+	*** 000123	32 ff 			xor	bh,bh
+;|***         mov     xmsError, bx
+; Line 261
+	*** 000125	89 5e fe 		mov	WORD PTR [bp-2],bx	;xmsError
+;|***     }
+; Line 262
+;|*** 
+;|*** done:
+; Line 264
+					$done272:
+;|***     return xmsError;
+; Line 265
+	*** 000128	8b 46 fe 		mov	ax,WORD PTR [bp-2]	;xmsError
+;|*** }
+; Line 266
+	*** 00012b	5e 			pop	si
+	*** 00012c	c9 			leave	
+	*** 00012d	c3 			ret	
+
+_XmsAllocateExtendedMemory	ENDP
+	PUBLIC	_XmsFreeExtendedMemory
+_XmsFreeExtendedMemory	PROC NEAR
+;|*** 
+;|*** int
+;|*** XmsFreeExtendedMemory(
+;|***     unsigned int uiBlockHandle)
+;|*** {
+; Line 271
+	*** 00012e	c8 02 00 00 		enter	2,0
+;	xmsError = -2
+;	uiBlockHandle = 4
+;|***     int xmsError = XMS_SUCCESS;
+; Line 272
+	*** 000132	c7 46 fe 00 00 		mov	WORD PTR [bp-2],0	;xmsError
+;|*** 
+;|***     if (!XmsIsInstalled())
+; Line 274
+	*** 000137	e8 c6 fe 		call	_XmsIsInstalled
+	*** 00013a	0b c0 			or	ax,ax
+	*** 00013c	75 06 			jne	$I277
+;|***     {
+;|***         return XMS_E_NOT_IMPLEMENTED;
+; Line 276
+	*** 00013e	b8 80 00 		mov	ax,128	;0080H
+	*** 000141	c9 			leave	
+	*** 000142	c3 			ret	
+	*** 000143	90 			nop	
+;|***     }
+;|*** 
+;|***     _asm
+; Line 279
+					$I277:
+;|***     {
+;|***         mov     ah, 0Ah
+; Line 281
+	*** 000144	b4 0a 			mov	ah,10	;000aH
+;|***         mov     dx, uiBlockHandle
+; Line 282
+	*** 000146	8b 56 04 		mov	dx,WORD PTR [bp+4]	;uiBlockHandle
+;|***         call    [XMSControl]
+; Line 283
+	*** 000149	ff 1e 00 00 		call	DWORD PTR _XMSControl
+;|*** 
+;|***         clc
+; Line 285
+	*** 00014d	f8 			clc	
+;|***         rcr     al, 1
+; Line 286
+	*** 00014e	d0 d8 			rcr	al,1
+;|***         jc      done
+; Line 287
+	*** 000150	72 05 			jb	$done278
+;|*** 
+;|***         xor     bh, bh
+; Line 289
+	*** 000152	32 ff 			xor	bh,bh
+;|***         mov     xmsError, bx
+; Line 290
+	*** 000154	89 5e fe 		mov	WORD PTR [bp-2],bx	;xmsError
+;|***     }
+; Line 291
+;|*** 
+;|*** done:
+; Line 293
+					$done278:
+;|***     return xmsError;
+; Line 294
+	*** 000157	8b 46 fe 		mov	ax,WORD PTR [bp-2]	;xmsError
+;|*** }
+; Line 295
+	*** 00015a	c9 			leave	
+	*** 00015b	c3 			ret	
+
+_XmsFreeExtendedMemory	ENDP
+	PUBLIC	_XmsMoveExtendedMemory
+_XmsMoveExtendedMemory	PROC NEAR
+;|*** 
+;|*** int
+;|*** XmsMoveExtendedMemory(
+;|***     unsigned int    uiSourceHandle,
+;|***     unsigned long   ulSourceOffset,
+;|***     unsigned int    uiDestinationHandle,
+;|***     unsigned long   ulDestinationOffset,
+;|***     unsigned long   ulLength)
+;|*** {
+; Line 304
+	*** 00015c	c8 12 00 00 		enter	18,0
+	*** 000160	56 			push	si
+;	moveInfo = -16
+;	xmsError = -18
+;	ulLength = 16
+;	ulDestinationOffset = 12
+;	uiDestinationHandle = 10
+;	ulSourceOffset = 6
+;	uiSourceHandle = 4
+;|***     EXTENDED_MEMORY_MOVE    moveInfo;
+;|*** 
+;|***     int                     xmsError = XMS_SUCCESS;
+; Line 307
+	*** 000161	c7 46 ee 00 00 		mov	WORD PTR [bp-18],0	;xmsError
+;|*** 
+;|***     if (!XmsIsInstalled())
+; Line 309
+	*** 000166	e8 97 fe 		call	_XmsIsInstalled
+	*** 000169	0b c0 			or	ax,ax
+	*** 00016b	75 07 			jne	$I292
+;|***     {
+;|***         return XMS_E_NOT_IMPLEMENTED;
+; Line 311
+	*** 00016d	b8 80 00 		mov	ax,128	;0080H
+	*** 000170	5e 			pop	si
+	*** 000171	c9 			leave	
+	*** 000172	c3 			ret	
+	*** 000173	90 			nop	
+;|***     }
+;|*** 
+;|***     moveInfo.uiSourceHandle = uiSourceHandle;
+; Line 314
+					$I292:
+	*** 000174	8b 46 04 		mov	ax,WORD PTR [bp+4]	;uiSourceHandle
+	*** 000177	89 46 f4 		mov	WORD PTR [bp-12],ax
+;|***     moveInfo.ulSourceOffset = ulSourceOffset;
+; Line 315
+	*** 00017a	8b 46 06 		mov	ax,WORD PTR [bp+6]	;ulSourceOffset
+	*** 00017d	8b 56 08 		mov	dx,WORD PTR [bp+8]
+	*** 000180	89 46 f6 		mov	WORD PTR [bp-10],ax
+	*** 000183	89 56 f8 		mov	WORD PTR [bp-8],dx
+;|***     moveInfo.uiDestinationHandle = uiDestinationHandle;
+; Line 316
+	*** 000186	8b 46 0a 		mov	ax,WORD PTR [bp+10]	;uiDestinationHandle
+	*** 000189	89 46 fa 		mov	WORD PTR [bp-6],ax
+;|***     moveInfo.ulDestinationOffset = ulDestinationOffset;
+; Line 317
+	*** 00018c	8b 46 0c 		mov	ax,WORD PTR [bp+12]	;ulDestinationOffset
+	*** 00018f	8b 56 0e 		mov	dx,WORD PTR [bp+14]
+	*** 000192	89 46 fc 		mov	WORD PTR [bp-4],ax
+	*** 000195	89 56 fe 		mov	WORD PTR [bp-2],dx
+;|***     moveInfo.ulLength = ulLength;
+; Line 318
+	*** 000198	8b 46 10 		mov	ax,WORD PTR [bp+16]	;ulLength
+	*** 00019b	8b 56 12 		mov	dx,WORD PTR [bp+18]
+	*** 00019e	89 46 f0 		mov	WORD PTR [bp-16],ax	;moveInfo
+	*** 0001a1	89 56 f2 		mov	WORD PTR [bp-14],dx
+;|*** 
+;|***     _asm
+;|***     {
+;|***         mov     ah, 0Bh
+; Line 322
+	*** 0001a4	b4 0b 			mov	ah,11	;000bH
+;|*** 
+;|***         push    si
+; Line 324
+	*** 0001a6	56 			push	si
+;|***         lea     si, moveInfo
+; Line 325
+	*** 0001a7	8d 76 f0 		lea	si,WORD PTR [bp-16]	;moveInfo
+;|***         call    [XMSControl]
+; Line 326
+	*** 0001aa	ff 1e 00 00 		call	DWORD PTR _XMSControl
+;|***         pop     si
+; Line 327
+	*** 0001ae	5e 			pop	si
+;|*** 
+;|***         clc
+; Line 329
+	*** 0001af	f8 			clc	
+;|***         rcr     al, 1
+; Line 330
+	*** 0001b0	d0 d8 			rcr	al,1
+;|***         jc      done
+; Line 331
+	*** 0001b2	72 05 			jb	$done293
+;|*** 
+;|***         xor     bh, bh
+; Line 333
+	*** 0001b4	32 ff 			xor	bh,bh
+;|***         mov     xmsError, bx
+; Line 334
+	*** 0001b6	89 5e ee 		mov	WORD PTR [bp-18],bx	;xmsError
+;|***     }
+; Line 335
+;|*** 
+;|*** done:
+; Line 337
+					$done293:
+;|***     return xmsError;
+; Line 338
+	*** 0001b9	8b 46 ee 		mov	ax,WORD PTR [bp-18]	;xmsError
+;|*** }
+; Line 339
+	*** 0001bc	5e 			pop	si
+	*** 0001bd	c9 			leave	
+	*** 0001be	c3 			ret	
+	*** 0001bf	90 			nop	
+
+_XmsMoveExtendedMemory	ENDP
+	PUBLIC	_XmsLockExtendedMemory
+_XmsLockExtendedMemory	PROC NEAR
+;|*** 
+;|*** int
+;|*** XmsLockExtendedMemory(
+;|***     unsigned int uiBlockHandle,
+;|***     unsigned long * pulLinearAddress)
+;|*** {
+; Line 345
+	*** 0001c0	c8 02 00 00 		enter	2,0
+	*** 0001c4	56 			push	si
+;	xmsError = -2
+;	pulLinearAddress = 6
+;	uiBlockHandle = 4
+;|***     int xmsError = XMS_SUCCESS;
+; Line 346
+	*** 0001c5	c7 46 fe 00 00 		mov	WORD PTR [bp-2],0	;xmsError
+;|*** 
+;|***     if (!XmsIsInstalled())
+; Line 348
+	*** 0001ca	e8 33 fe 		call	_XmsIsInstalled
+	*** 0001cd	0b c0 			or	ax,ax
+	*** 0001cf	75 07 			jne	$I300
+;|***     {
+;|***         return XMS_E_NOT_IMPLEMENTED;
+; Line 350
+	*** 0001d1	b8 80 00 		mov	ax,128	;0080H
+	*** 0001d4	5e 			pop	si
+	*** 0001d5	c9 			leave	
+	*** 0001d6	c3 			ret	
+	*** 0001d7	90 			nop	
+;|***     }
+;|*** 
+;|***     _asm
+; Line 353
+					$I300:
+;|***     {
+;|***         mov     ah, 0Ch
+; Line 355
+	*** 0001d8	b4 0c 			mov	ah,12	;000cH
+;|***         mov     dx, uiBlockHandle
+; Line 356
+	*** 0001da	8b 56 04 		mov	dx,WORD PTR [bp+4]	;uiBlockHandle
+;|***         call    [XMSControl]
+; Line 357
+	*** 0001dd	ff 1e 00 00 		call	DWORD PTR _XMSControl
+;|*** 
+;|***         push    si
+; Line 359
+	*** 0001e1	56 			push	si
+;|***         mov     si, pulLinearAddress
+; Line 360
+	*** 0001e2	8b 76 06 		mov	si,WORD PTR [bp+6]	;pulLinearAddress
+;|***         mov     WORD PTR [si], bx
+; Line 361
+	*** 0001e5	89 1c 			mov	WORD PTR [si],bx
+;|***         mov     WORD PTR [si + 2], dx
+; Line 362
+	*** 0001e7	89 54 02 		mov	WORD PTR [si+2],dx
+;|***         pop     si
+; Line 363
+	*** 0001ea	5e 			pop	si
+;|*** 
+;|***         clc
+; Line 365
+	*** 0001eb	f8 			clc	
+;|***         rcr     al, 1
+; Line 366
+	*** 0001ec	d0 d8 			rcr	al,1
+;|***         jc      done
+; Line 367
+	*** 0001ee	72 05 			jb	$done301
+;|*** 
+;|***         xor     bh, bh
+; Line 369
+	*** 0001f0	32 ff 			xor	bh,bh
+;|***         mov     xmsError, bx
+; Line 370
+	*** 0001f2	89 5e fe 		mov	WORD PTR [bp-2],bx	;xmsError
+;|***     }
+; Line 371
+;|*** 
+;|*** done:
+; Line 373
+					$done301:
+;|***     return xmsError;
+; Line 374
+	*** 0001f5	8b 46 fe 		mov	ax,WORD PTR [bp-2]	;xmsError
+;|*** }
+; Line 375
+	*** 0001f8	5e 			pop	si
+	*** 0001f9	c9 			leave	
+	*** 0001fa	c3 			ret	
+	*** 0001fb	90 			nop	
+
+_XmsLockExtendedMemory	ENDP
+	PUBLIC	_XmsUnlockExtendedMemory
+_XmsUnlockExtendedMemory	PROC NEAR
+;|*** 
+;|*** int
+;|*** XmsUnlockExtendedMemory(
+;|***     unsigned int uiBlockHandle)
+;|*** {
+; Line 380
+	*** 0001fc	c8 02 00 00 		enter	2,0
+;	xmsError = -2
+;	uiBlockHandle = 4
+;|***     int xmsError = XMS_SUCCESS;
+; Line 381
+	*** 000200	c7 46 fe 00 00 		mov	WORD PTR [bp-2],0	;xmsError
+;|*** 
+;|***     if (!XmsIsInstalled())
+; Line 383
+	*** 000205	e8 f8 fd 		call	_XmsIsInstalled
+	*** 000208	0b c0 			or	ax,ax
+	*** 00020a	75 06 			jne	$I306
+;|***     {
+;|***         return XMS_E_NOT_IMPLEMENTED;
+; Line 385
+	*** 00020c	b8 80 00 		mov	ax,128	;0080H
+	*** 00020f	c9 			leave	
+	*** 000210	c3 			ret	
+	*** 000211	90 			nop	
+;|***     }
+;|*** 
+;|***     _asm
+; Line 388
+					$I306:
+;|***     {
+;|***         mov     ah, 0Dh
+; Line 390
+	*** 000212	b4 0d 			mov	ah,13	;000dH
+;|***         mov     dx, uiBlockHandle
+; Line 391
+	*** 000214	8b 56 04 		mov	dx,WORD PTR [bp+4]	;uiBlockHandle
+;|***         call    [XMSControl]
+; Line 392
+	*** 000217	ff 1e 00 00 		call	DWORD PTR _XMSControl
+;|*** 
+;|***         clc
+; Line 394
+	*** 00021b	f8 			clc	
+;|***         rcr     al, 1
+; Line 395
+	*** 00021c	d0 d8 			rcr	al,1
+;|***         jc      done
+; Line 396
+	*** 00021e	72 05 			jb	$done307
+;|*** 
+;|***         xor     bh, bh
+; Line 398
+	*** 000220	32 ff 			xor	bh,bh
+;|***         mov     xmsError, bx
+; Line 399
+	*** 000222	89 5e fe 		mov	WORD PTR [bp-2],bx	;xmsError
+;|***     }
+; Line 400
+;|*** 
+;|*** done:
+; Line 402
+					$done307:
+;|***     return xmsError;
+; Line 403
+	*** 000225	8b 46 fe 		mov	ax,WORD PTR [bp-2]	;xmsError
+;|*** }
+; Line 404
+	*** 000228	c9 			leave	
+	*** 000229	c3 			ret	
+
+_XmsUnlockExtendedMemory	ENDP
+	PUBLIC	_XmsErrorString
+_XmsErrorString	PROC NEAR
+;|*** 
+;|*** char *XmsErrorString(int xmsError)
+;|*** {
+; Line 407
+	*** 00022a	55 			push	bp
+	*** 00022b	8b ec 			mov	bp,sp
+	*** 00022d	57 			push	di
+;	xmsError = 4
+;	register di = i
+;|***     int     i;
+;|*** 
+;|***     for (i = 0; i < N_XMS_ERROR_MESSAGES; i++)
+; Line 410
+	*** 00022e	33 ff 			xor	di,di
+	*** 000230	bb 00 00 		mov	bx,OFFSET DGROUP:_XmsErrorMessages
+	*** 000233	8b 56 04 		mov	dx,WORD PTR [bp+4]	;xmsError
+					$F312:
+;|***     {
+;|***         if (XmsErrorMessages[i].iErrorCode == xmsError)
+; Line 412
+	*** 000236	39 17 			cmp	WORD PTR [bx],dx
+	*** 000238	74 0c 			je	$L318
+	*** 00023a	47 			inc	di
+	*** 00023b	83 c3 04 		add	bx,4
+	*** 00023e	81 fb 68 00 		cmp	bx,OFFSET DGROUP:_XmsErrorMessages+104
+	*** 000242	72 f2 			jb	$F312
+	*** 000244	eb 0a 			jmp	SHORT $FB314
+					$L318:
+;|***         {
+;|***             return XmsErrorMessages[i].pszErrorString;
+; Line 414
+	*** 000246	c1 e7 02 		shl	di,2
+	*** 000249	8b 85 02 00 		mov	ax,WORD PTR _XmsErrorMessages[di+2]
+	*** 00024d	5f 			pop	di
+	*** 00024e	c9 			leave	
+	*** 00024f	c3 			ret	
+;|***         }
+;|***     }
+; Line 416
+					$FB314:
+;|*** 
+;|***     return "Unknown error";
+; Line 418
+	*** 000250	b8 00 00 		mov	ax,OFFSET DGROUP:$SG316
+;|*** }
+; Line 419
+	*** 000253	5f 			pop	di
+	*** 000254	c9 			leave	
+	*** 000255	c3 			ret	
+
+_XmsErrorString	ENDP
+_TEXT	ENDS
+END
