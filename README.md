@@ -54,8 +54,7 @@ ONEW Studio QQ交流群:**981893945** 欢迎来玩<br /><br />
 本项目使用了以下项目的代码/资源:<br />
 CE：<br />
 大多数镜像为自己用Platform Builder编译的<br />
-少部分模拟器/镜像为HPCF版本或是M$的SDK提取<br />
-还有少部分是HPCF版本<br />
+少部分模拟器/镜像为示例镜像版本或是M$的SDK提取<br />
 x86CEPC Bootloader(LOADCEPC)/工具 为M$官方版6.0修改版<br />
 
 其他：<br />
