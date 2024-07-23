@@ -1,0 +1,28 @@
+@REM
+@REM Copyright (c) Microsoft Corporation.  All rights reserved.
+@REM
+@REM
+@REM Use of this sample source code is subject to the terms of the Microsoft
+@REM license agreement under which you licensed this sample source code. If
+@REM you did not accept the terms of the license agreement, you are not
+@REM authorized to use this sample source code. For the terms of the license,
+@REM please see the license agreement between you and Microsoft or, if applicable,
+@REM see the LICENSE.RTF on your install media or the root of your tools installation.
+@REM THE SAMPLE SOURCE CODE IS PROVIDED "AS IS", WITH NO WARRANTIES.
+@REM
+@REM set __MSVCDIR=\\boneyard\boneyard-dfs\us\rellang\vc150.win\msvc
+@REM
+@REM set PATH=%__MSVCDIR%\bin;%PATH%;%_WINCEROOT%\sdk\bin\i386
+@REM set MSDevDir=%__MSVCDIR%
+@REM set lib=%__MSVCDIR%\lib
+@REM set include=%__MSVCDIR%\include
+
+@REM
+@REM changed to the following code to allow exiting from 16-bit development mode back to the main 32 bit dev mode window
+@REM setupen2.bat also checks for vc1.5 being installed on the local HD (under %_WINCEROOT%\sdk\vc150.win) and uses that if found
+@REM else it goes to corpnet (under \\boneyard\rellan\vc150.win\msvc)
+@REM
+
+@echo off
+%comspec% /k setupen2.bat
+

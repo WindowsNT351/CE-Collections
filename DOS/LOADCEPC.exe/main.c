@@ -611,7 +611,8 @@ main_error:
         XmsFreeExtendedMemory(usBlockHandle);
     }
 
-    printf("\n\n               Press any key to cancel.\n");
+    //printf("\n\n               Press any key to cancel.\n");
+	printf("\n\n             ==============Press any key to cancel==============\n ");
 	__asm
     {
         push    dx
@@ -751,7 +752,7 @@ static void usage( char *pszProgramNameArg )
           "      treated as the name of the file.\n"
           "      It is an error for <pattern> to match multiple files\n"
           "      when <destination> specifies a file.\n"
-		  "For CE Collections - Last built with ver.2.01-Beta1-02",
+		  "For CE Collections - Last built with ver.2.01-Beta1-03",
 
           pszProgram );
 }
@@ -873,6 +874,8 @@ static int LoadImage( BOOL     bVerbose,
     long int        bootType;
     unsigned        len;
 
+	char cReturnStri[60]={0};
+	strcpy(cReturnStri,"\r                                                                         \r\n        ");
 
     // Find the largest Extended Memory block and allocate it
 
@@ -900,8 +903,8 @@ static int LoadImage( BOOL     bVerbose,
 	fprintf(stderr, "             ");
     if( bVerbose )
     {
+		fprintf(stderr,cReturnStri);
         // Print info about memory available
-
         printf( "Total free extended memory = %u, largest block = %u\n",
                 usTotalFree, usLargestBlock);
     }
@@ -912,6 +915,7 @@ static int LoadImage( BOOL     bVerbose,
 
     if( xmsError != XMS_SUCCESS )
     {
+		fprintf(stderr,cReturnStri);
         printf( "Error allocating extended memory - %s\n", 
                XmsErrorString(xmsError));
 
@@ -932,7 +936,7 @@ static int LoadImage( BOOL     bVerbose,
 
     if( xmsError != XMS_SUCCESS )
     {
-        fprintf(stderr, "\r                                                                         \r");
+        fprintf(stderr,cReturnStri);
         printf("Error locking extended memory - %s\n", XmsErrorString(xmsError));
 
         XmsFreeExtendedMemory(usBlockHandle);
@@ -950,7 +954,7 @@ static int LoadImage( BOOL     bVerbose,
 
     if( bVerbose )
     {
-        fprintf(stderr, "\r                                                                         \r");
+        fprintf(stderr,cReturnStri);
         printf("Block allocated at 0x%lX\n", ulLinearAddress);
     }
 
@@ -976,7 +980,7 @@ static int LoadImage( BOOL     bVerbose,
 
         if( xmsError != XMS_SUCCESS )
         {
-            fprintf(stderr, "\r                                                                         \r");
+            fprintf(stderr,cReturnStri);
             printf("Error zeroing extended memory - %s\n", XmsErrorString(xmsError));
             if( !bParallelDownload && !bSerialDownload )
                 _close(hImage);
@@ -1010,6 +1014,7 @@ static int LoadImage( BOOL     bVerbose,
 
         if( pszFileName )
         {
+			fprintf(stderr,cReturnStri);
             if( bSerialDownload )
                 printf("Loading image %s via serial port.\r\n",pszFileName);
             else
@@ -1027,6 +1032,7 @@ static int LoadImage( BOOL     bVerbose,
         }
         else
         {
+			fprintf(stderr,cReturnStri);
             if( bSerialDownload )
                 printf("Loading host default image via serial port.\r\n");
             else
@@ -1071,7 +1077,11 @@ static int LoadImage( BOOL     bVerbose,
         }
 
 
-        if( bVerbose ) printf("Sending boot packet: ");
+        if( bVerbose ) 
+		{
+			fprintf(stderr,cReturnStri);
+			printf("Sending boot packet: ");
+		}
 
         usIndex=0;
 
@@ -1082,7 +1092,11 @@ static int LoadImage( BOOL     bVerbose,
                 return FALSE;
             }
 
-            if( bVerbose ) printf("%x ",BootPacket[usIndex]);
+            if( bVerbose ) 
+			{
+				fprintf(stderr,cReturnStri);
+				printf("%x ",BootPacket[usIndex]);
+			}
 
             if( bSerialDownload )
             {
@@ -1103,12 +1117,14 @@ static int LoadImage( BOOL     bVerbose,
 
         if( hImage == -1 )
         {
+			fprintf(stderr,cReturnStri);
             printf("%s: Error opening file - %s\n", pszFileName, _strerror(NULL));
             return FALSE;
         }
 
         if( (lImageSize = _filelength(hImage)) == -1 )
         {
+			fprintf(stderr,cReturnStri);
             printf("%s: Error obtaining file size - %s\n", pszFileName, _strerror(NULL));
             if( !bParallelDownload && !bSerialDownload )
                 _close(hImage);
@@ -1118,9 +1134,10 @@ static int LoadImage( BOOL     bVerbose,
 
         if( bVerbose )
         {
+			fprintf(stderr,cReturnStri);
             printf("Loading %s, size = %ld\n", pszFileName, lImageSize);
-	    DisplayCEOSVersion( pszFileName );  // Extract Version Number from image if available
-	}
+	        DisplayCEOSVersion( pszFileName );  // Extract Version Number from image if available
+	    }
     }
 
     // Read initial signature and physical start and size
@@ -1129,6 +1146,7 @@ static int LoadImage( BOOL     bVerbose,
 
     if( DownloadRead( hImage, ucBuffer, usReadSize, bParallelDownload) != usReadSize )
     {
+		fprintf(stderr,cReturnStri);
         printf("Error reading signature - %s\n", _strerror(NULL));
         if( !bParallelDownload && !bSerialDownload )
             _close(hImage);
@@ -1138,6 +1156,7 @@ static int LoadImage( BOOL     bVerbose,
 
     if( memcmp(ucBuffer, ucSignature, sizeof(ucSignature)) != 0 )
     {
+		fprintf(stderr,cReturnStri);
         printf("Error invalid signature\nData: ");
         for( i = 0; i < (int)usReadSize; i++ )
             printf("%x ",ucBuffer[i]);
@@ -1154,6 +1173,7 @@ static int LoadImage( BOOL     bVerbose,
 
     if( bVerbose )
     {
+		fprintf(stderr,cReturnStri);
         printf( "Image physical start = 0x%8.8lX, size = %ld\n",
               *(PULONG)&ucBuffer[sizeof(ucSignature)],
               *(PULONG)&ucBuffer[sizeof(ucSignature) + sizeof(ULONG)]);
@@ -1172,7 +1192,7 @@ static int LoadImage( BOOL     bVerbose,
 
         if( usAmountRead != 3 * sizeof(ULONG) )
         {
-            fprintf(stderr, "\r                                                                         \r");
+            fprintf(stderr,cReturnStri);
             printf("Error reading header - %s\n", XmsErrorString(xmsError));
             if( !bParallelDownload && !bSerialDownload )
                 _close(hImage);
@@ -1195,14 +1215,14 @@ static int LoadImage( BOOL     bVerbose,
             (ulSectionAddress + ulSectionSize) >
             (ulLinearAddress + (ULONG)usLargestBlock * 1024) )
         {
-            fprintf(stderr, "\r                                                                         \r");
+            fprintf(stderr,cReturnStri);
             printf(
                   "Error image section doesn't fit in allocated block\n"
-                  "Block allocated at 0x%lX, size = %ld\n"
-                  "Section physical start = 0x%8.8lX, size = %ld\n"
-				  "Memory too low in your VM might cause this.\n"
+                  "      Block allocated at 0x%lX, size = %ld\n"
+                  "      Section physical start = 0x%8.8lX, size = %ld\n"
+				  "      Memory too low in your VM might cause this.\n"
 				  "\n"
-				  ">> Increase memory may fix this.\n",
+				  "        >> Increase memory may fix this.\n",
                   ulLinearAddress, (ULONG)usLargestBlock * 1024,
                   ulSectionAddress, ulSectionSize);
 
@@ -1214,7 +1234,7 @@ static int LoadImage( BOOL     bVerbose,
 
         if( bVerbose )
         {
-            fprintf(stderr, "\r                                                                         \r");
+            fprintf(stderr,cReturnStri);
             printf(
                   "Section physical start = 0x%8.8lX, size = %ld\n",
                   ulSectionAddress, ulSectionSize);
@@ -1236,7 +1256,7 @@ static int LoadImage( BOOL     bVerbose,
 
             if( usAmountRead != usReadSize )
             {
-                fprintf(stderr, "\r                                                                         \r");
+                fprintf(stderr,cReturnStri);
                 printf("Error reading section - %s\n", XmsErrorString(xmsError));
                 if( !bParallelDownload && !bSerialDownload )
                     _close(hImage);
@@ -1261,7 +1281,7 @@ static int LoadImage( BOOL     bVerbose,
 
             if( xmsError != XMS_SUCCESS )
             {
-                fprintf(stderr, "\r                                                                         \r");
+                fprintf(stderr,cReturnStri);
                 printf("Error moving extended memory - %s\n", XmsErrorString(xmsError));
                 if( !bParallelDownload && !bSerialDownload )
                     _close(hImage);
@@ -1274,7 +1294,7 @@ static int LoadImage( BOOL     bVerbose,
 #if 0
         if( ulChecksum != ulSectionChecksum )
         {
-            fprintf(stderr, "\r                                                                         \r");
+            fprintf(stderr,cReturnStri);
             printf(
                   "Bad checksum 0x%8.8lX, expected 0x%8.8lX\n",
                   ulChecksum, ulSectionChecksum);
@@ -1305,7 +1325,7 @@ static int LoadImage( BOOL     bVerbose,
         out     dx, al
         pop     dx
     }
-    fprintf(stderr, "\r                                                                         \r");
+    fprintf(stderr,cReturnStri);
 
     // Indicate success
 
