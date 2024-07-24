@@ -16,17 +16,17 @@ Load ISO into a virtual optical drive or virtual machine (Windows XP SP3 is reco
 When booting early CEs in CEPC Boot Loader, the menu may ask whether to use high-resolution mode, because modern virtual machines cannot emulate graphics cards properly, resulting in early CE only being able to use low resolution mode. If you want to use high-resolution mode, please use emulators such as PCEM or 86Box that can emulate hardware at that old time. It is recommended to use S3 ViRGE in PCEM<br />
 
 ## ❓QA:
-Q: After booting from the CD, select Windows CE version from 2.x to Windows 3.x and I got a black screen!   A: The resolution may be selected incorrectly. In virtual machines such as VMware, low resolution mode is required. In addition, the new version of VMware is very slow when simulating old systems, which may also cause black screens< br />
-Q: I have already used PCem, but still cannot use high-resolution A: In PCem, you need to choose an S3 ViRGE graphics card with a CPU greater than or equal to 486/33 to use high-resolution< br />
-Q: In PCem, CD cannot be booted. A: Use compression software such as 7Zip to open the ISO file, extract the img file under [boot], and boot from the floppy disk< br />
-Q: Why can't I use the shutdown in the CEPC? A: You really can't use it< br />
-Q: In the CEPC bootloader, after selecting the system, the Error image section does not fit in allocated block showed A: The memory is too small, increase the memory< br />
-Q: Windows EC 2013 black screen after booting A: Do not use VMware [DOS] option when creating a virtual machine, switch to [Windows XP] option< br />
-Q: Windows Mobile resolution is too abstract. A: Try changing to another resolution option< br />
-Q: Shell Simulators cannot be started together A: Do not start multiple Shell Simulators together. If you accidentally start them together, please log off or restart and run [CDROM]:\WNT\200HPC\CEU.reg< br />
-Q: Windows PPC 2000 Shell Emulator cannot work on Windows Vista and above systems. A: No way, the Windows API is not compatible, so the best system to experience Shell emulator is Windows XP< br />
-Q: My Windows CE or Mobile machine is not starting, can you help me? A: Well....<br/>
-Q: Can you integrate other Windows into it? A: Look at the project name!!!!!!<br/>
+Q: After booting from the CD, select Windows CE version from 2.x to Windows 3.x and I got a black screen!   A: The resolution may be selected incorrectly. In virtual machines such as VMware, low resolution mode is required. In addition, the new version of VMware is very slow when simulating old systems, which may also cause black screens<br />
+Q: I have already used PCem, but still cannot use high-resolution A: In PCem, you need to choose an S3 ViRGE graphics card with a CPU greater than or equal to 486/33 to use high-resolution<br />
+Q: In PCem, CD cannot be booted. A: Use compression software such as 7Zip to open the ISO file, extract the img file under [boot], and boot from the floppy disk<br />
+Q: Why can't I use the shutdown in the CEPC? A: You really can't use it<br />
+Q: In the CEPC bootloader, after selecting the system, the Error image section does not fit in allocated block showed A: The memory is too small, increase the memory<br />
+Q: Windows EC 2013 black screen after booting A: Do not use VMware [DOS] option when creating a virtual machine, switch to [Windows XP] option<br />
+Q: Windows Mobile resolution is too abstract. A: Try changing to another resolution option<br />
+Q: Shell Simulators cannot be started together A: Do not start multiple Shell Simulators together. If you accidentally start them together, please log off or restart and run [CDROM]:\WNT\200HPC\CEU.reg<br />
+Q: Windows PPC 2000 Shell Emulator cannot work on Windows Vista and above systems. A: No way, the Windows API is not compatible, so the best system to experience Shell emulator is Windows XP<br />
+Q: My Windows CE or Mobile machine is not starting, can you help me? A: Well....<br />
+Q: Can you integrate other Windows into it? A: Look at the project name!!!!!!<br />
 
 
 ## ❗Here is the systems that CEC can emulated
