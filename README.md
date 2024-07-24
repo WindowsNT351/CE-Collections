@@ -2,7 +2,7 @@
   
   <img alt="LOGO" src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections-2.0/main/WNT/menu2.exe/res/about.bmp" /><br />
   # CE Collections -2.01-
-  Windows CE 大合集<br /><br />
+  不止一个合集<br /><br />
 
   English version: https://github.com/WindowsNT351/CE-Collections/blob/main/README_EN.md
 </div>
@@ -67,8 +67,6 @@ DOS-LOGO: http://retro.timb.us/Documents/Software/DOS-LOGO.html<br />
 👆点击戳一下Inter<br />
 [樱之谷-MC服务器](www.sakuravalley.xyz)<br />
 👆点击戳一下Axium. 钰<br />
-[宣传一下我自己的MC服务器（？](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=V8a6CPxKB1QwMpykpz9PVsMMDedITCqr&authKey=HMJy269CbqbjLatvD4QQG9Z3XrGGqEKUqD7LKciNWPvP1lVUX7LxXvIQWxX7yqYX&noverify=0&group_code=377904406)<br />
-👆点击戳一下351(?<br />
 
 <br /><br /><br /><br />
 Copyright 351Workshop 2022-2024
