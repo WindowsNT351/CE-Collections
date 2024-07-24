@@ -2,8 +2,9 @@
   
   <img alt="LOGO" src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections-2.0/main/WNT/menu2.exe/res/about.bmp" /><br />
   # CE Collections -2.01-
-  Windows CE 大合集<br />
+  Windows CE 大合集<br /><br />
 
+  English version: https://github.com/WindowsNT351/CE-Collections/blob/main/README_EN.md
 </div>
 
 ### ONEW CE Collections
