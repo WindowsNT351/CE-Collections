@@ -32,7 +32,7 @@ Q:你能把其他Windows集成进来吗？  A:看看项目名啊啊啊啊啊<br 
 
 
 ## ❗以下是本项目集成的CE镜像和模拟器
-绿色:支持  黄色：有资源，可集成，但未集成  浅黄色：有资源，技术不可集成  红色：无资源<br />
+绿色:集成  蓝色：已集成，但有点问题  黄色：有资源，可集成，但未集成  浅黄色：有资源，技术不可集成  红色：无资源<br />
 <img src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections-2.0/main/cetl.png"/>
 
 ## ℹ关于
