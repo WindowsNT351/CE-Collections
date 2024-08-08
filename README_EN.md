@@ -8,7 +8,7 @@
 
 ### ONEW CE Collections
 ## ❓What is CE Collections<br />
-CE Collections integrates almost all CE(official versions of CEs, such as Windows Mobile) images and emulators, including x86 Bin images booted by Loadcepc, ArmBin images booted by DeviceSimulator, and Shell emulators for Windows NT.<br />
+CE Collections integrates almost all CE(official versions of CEs, such as Windows Mobile) images and emulators, including x86 Bin images booted by Loadcepc, Arm Bin images booted by Device Emulator, and Shell emulators for Windows NT.<br />
 
 ## 📥How to use
 **This image can not only boot and use the CEPCx86 image in a virtual machine, but also,you can open MENU2.EXE in Windows and use other forms of images/emulators. The two platforms (direct boot and MENU2 in Windows) can boot different versions of Windows CE!!!!!** <br /><br />
