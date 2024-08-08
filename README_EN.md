@@ -31,6 +31,7 @@ Q: Can you integrate other Windows into it? A: Look at the project name!!!!!!<br
 
 ## ❗Here is the systems that CEC can emulated
 Green: Supports<br />
+Blue: Supports,but has problem.
 Yellow: Has resources, can be integrated, but not integrated<br />
 Light yellow: Has resources, cannot be integrated<br />
 Red: No resources<br />
