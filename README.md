@@ -50,7 +50,7 @@ Q:你能把其他Windows集成进来吗？  A:看看项目名啊啊啊啊啊<br 
   
 </table>
 <br />
-ONEW Studio QQ交流群:**981893945** 欢迎来玩<br /><br />
+ONEW Studio QQ交流群：981893945 欢迎来玩<br /><br />
 
 本项目使用了以下项目的代码/资源:<br />
 CE：<br />
