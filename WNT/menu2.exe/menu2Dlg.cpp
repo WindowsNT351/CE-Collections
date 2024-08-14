@@ -81,17 +81,22 @@ BOOL Cmenu2Dlg::OnInitDialog()
 
 	SetWindowLong(m_hWnd, GWL_STYLE, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
 
-	treeStr[0] = m_tree.InsertItem(L"Windows CE", 1, 0, TVI_ROOT);
-	for (int i = 1; i < 255; i++)
+	//treeStr[0] = m_tree.InsertItem(L"Windows CE", 1, 0, TVI_ROOT);
+	int iNodeNum = GetPrivateProfileInt(L"0", L"nodeNum", 255, lpPath);
+	for (int i = 0; i < iNodeNum; i++)
 	{
 		TCHAR iniCBuffer[255] = { 0 };
 		wsprintf(iniCBuffer, L"%d", i);
 		int currentFat = GetPrivateProfileInt(iniCBuffer, L"fat", -1, lpPath);
 		if (currentFat == -1)
-			break;
+			continue;//201C101
+		
 		TCHAR currentName[255] = { 0 };
 		GetPrivateProfileString(iniCBuffer, L"name", NULL, currentName, 255, lpPath);
-		treeStr[i] = m_tree.InsertItem(currentName, 1, 0, treeStr[currentFat]);
+		if (currentFat == -2)
+			treeStr[0] = m_tree.InsertItem(currentName, 1, 0, TVI_ROOT);
+		else
+			treeStr[i] = m_tree.InsertItem(currentName, 1, 0, treeStr[currentFat]);
 	}
 
 	MyExpandTree(m_tree.GetRootItem());
