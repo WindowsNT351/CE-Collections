@@ -58,8 +58,11 @@ CE:<br />
 Most images are compiled by myself using Platform Builder.<br />
 A small number of emulators and images are sample image versions or official SDK extracts.<br />
 x86CEPC Bootloader(LOADCEPC)/utilities are moded from the code comes from official PB 6.0.<br />
+Others:<br />
+DOS-LOGO: http://retro.timb.us/Documents/Software/DOS-LOGO.html<br />
 
-## SDK and others download
+
+## 📥SDK and others download
 ### Windows CE 1.x
 #### Windows CE 1.0x
 [Microsoft Visual C++ For Windows CE Version 1.0](https://archive.org/details/msvcceu.100)<br />
@@ -109,7 +112,6 @@ Microsoft Handheld PC 3.0(HPC Pro) Platform SDK: [Windows CE Developers Conferen
 #### Windows CE 5.10
 [Microsoft Windows Mobile 5.0 SDK](https://archive.org/download/WMSDK/Windows%20Mobile%205.0%20Pocket%20PC%20SDK.msi)<br />
 #### Windows CE 5.20
-[Microsoft Windows Mobile 5.0 Pocket PC SDK](https://archive.org/download/WMSDK/Windows%20Mobile%205.0%20Pocket%20PC%20SDK.msi)<br />
 [Microsoft Windows Mobile 6 Professional SDK](https://archive.org/download/WMSDK/Windows%20Mobile%206%20Professional%20SDK%20Refresh.msi)<br />
 [Microsoft Windows Mobile 6 Standard SDK](https://archive.org/download/WMSDK/Windows%20Mobile%206%20Standard%20SDK%20Refresh.msi)<br />
 [Microsoft Windows Mobile 6.1.4 Professional Images](https://archive.org/download/WMSDK/Windows%20Mobile%206.1.4%20Professional%20Images%20%28USA%29.msi)<br />
@@ -133,9 +135,6 @@ Microsoft Handheld PC 3.0(HPC Pro) Platform SDK: [Windows CE Developers Conferen
 ### Windows CE 8.x
 #### Windows CE 8.0
 [Microsoft Windows Embedded Compact 2013 Platform Builder](https://archive.org/details/en_windows_embedded_compact_2013_x86_x64_dvd_2247108)
-
-Others:<br />
-DOS-LOGO: http://retro.timb.us/Documents/Software/DOS-LOGO.html<br />
 
 <br /><br /><br /><br />
 Copyright 351Workshop 2022-2024
