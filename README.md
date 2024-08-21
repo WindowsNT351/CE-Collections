@@ -68,7 +68,7 @@ DOS-LOGO: http://retro.timb.us/Documents/Software/DOS-LOGO.html<br />
 <br />
 ### Windows CE 2.x
 #### Windows CE 2.00
-[Microsoft Windows Handheld PC 2.0 Platform SDK](https://archive.org/details/wincesdk)<br />
+[Microsoft Handheld PC 2.0 Platform SDK](https://archive.org/details/wincesdk)<br />
 #### Windows CE 2.01
 Microsoft Palm-size PC 1.0 Platform SDK: [Programming Windows CE Disc](https://archive.org/details/mspress_programmingwindowsce_0970002166)<br />
 Microsoft Auto PC 1.0 Platform SDK: [Windows CE Developers Conference DevCon 99 Conference CD](https://archive.org/details/windowscedevcon99conferencecd)<br />
@@ -82,6 +82,14 @@ Microsoft Handheld PC 3.0(HPC Pro) Platform SDK: [Windows CE Developers Conferen
 #### Windows CE 2.12
 [Microsoft Windows CE 2.12 Platform Builder](https://www.betaarchive.com/database/view_release.php?uuid=e73feaeb-c4dc-4915-9b16-1692c269d3b5)<br />
 <br />
+### Windows CE 3.x
+#### Windows CE 3.0
+[Microsoft Windows CE 3.0 Platform Builder(Part 1)](https://archive.org/details/ms-wince-pb30)
+[Microsoft Windows CE 3.0 Platform Builder(Part 2)](https://archive.org/details/ms-wince-pb30_5-11)
+[Microsoft Pocket PC 2000(Palm-size PC 3.0) Platform SDK(Backup)](https://pan.baidu.com/s/14ykCvhJfTmiYzloPs6ApRg) 提取码6zjx
+[Microsoft Handheld PC 2000 SDK](https://archive.org/details/hpc2ksdkusa)
+[Microsoft Smart Phone 2002 SDK](https://archive.org/download/windows-mobile-sdks-2023/smartphone_2002_sdk.exe)
+[Microsoft Pocket PC 2002 SDK](https://archive.org/download/windows-mobile-sdks-2023/ppc2002_sdk.exe)
 
 
 ## 🤝友情链接
