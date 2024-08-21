@@ -22,7 +22,7 @@ Q: In PCem, CD cannot be booted. A: Use compression software such as 7Zip to ope
 Q: Why can't I use the shutdown in the CEPC? A: You really can't use it<br />
 Q: In the CEPC bootloader, after selecting the system, the Error image section does not fit in allocated block showed A: The memory is too small, increase the memory<br />
 Q: Windows EC 2013 black screen after booting A: Do not use VMware [DOS] option when creating a virtual machine, switch to [Windows XP] option<br />
-Q: Windows Mobile resolution is too abstract. A: Try changing to another resolution option<br />
+Q: Windows Mobile resolution is too strange. A: Try changing to another resolution option<br />
 Q: Shell Simulators cannot be started together A: Do not start multiple Shell Simulators together. If you accidentally start them together, please log off or restart and run [CDROM]:\WNT\200HPC\CEU.reg<br />
 Q: Windows PPC 2000 Shell Emulator cannot work on Windows Vista and above systems. A: No way, the Windows API is not compatible, so the best system to experience Shell emulator is Windows XP<br />
 Q: My Windows CE or Mobile machine is not starting, can you help me? A: Well....<br />
@@ -58,6 +58,81 @@ CE:<br />
 Most images are compiled by myself using Platform Builder.<br />
 A small number of emulators and images are sample image versions or official SDK extracts.<br />
 x86CEPC Bootloader(LOADCEPC)/utilities are moded from the code comes from official PB 6.0.<br />
+
+## SDK and others download
+### Windows CE 1.x
+#### Windows CE 1.0x
+[Microsoft Visual C++ For Windows CE Version 1.0](https://archive.org/details/msvcceu.100)<br />
+<br />
+### Windows CE 2.x
+#### Windows CE 2.00
+[Microsoft Handheld PC 2.0 Platform SDK](https://archive.org/details/wincesdk)<br />
+#### Windows CE 2.01
+Microsoft Palm-size PC 1.0 Platform SDK: [Programming Windows CE Disc](https://archive.org/details/mspress_programmingwindowsce_0970002166)<br />
+Microsoft Auto PC 1.0 Platform SDK: [Windows CE Developers Conference DevCon 99 Conference CD](https://archive.org/details/windowscedevcon99conferencecd)<br />
+#### Windows CE 2.10
+[Microsoft Windows CE 2.10 Enhancement Pack for Windows CE Embedded Toolkit](https://www.betaarchive.com/database/view_release.php?uuid=0bef77bc-078b-468d-9ed0-18c51508948d)<br />
+#### Windows CE 2.11
+[Microsoft Windows CE 2.11 Platform Builder](https://archive.org/details/MicrosoftWindowsCEPlatformBuilder2.11Disc1.iso.7z)<br />
+[Microsoft Palm-size PC 1.1 Platform SDK](https://web.archive.org/web/20051218093617/http://download.microsoft.com/download/wincepalm/pdasdk/1.1/WCE/CN/PPC_SDK(CHS).zip)<br />
+Microsoft Palm-size PC 1.2 Platform SDK: [Windows CE Developers Conference DevCon 99 Conference CD](https://archive.org/details/windowscedevcon99conferencecd)<br />
+Microsoft Handheld PC 3.0(HPC Pro) Platform SDK: [Windows CE Developers Conference DevCon 99 Conference CD](https://archive.org/details/windowscedevcon99conferencecd)<br />
+#### Windows CE 2.12
+[Microsoft Windows CE 2.12 Platform Builder](https://www.betaarchive.com/database/view_release.php?uuid=e73feaeb-c4dc-4915-9b16-1692c269d3b5)<br />
+<br />
+### Windows CE 3.x
+#### Windows CE 3.00
+[Microsoft Windows CE 3.0 Platform Builder(Part 1)](https://archive.org/details/ms-wince-pb30)<br />
+[Microsoft Windows CE 3.0 Platform Builder(Part 2)](https://archive.org/details/ms-wince-pb30_5-11)<br />
+[Microsoft Pocket PC 2000(Palm-size PC 3.0) Platform SDK(Backup)](https://pan.baidu.com/s/14ykCvhJfTmiYzloPs6ApRg) Key:6zjx<br />
+[Microsoft Handheld PC 2000 SDK](https://archive.org/details/hpc2ksdkusa)<br />
+[Microsoft Smart Phone 2002 SDK](https://archive.org/download/windows-mobile-sdks-2023/smartphone_2002_sdk.exe)<br />
+[Microsoft Pocket PC 2002 SDK](https://archive.org/download/windows-mobile-sdks-2023/ppc2002_sdk.exe)<br />
+<br />
+### Windows CE 4.x
+#### Windows CE 4.00
+[Microsoft Windows CE.net 4.0 Platform Builder Emulation Edition(Backup)](https://www.123pan.com/s/KDyhTd-zTPN3) Key:eGCt<br />
+[Microsoft Windows CE.net 4.0 Platform Builder](https://www.betaarchive.com/database/view_release.php?uuid=51000b20-9a15-4403-8b56-c3759aa682b7)<br />
+#### Windows CE 4.10
+[Microsoft Windows CE.net 4.1 Platform Builder Emulation Edition](https://archive.org/details/winceemul41)<br />
+[Microsoft Windows CE.net 4.1 Platform Builder](https://www.betaarchive.com/database/view_release.php?uuid=fc6d66f5-e047-4303-9f0e-82e7f1de6645)<br />
+#### Windows CE 4.20
+[Microsoft Windows CE.net 4.2 Platform Builder Emulation Edition](https://archive.org/details/winceemul42)<br />
+[Microsoft Windows CE.net 4.2 Platform Builder](https://www.betaarchive.com/database/view_release.php?uuid=2b657ca7-2b53-4aac-8b1e-446b5669fda9)<br />
+[Microsoft Windows Mobile 2003 SDK](https://archive.org/download/WMSDK/Microsoft%20Pocket%20PC%202003%20SDK.msi)<br />
+#### Windows CE 4.21
+[Microsoft Windows Mobile 2003 SE Images](https://archive.org/download/WMSDK/WM2003SEimages.msi)<br />
+<br />
+### Windows CE 5.x
+#### Windows CE 5.00
+[Microsoft Windows CE.net 5.0 Platform Builder](https://archive.org/details/en_win_ce_net_cd1)<br />
+#### Windows CE 5.10
+[Microsoft Windows Mobile 5.0 SDK](https://archive.org/download/WMSDK/Windows%20Mobile%205.0%20Pocket%20PC%20SDK.msi)<br />
+#### Windows CE 5.20
+[Microsoft Windows Mobile 5.0 Pocket PC SDK](https://archive.org/download/WMSDK/Windows%20Mobile%205.0%20Pocket%20PC%20SDK.msi)<br />
+[Microsoft Windows Mobile 6 Professional SDK](https://archive.org/download/WMSDK/Windows%20Mobile%206%20Professional%20SDK%20Refresh.msi)<br />
+[Microsoft Windows Mobile 6 Standard SDK](https://archive.org/download/WMSDK/Windows%20Mobile%206%20Standard%20SDK%20Refresh.msi)<br />
+[Microsoft Windows Mobile 6.1.4 Professional Images](https://archive.org/download/WMSDK/Windows%20Mobile%206.1.4%20Professional%20Images%20%28USA%29.msi)<br />
+[Microsoft Windows Mobile 6.1.4 Standard Images](https://archive.org/download/WMSDK/Windows%20Mobile%206.1.4%20Standard%20Images%20%28USA%29.msi)<br />
+[Microsoft Windows Mobile 6.5 Professional DKT](https://archive.org/download/WMSDK/Windows%20Mobile%206.5%20Professional%20Developer%20Tool%20Kit%20%28USA%29.msi)<br />
+[Microsoft Windows Mobile 6.5 Standard DKT](https://archive.org/download/WMSDK/Windows%20Mobile%206.5%20Standard%20Developer%20Tool%20Kit%20%28USA%29.msi)<br />
+[Microsoft Windows Mobile 6.5.3 Professional DKT](https://archive.org/download/WMSDK/Windows%20Mobile%206.5.3%20Professional%20DTK.msi)<br />
+[Microsoft Windows Mobile 6.5.3 Standard DKT](https://archive.org/download/WMSDK/Windows%20Mobile%206.5.3%20Standard%20DTK.msi)<br />
+<br />
+### Windows CE 6.x
+#### Windows CE 6.0
+[Microsoft Windows Embedded CE 6.0 Platform Builder](https://archive.org/details/en_windows_embedded_ce_6.0_dvd)<br />
+[Microsoft Windows Embedded CE 6.0 Platform Builder R2](https://archive.org/details/windows-embedded-ce-6.0-r2)<br />
+[Microsoft Windows Embedded CE 6.0 Platform Builder R3](https://archive.org/details/en_windows_embedded_ce_6.0_r3_dvd__x16-28730)<br />
+<br />
+### Windows CE 7.x
+#### Windows CE 7.0
+[Microsoft Windows Embedded Compact 7.0 Platform Builder](https://archive.org/details/WindowsEmbeddedCompact7)<br />
+[Microsoft Windows Embedded Automotive 7.0 Platform Builder](https://archive.org/details/windows-embedded-automotive-7)<br />
+<br />
+### Windows CE 8.x
+#### Windows CE 8.0
+[Microsoft Windows Embedded Compact 2013 Platform Builder](https://archive.org/details/en_windows_embedded_compact_2013_x86_x64_dvd_2247108)
 
 Others:<br />
 DOS-LOGO: http://retro.timb.us/Documents/Software/DOS-LOGO.html<br />
