@@ -61,6 +61,28 @@ x86CEPC Bootloader(LOADCEPC)/工具 为M$官方版6.0修改版<br />
 其他：<br />
 DOS-LOGO: http://retro.timb.us/Documents/Software/DOS-LOGO.html<br />
 
+## ❗SDK及其他相关工具下载 [更新中]
+### Windows CE 1.x
+#### Windows CE 1.0x
+[Microsoft Visual C++ For Windows CE Version 1.0](https://archive.org/details/msvcceu.100)<br />
+<br />
+### Windows CE 2.x
+#### Windows CE 2.00
+[Microsoft Windows Handheld PC 2.0 Platform SDK](https://archive.org/details/wincesdk)<br />
+#### Windows CE 2.01
+Microsoft Palm-size PC 1.0 Platform SDK: [Programming Windows CE Disc](https://archive.org/details/mspress_programmingwindowsce_0970002166)
+Microsoft Auto PC 1.0 Platform SDK: [Windows CE Developers Conference DevCon 99 Conference CD](https://archive.org/details/windowscedevcon99conferencecd)
+#### Windows CE 2.10
+[Microsoft Windows CE 2.10 Enhancement Pack for Windows CE Embedded Toolkit](https://www.betaarchive.com/database/view_release.php?uuid=0bef77bc-078b-468d-9ed0-18c51508948d)
+#### Windows CE 2.11
+[Microsoft Windows CE 2.11 Platform Builder](https://archive.org/details/MicrosoftWindowsCEPlatformBuilder2.11Disc1.iso.7z)
+[Microsoft Palm-size PC 1.1 Platform SDK](https://web.archive.org/web/20051218093617/http://download.microsoft.com/download/wincepalm/pdasdk/1.1/WCE/CN/PPC_SDK(CHS).zip)
+Microsoft Palm-size PC 1.2 Platform SDK: [Windows CE Developers Conference DevCon 99 Conference CD](https://archive.org/details/windowscedevcon99conferencecd)
+Microsoft Handheld PC 3.0(HPC Pro) Platform SDK: [Windows CE Developers Conference DevCon 99 Conference CD](https://archive.org/details/windowscedevcon99conferencecd)
+#### Windows CE 2.12
+[Microsoft Windows CE 2.12 Platform Builder](https://www.betaarchive.com/database/view_release.php?uuid=e73feaeb-c4dc-4915-9b16-1692c269d3b5)
+<br />
+
 
 ## 🤝友情链接
 [Inter的PenPointOS模拟器](https://github.com/Inter1006/PenPointOS_Vbox/tree/main)<br />
