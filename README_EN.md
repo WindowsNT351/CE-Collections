@@ -2,18 +2,18 @@
   
   <img alt="LOGO" src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections-2.0/main/WNT/menu2.exe/res/about.bmp" /><br />
   # CE Collections -2.01-
-  More than one Collection<br />
+  More than one<br />
 
 </div>
 
 ### ONEW CE Collections
 ## ❓What is CE Collections<br />
-CE Collections integrates almost all CE(official versions of CEs, such as Windows Mobile) images and emulators, including x86 Bin images booted by Loadcepc, Arm Bin images booted by Device Emulator, and Shell emulators for Windows NT.<br />
+CE Collections integrates almost all CEs(official versions of CEs, such as Windows Mobile) images and emulators, including x86 Bin images booted by Loadcepc, Arm Bin images booted by Device Emulator, and Shell emulators for Windows NT.<br />
 
 ## 📥How to use
-**This image can not only boot and use the CEPCx86 image in a virtual machine, but also,you can open MENU2.EXE in Windows and use other forms of images/emulators. The two platforms (direct boot and MENU2 in Windows) can boot different versions of Windows CE!!!!!** <br /><br />
-Load ISO into a virtual optical drive or virtual machine (Windows XP SP3 is recommended as the Windows PPC 2000 emulator cannot run on NT6. x). Open [CDROM]:\WNT\MENU2.exe, select the Windows CE version you want to open, and click Run to open the emulator.Or just boot it directly and choose the system you want to boot.<br />
-When booting early CEs in CEPC Boot Loader, the menu may ask whether to use high-resolution mode, because modern virtual machines cannot emulate graphics cards properly, resulting in early CE only being able to use low resolution mode. If you want to use high-resolution mode, please use emulators such as PCEM or 86Box that can emulate hardware at that old time. It is recommended to use S3 ViRGE in PCEM<br />
+**This image can not only boot and use the CEPCx86 image in a virtual machine,but also,you can use MENU2.EXE in Windows and use other forms of images/emulators.The two platforms (direct boot and MENU2 in Windows) can boot different versions of Windows CE!!!!!** <br /><br />
+Load ISO into a virtual optical drive or virtual machine (Windows XP SP3 is recommended as the Windows PPC 2000 emulator cannot run on NT6. x).Open [CDROM]:\WNT\MENU2.exe,select the Windows CE version you want to open,and click Run to open the emulator.Or just boot it directly and choose the system you want to boot.<br />
+When booting early CEs in CEPC Boot Loader,the menu may ask whether to use high-resolution mode,because modern virtual machines cannot emulate graphics cards properly,resulting in early CE only being able to use low resolution mode.If you want to use high-resolution mode,please use emulators such as PCEM or 86Box that can emulate hardware at that old time. It is recommended to use S3 ViRGE in PCEM<br />
 
 ## ❓QA:
 Q: After booting from the CD, select Windows CE version from 2.x to Windows 3.x and I got a black screen!   A: The resolution may be selected incorrectly. In virtual machines such as VMware, low resolution mode is required. In addition, the new version of VMware is very slow when simulating old systems, which may also cause black screens<br />
