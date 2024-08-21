@@ -12,7 +12,7 @@ CE Collections integrates almost all CEs(official versions of CEs, such as Windo
 
 ## 📥How to use
 **This image can not only boot and use the CEPCx86 image in a virtual machine,but also,you can use MENU2.EXE in Windows and use other forms of images/emulators.The two platforms (direct boot and MENU2 in Windows) can boot different versions of Windows CE!!!!!** <br /><br />
-Load ISO into a virtual optical drive or virtual machine (Windows XP SP3 is recommended as the Windows PPC 2000 emulator cannot run on NT6. x).Open [CDROM]:\WNT\MENU2.exe,select the Windows CE version you want to open,and click Run to open the emulator.Or just boot it directly and choose the system you want to boot.<br />
+Load ISO into a virtual DVD drive or just use virtual machine(Windows XP SP3 is recommended as the Windows PPC 2000 emulator cannot run on NT6.x).Open [CDROM]:\WNT\MENU2.exe,select the Windows CE version you want to open,and click Run to open the emulator.Or just boot it directly and choose the system you want to boot.<br />
 When booting early CEs in CEPC Boot Loader,the menu may ask whether to use high-resolution mode,because modern virtual machines cannot emulate graphics cards properly,resulting in early CE only being able to use low resolution mode.If you want to use high-resolution mode,please use emulators such as PCEM or 86Box that can emulate hardware at that old time. It is recommended to use S3 ViRGE in PCEM<br />
 
 ## ❓QA:
