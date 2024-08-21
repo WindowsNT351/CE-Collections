@@ -61,7 +61,7 @@ x86CEPC Bootloader(LOADCEPC)/工具 为M$官方版6.0修改版<br />
 其他：<br />
 DOS-LOGO: http://retro.timb.us/Documents/Software/DOS-LOGO.html<br />
 
-## ❗SDK及其他相关工具下载 [更新中]
+## ❗SDK及其他相关工具下载
 ### Windows CE 1.x
 #### Windows CE 1.0x
 [Microsoft Visual C++ For Windows CE Version 1.0](https://archive.org/details/msvcceu.100)<br />
@@ -121,7 +121,20 @@ Microsoft Handheld PC 3.0(HPC Pro) Platform SDK: [Windows CE Developers Conferen
 [Microsoft Windows Mobile 6.5.3 Professional DKT](https://archive.org/download/WMSDK/Windows%20Mobile%206.5.3%20Professional%20DTK.msi)<br />
 [Microsoft Windows Mobile 6.5.3 Standard DKT](https://archive.org/download/WMSDK/Windows%20Mobile%206.5.3%20Standard%20DTK.msi)<br />
 <br />
-
+### Windows CE 6.x
+#### Windows CE 6.0
+[Microsoft Windows Embedded CE 6.0 Platform Builder](https://archive.org/details/en_windows_embedded_ce_6.0_dvd)<br />
+[Microsoft Windows Embedded CE 6.0 Platform Builder R2](https://archive.org/details/windows-embedded-ce-6.0-r2)<br />
+[Microsoft Windows Embedded CE 6.0 Platform Builder R3](https://archive.org/details/en_windows_embedded_ce_6.0_r3_dvd__x16-28730)<br />
+<br />
+### Windows CE 7.x
+#### Windows CE 7.0
+[Microsoft Windows Embedded Compact 7.0 Platform Builder](https://archive.org/details/WindowsEmbeddedCompact7)<br />
+[Microsoft Windows Embedded Automotive 7.0 Platform Builder](https://archive.org/details/windows-embedded-automotive-7)<br />
+<br />
+### Windows CE 8.x
+#### Windows CE 8.0
+[Microsoft Windows Embedded Compact 2013 Platform Builder](https://archive.org/details/en_windows_embedded_compact_2013_x86_x64_dvd_2247108)
 
 ## 🤝友情链接
 [Inter的PenPointOS模拟器](https://github.com/Inter1006/PenPointOS_Vbox/tree/main)<br />
