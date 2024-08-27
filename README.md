@@ -123,18 +123,18 @@ Microsoft Handheld PC 3.0(HPC Pro) Platform SDK: [Windows CE Developers Conferen
 [Microsoft Windows Mobile 6.5.3 Standard DKT](https://archive.org/download/WMSDK/Windows%20Mobile%206.5.3%20Standard%20DTK.msi)<br />
 <br />
 ### Windows CE 6.x
-#### Windows CE 6.0
+#### Windows CE 6.00
 [Microsoft Windows Embedded CE 6.0 Platform Builder](https://archive.org/details/en_windows_embedded_ce_6.0_dvd)<br />
 [Microsoft Windows Embedded CE 6.0 Platform Builder R2](https://archive.org/details/windows-embedded-ce-6.0-r2)<br />
 [Microsoft Windows Embedded CE 6.0 Platform Builder R3](https://archive.org/details/en_windows_embedded_ce_6.0_r3_dvd__x16-28730)<br />
 <br />
 ### Windows CE 7.x
-#### Windows CE 7.0
+#### Windows CE 7.00
 [Microsoft Windows Embedded Compact 7.0 Platform Builder](https://archive.org/details/WindowsEmbeddedCompact7)<br />
 [Microsoft Windows Embedded Automotive 7.0 Platform Builder](https://archive.org/details/windows-embedded-automotive-7)<br />
 <br />
 ### Windows CE 8.x
-#### Windows CE 8.0
+#### Windows CE 8.00
 [Microsoft Windows Embedded Compact 2013 Platform Builder](https://archive.org/details/en_windows_embedded_compact_2013_x86_x64_dvd_2247108)
 
 ## 🤝友情链接
