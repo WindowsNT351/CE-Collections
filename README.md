@@ -228,6 +228,6 @@ Microsoft Handheld PC 3.0(HPC Pro) Platform SDK: [Windows CE Developers Conferen
 👆点击戳一下Inter<br />
 
 <br /><br /><br /><br />
-Copyright 351Workshop 2022-2024
+Copyright 351Workshop 2022-2025
 
 
