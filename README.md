@@ -30,6 +30,7 @@ CEPC平台使用方法：
 <img src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections/main/cepcr1.png"/>
 <img src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections/main/cepcr2.png"/>
 <img src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections/main/cepcr3.png"/>
+
 2. 打开虚拟机，引导光盘。
 3. 选择想要启动的 Windows CE 版本。
 4. 若提示需要选择分辨率，请依照您使用的模拟器、虚拟机或实体硬件选择。
