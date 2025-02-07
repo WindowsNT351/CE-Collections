@@ -218,4 +218,4 @@ Microsoft Handheld PC 3.0(HPC Pro) Platform SDK: [Windows CE Developers Conferen
 [Microsoft Windows Embedded Compact 2013 Platform Builder](https://archive.org/details/en_windows_embedded_compact_2013_x86_x64_dvd_2247108)
 
 <br /><br /><br /><br />
-Copyright 351Workshop 2022-2024
+Copyright 351Workshop 2022-2025
