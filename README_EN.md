@@ -26,7 +26,10 @@ How to use WinNT-Platform-Loader:
 3. Choose the desired Windows CE version and click Run to launch the corresponding emulator.
 
 How to use CEPC Loader:
-1. Load the ISO file to a virtual machine or emulator(such as 86Box).
+1. Load the ISO file to a virtual machine or emulator(such as 86Box,here is recommend settings).
+<img src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections-2.0/main/cepcr1.png"/>
+<img src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections-2.0/main/cepcr2.png"/>
+<img src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections-2.0/main/cepcr3.png"/>
 2. Turn the virtual machine on and boot the CD.
 3. Choose the OS you want to boot.
 4. If it ask you to choose a resolution,please choose that on-demand.
