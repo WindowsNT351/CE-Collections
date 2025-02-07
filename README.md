@@ -26,11 +26,13 @@ WinNT平台模拟器使用方法：
 3. 选择想要启动的 Windows CE 版本，并点击 Run 打开对应的模拟器。
 
 CEPC平台使用方法：
-1. 将ISO文件加载至虚拟机或模拟器中，推荐使用86Box。
+1. 将ISO文件加载至虚拟机或模拟器中，推荐使用86Box，以下是推荐配置。
+<img src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections/main/cepcr1.png"/>
+<img src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections/main/cepcr2.png"/>
+<img src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections/main/cepcr3.png"/>
 2. 打开虚拟机，引导光盘。
 3. 选择想要启动的 Windows CE 版本。
 4. 若提示需要选择分辨率，请依照您使用的模拟器、虚拟机或实体硬件选择。
-
 注意：
 - 在引导较早版本的 CE 时，菜单可能会询问是否使用高分辨率模式。这是因为现代虚拟机无法正常模拟当时的显卡，导致早期 CE 系统只能以低分辨率模式运行。若希望使用高分辨率模式，请使用 PCEM 或 86Box 等能够模拟当时硬件的模拟器（推荐使用 86Box 中的 S3 ViRGE）。
 
