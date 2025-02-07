@@ -30,6 +30,7 @@ How to use CEPC Loader:
 <img src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections-2.0/main/cepcr1.png"/>
 <img src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections-2.0/main/cepcr2.png"/>
 <img src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections-2.0/main/cepcr3.png"/>
+
 2. Turn the virtual machine on and boot the CD.
 3. Choose the OS you want to boot.
 4. If it ask you to choose a resolution,please choose that on-demand.
