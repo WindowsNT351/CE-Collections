@@ -283,6 +283,8 @@ Others:
 - [Sakura Valley - MC Server](www.sakuravalley.xyz)  
   (Click to view Axium. 钰)
 
+Doc rewrite: [LAGSNES](https://github.com/LAGSNESOwO/)
+
 ---
 
 <br /><br /><br /><br />
