@@ -96,14 +96,18 @@ BOOL about::OnInitDialog()
 
 	m_textver.SetWindowText(AsciiToUnicode(buffer));
 
-	m_edit1.SetWindowText( L"Name		Bilibili ID\r\n"
-							"351		351Workshop\r\n"
-							"Inter		-INTER_INIT-\r\n"
-							"WinPad		とある科学の手机副屏\r\n"
-							"GoldApple		不务正业的金苹果\r\n"
-							"DZY		DZY20070614\r\n"
-							"Zesa		LinuxMEMZ\r\n"
-							"XJBLMNP(?");
+	m_edit1.SetWindowText( L"Developer\r\n"
+							"	351			@351Workshop\r\n"
+							"Supporter and Sponsor\r\n"
+							"	IBM			@IBM_Official\r\n"
+							"	Dr.Quest			@蓬岸 Dr.Quest\r\n"
+							"Artworks\r\n"
+							"	WinPad			@とある科学の手机副屏\r\n"
+							"Guidance and Testing\r\n"
+							"	Inter			@-INTER_INIT-\r\n"
+							"	GoldApple			@不务正业的金苹果\r\n"
+							"	Zesa			@LinuxMEMZ\r\n"
+							"	DZY			@DZY20070614\r\n");
 	//HWND hWndEdit1 = m_edit1.GetSafeHwnd();
 	//::SendMessage(hWndEdit1, EM_LINESCROLL, 0, 3);
 

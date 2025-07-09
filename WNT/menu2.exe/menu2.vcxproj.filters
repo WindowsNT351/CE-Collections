@@ -71,9 +71,6 @@
     <Image Include="res\menu2.ico">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="E:\Desktop\background2.bmp">
-      <Filter>资源文件</Filter>
-    </Image>
     <Image Include="res\background.bmp">
       <Filter>资源文件</Filter>
     </Image>
@@ -81,9 +78,6 @@
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="res\flag.bmp">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="E:\Desktop\background - 副本 (2).bmp">
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="res\about.bmp">
