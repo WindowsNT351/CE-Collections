@@ -64,7 +64,7 @@ void Cmenu2Dlg::MyExpandTree(HTREEITEM hTreeItem)
 }
 
 TCHAR lpPath[255] = { 0 };
-HTREEITEM treeStr[255] = { 0 };
+HTREEITEM *treeStr;
 BOOL Cmenu2Dlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
@@ -83,6 +83,7 @@ BOOL Cmenu2Dlg::OnInitDialog()
 
 	//treeStr[0] = m_tree.InsertItem(L"Windows CE", 1, 0, TVI_ROOT);
 	int iNodeNum = GetPrivateProfileInt(L"0", L"nodeNum", 255, lpPath);
+	treeStr = new HTREEITEM[iNodeNum]();
 	for (int i = 0; i < iNodeNum; i++)
 	{
 		TCHAR iniCBuffer[255] = { 0 };
@@ -170,13 +171,19 @@ void doCommand(TCHAR *cmd, TCHAR *para)
 	ShellExecute(NULL, L"open", cmd, para, NULL, SW_SHOWNORMAL);
 }
 
+void doCommandD(TCHAR *cmd, TCHAR *para, TCHAR *dir)
+{
+	ShellExecute(NULL, L"open", cmd, para, dir, SW_SHOWNORMAL);
+}
+
 void Cmenu2Dlg::OnBnClickedOk()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	//CDialogEx::OnOK();
 	HTREEITEM hselected = m_tree.GetSelectedItem();
 	int currentTreeID = 0;
-	for (; currentTreeID < 255; currentTreeID++)
+	int iNodeNum = GetPrivateProfileInt(L"0", L"nodeNum", 255, lpPath);
+	for (; currentTreeID < iNodeNum; currentTreeID++)
 	{
 		if (hselected == treeStr[currentTreeID])
 			break;
@@ -185,11 +192,13 @@ void Cmenu2Dlg::OnBnClickedOk()
 	TCHAR currentINIHead[255] = { 0 };
 	TCHAR currentINICmd[255] = { 0 };
 	TCHAR currentINIPara[255] = { 0 };
+	TCHAR currentINIDir[255] = { 0 };
 	wsprintf(currentINIHead, L"%d", currentTreeID);
 	GetPrivateProfileString(currentINIHead, L"cmd", NULL, currentINICmd, 255, lpPath);
 	GetPrivateProfileString(currentINIHead, L"para", NULL, currentINIPara, 255, lpPath);
+	GetPrivateProfileString(currentINIHead, L"dir", NULL, currentINIDir, 255, lpPath);
 	if (currentINICmd[0] != NULL)
-		doCommand(currentINICmd, currentINIPara);
+		doCommandD(currentINICmd, currentINIPara, currentINIDir);
 }
 
 
@@ -204,7 +213,7 @@ void Cmenu2Dlg::OnBnClickedCancel()
 void Cmenu2Dlg::OnNMClickSyslink1(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	// TODO: 在此添加控件通知处理程序代码
-	doCommand(L"..\\DOCS\\UpdateLog.txt", NULL);
+	doCommand(L"..\\DOCS\\help.txt", NULL);
 	*pResult = 0;
 }
 
@@ -212,7 +221,7 @@ void Cmenu2Dlg::OnNMClickSyslink1(NMHDR *pNMHDR, LRESULT *pResult)
 void Cmenu2Dlg::OnNMClickSyslink2(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	// TODO: 在此添加控件通知处理程序代码
-	doCommand(L"..\\DOCS\\TimeLine.xlsx", NULL);
+	doCommand(L"..\\DOCS\\vers.bmp", NULL);
 	*pResult = 0;
 }
 

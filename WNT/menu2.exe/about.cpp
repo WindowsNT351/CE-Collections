@@ -97,17 +97,19 @@ BOOL about::OnInitDialog()
 	m_textver.SetWindowText(AsciiToUnicode(buffer));
 
 	m_edit1.SetWindowText( L"Developer\r\n"
-							"	351			@351Workshop\r\n"
-							"Supporter and Sponsor\r\n"
-							"	IBM			@IBM_Official\r\n"
-							"	Dr.Quest			@蓬岸 Dr.Quest\r\n"
+							"	351			351Workshop@Bilibili\r\n"
+							"Sponsor\r\n"
+							"	IBM			IBM_Official@Bilibili\r\n"
+							"	Dr.Quest			蓬岸@知乎\r\n"
+							"Image Providing\r\n"
+							"	Alexis			lucss21a@Discord\r\n"
 							"Artworks\r\n"
-							"	WinPad			@とある科学の手机副屏\r\n"
+							"	WinPad			とある科学の手机副屏@Bilibili\r\n"
 							"Guidance and Testing\r\n"
-							"	Inter			@-INTER_INIT-\r\n"
-							"	GoldApple			@不务正业的金苹果\r\n"
-							"	Zesa			@LinuxMEMZ\r\n"
-							"	DZY			@DZY20070614\r\n");
+							"	Inter			-INTER_INIT-@Bilibili\r\n"
+							"	GoldApple			不务正业的金苹果@Bilibili\r\n"
+							"	Zesa			LinuxMEMZ@Bilibili\r\n"
+							"	DZY			DZY20070614@Bilibili\r\n");
 	//HWND hWndEdit1 = m_edit1.GetSafeHwnd();
 	//::SendMessage(hWndEdit1, EM_LINESCROLL, 0, 3);
 
