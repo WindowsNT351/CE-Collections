@@ -5,7 +5,7 @@
 #include <tlhelp32.h>
 #include <conio.h>
 #include <iostream>
-#include <VersionHelpers.h>
+//#include <VersionHelpers.h>
 //#pragma comment(lib, "psapi.lib")
 using namespace std;
 //#pragma comment( linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"" )
@@ -210,6 +210,36 @@ bool KillProcessByName(char *processName) {
 	return false;
 }
 
+int findProcessByName(char *processName) {
+	// 创建进程快照
+	HANDLE hSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+	PROCESSENTRY32 pe;
+	int flag = 0;
+
+	if (hSnapShot == INVALID_HANDLE_VALUE) {
+		return false;
+	}
+
+	pe.dwSize = sizeof(PROCESSENTRY32);
+
+	// 遍历进程列表
+	if (Process32First(hSnapShot, &pe)) {
+		do {
+			// 检查进程名称
+			if (_stricmp(pe.szExeFile, processName) == 0) {
+				HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, pe.th32ProcessID);
+
+				if (hProcess != NULL) {
+					flag++;
+				}
+			}
+		} while (Process32Next(hSnapShot, &pe));
+	}
+
+	CloseHandle(hSnapShot);
+	return flag;
+}
+
 /*int delReg(char *path)
 {
 	char fatKey[255] = { 0 };
@@ -263,7 +293,7 @@ bool KillProcessByName(char *processName) {
 
 DWORD WINAPI dispWind_cantStart(LPVOID lpParam)
 {
-	MessageBox(NULL, "You can't start emulator due to:\r\n    - You are running another Shell Emulator.\r\n    - Your OS is not the required version for the emulator.", "CE-Collections", MB_OK);
+	MessageBox(NULL, "You can't start emulator due to:\r\n    - You are running another Shell Emulator.\r\n    - Your OS is not the required version for the emulator.", "CE-Collections", MB_OK | MB_ICONHAND);
 	return 0;
 }
 
@@ -316,6 +346,9 @@ void afterworks(char *outDir)
 	if (!KillProcessByName("FILESYS.EXE"))
 		puts("Warning - Can't stop FILESYS.exe");
 	Sleep(100);
+	if (!KillProcessByName("DEVICE.EXE"))
+		puts("Warning - Can't stop DEVICE.exe");
+	Sleep(100);
 	if (!DeleteDirectory(outDir))
 		puts("Warning - Can't delete CESHLTMP");
 	Sleep(100);
@@ -324,19 +357,32 @@ void afterworks(char *outDir)
 	return;
 }
 
+int IsWindowsVistaOrGreater()
+{
+	std::string vname;
+	typedef void(__stdcall*NTPROC)(DWORD*, DWORD*, DWORD*);
+	HINSTANCE hinst = LoadLibrary("ntdll.dll");
+	DWORD dwMajor, dwMinor, dwBuildNumber;
+	NTPROC proc = (NTPROC)GetProcAddress(hinst, "RtlGetNtVersionNumbers");
+	proc(&dwMajor, &dwMinor, &dwBuildNumber);
+	if (dwMajor >= 6)
+		return 1;
+	return 0;
+}
+
 int main(int argc, char **argv)
 {
 	if (argc == 1)
 	{
 		puts("Windows CE Shell Emulator Starter for CE-Collections 2.02 - 351Workshop 2025");
-		puts("Usage: Emustarter <Start type> <Path to EMUL> <shell32.exe name>");
+		puts("Usage: Shellmgr <Start type> <Path to EMUL> <shell32.exe name>");
 		puts("    <Start type>:");
 		puts("      1: Standard 1.x series");
 		puts("      2: Standard 2.x series");
 		puts("      3: PocketPC 2000");
 		puts("      4: Auto PC 1.0");
-		puts("Sample: Emustarter 1 .\\10xHPC\\ SHELL32.exe");
-		puts("        Emustarter 2 .\\200HPC\\ explorem.exe");
+		puts("Sample: Shellmgr 1 .\\10xSTD\\ SHELL32.exe");
+		puts("        Shellmgr 2 .\\200HPC\\ explorem.exe");
 		puts("Copyright 351Workshop 2025 - Last built: with CECv202B105");
 		return 1;
 	}
@@ -344,6 +390,31 @@ int main(int argc, char **argv)
 	{
 		puts("Error - Wrong command");
 		return 1;
+	}
+
+	if (findProcessByName("Shellmgr.exe") > 1)
+	{
+		printf("Info - Can't start emulator due to another Emulator is running.Press Backspace to skip.\n");
+		HANDLE hDispWindCantStart = CreateThread(
+			NULL, // 默认安全属性
+			0, // 默认堆栈大小
+			dispWind_cantStart, // 线程函数
+			NULL, // 无参数传递
+			0, // 立即执行线程
+			NULL // 不接收线程ID
+		);
+		DWORD flag = 0;
+		while (1)
+		{
+			if (_kbhit() && _getche() == '\b')
+				break;
+			GetExitCodeThread(hDispWindCantStart, &flag);
+			if (flag != STILL_ACTIVE)
+			{
+				return 1;
+			}
+		}
+		TerminateThread(hDispWindCantStart, 0);
 	}
 
 	HANDLE hDispWindStarting = CreateThread(
@@ -367,7 +438,7 @@ int main(int argc, char **argv)
 		puts("Error - Can't get TEMP path");
 		return 1;
 	}
-	sprintf_s(outDir, "%s\\CESHLTMP\\", outDir);
+	sprintf_s(outDir, "%sCESHLTMP", outDir);
 
 	printf("====================Prep TEMP files=====================\n");
 	printf("srcDir......................:%s\n", srcDir);
@@ -527,6 +598,7 @@ int main(int argc, char **argv)
 
 		if (IsWindowsVistaOrGreater())
 		{
+			TerminateThread(hDispWindStarting, 0);
 			printf("Info - Can't start emulator due to OS version too high.Press Backspace to skip.\n");
 			HANDLE hDispWindCantStart = CreateThread(
 				NULL, // 默认安全属性
@@ -626,6 +698,7 @@ int main(int argc, char **argv)
 
 		if (IsWow64())
 		{
+			TerminateThread(hDispWindStarting, 0);
 			printf("Info - Can't start emulator due to the OS isn't I386.Press Backspace to skip.\n");
 			HANDLE hDispWindCantStart = CreateThread(
 				NULL, // 默认安全属性
