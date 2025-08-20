@@ -1,5 +1,0 @@
-[1]
-fat=0
-name="CE"
-cmd="DeviceEmulator.exe"
-para="..\ARMV4\WM65PPC.bin"

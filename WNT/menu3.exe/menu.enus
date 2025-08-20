@@ -1,0 +1,546 @@
+[sug]
+maxInfo=7
+0="Background color in Shell Emulator depends on your host computer's setting."
+1="Sound in CE 1.x Shell Emulator depends on your host computer's setting."
+2="Reset your computer to boot into CEPC Loader."
+3="LOADCEPC.EXE will load the CE image to the memory."
+4="If the CEPC Loader show an error,you can try to increase memory."
+5="CE Collections was called CEPC Collection before!"
+6="Don't use more than one Shell Emulator at the same time!"
+
+[0]
+fat=-2
+nodeNum=999
+name="Windows CE Family"
+
+[1]
+fat=0
+name="1.x"
+[2]
+fat=0
+name="2.x"
+[3]
+fat=0
+name="3.x"
+[4]
+fat=0
+name="4.x"
+[5]
+fat=0
+name="5.x"
+[6]
+fat=0
+name="6.x"
+[7]
+fat=0
+name="7.x"
+[8]
+fat=0
+name="8.x"
+
+[11]
+fat=1
+name="1.0x"
+
+[13]
+fat=2
+name="2.00"
+[14]
+fat=2
+name="2.01"
+[15]
+fat=2
+name="2.10"
+[16]
+fat=2
+name="2.11"
+[17]
+fat=2
+name="2.12"
+
+[18]
+fat=3
+name="3.00"
+
+[19]
+fat=4
+name="4.00"
+[20]
+fat=4
+name="4.10"
+[21]
+fat=4
+name="4.20"
+[22]
+fat=4
+name="4.21"
+
+[23]
+fat=5
+name="5.00"
+[24]
+fat=5
+name="5.10"
+[25]
+fat=5
+name="5.20"
+
+[26]
+fat=6
+name="6.00"
+
+[30]
+fat=7
+name="7.00"
+[31]
+fat=7
+name="7.10"
+
+[32]
+fat=8
+name="8.00"
+
+
+
+
+
+[101]
+fat=11
+name="Windows CE 1.0x"
+cmd="hiderun.vbs"
+para=""shellmgr 1 .\10xSTD SHELL32.exe""
+
+[201]
+fat=13
+name="Windows CE 2.0"
+cmd="hiderun.vbs"
+para=""whitebox.exe /D:3 /M:PRO2.cfg ..\..\I486\20xSTD.bin""
+dir=".\whitebox\"
+[202]
+fat=13
+name="Handheld PC 2.0"
+cmd="hiderun.vbs"
+para=""shellmgr 2 .\200HPC explorem.exe""
+[203]
+fat=14
+name="Auto PC 1.0"
+cmd="hiderun.vbs"
+para=""shellmgr 4 .\201APC APCHW.exe""
+[204]
+fat=14
+name="Palm-size PC 1.0"
+cmd="hiderun.vbs"
+para=""shellmgr 2 .\201PPC SHELL32.exe""
+[205]
+fat=15
+name="Windows CE 2.10"
+cmd="hiderun.vbs"
+para=""whitebox.exe /D:3 ..\..\I486\210STD.bin""
+dir=".\whitebox\"
+[206]
+fat=16
+name="Windows CE 2.11"
+cmd="hiderun.vbs"
+para=""whitebox.exe /D:3 ..\..\I486\211STD.bin""
+dir=".\whitebox\"
+[207]
+fat=16
+name="Palm-size PC 1.1"
+cmd="hiderun.vbs"
+para=""shellmgr 2 .\211PPC1 SHELL32.exe""
+[208]
+fat=16
+name="Palm-szie PC 1.2"
+cmd="hiderun.vbs"
+para=""shellmgr 2 .\211PPC2 SHELL32.exe""
+[209]
+fat=16
+name="Handheld PC 3.0"
+cmd="hiderun.vbs"
+para=""shellmgr 2 .\211HPC explorej.exe""
+[200]
+fat=17
+name="Windows CE 2.12"
+cmd="hiderun.vbs"
+para=""whitebox.exe /D:3 ..\..\I486\212STD.bin""
+dir=".\whitebox\"
+
+[301]
+fat=18
+name="Windows CE 3.0"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\300STD.bin""
+dir=".\whitebox\"
+[302]
+fat=18
+name="Pocket PC 2000"
+cmd="hiderun.vbs"
+para=""shellmgr 3 .\300PPC2K SHELL32.exe""
+[303]
+fat=18
+name="Handheld PC 2000"
+cmd="hiderun.vbs"
+para=""whitebox.exe /D:3 ..\..\I486\300HPC.bin""
+dir=".\whitebox\"
+[304]
+fat=18
+name="Windows Mobile 2002"
+[305]
+fat=304
+name="Pocket PC"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:240x320x16 ..\..\I486\300PPC.bin""
+dir=".\whitebox\"
+[306]
+fat=304
+name="Smart Phone"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:240x320x16 ..\..\I486\300SP.bin""
+dir=".\whitebox\"
+
+[401]
+fat=19
+name="Windows CE.net 4.0"
+[402]
+fat=401
+name="Standard"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\400STD.bin""
+dir=".\whitebox\"
+[403]
+fat=401
+name="Thin Client"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\400TC.bin""
+dir=".\whitebox\"
+[404]
+fat=20
+name="Windows CE.net 4.1"
+[405]
+fat=404
+name="Standard"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\410STD.bin""
+dir=".\whitebox\"
+[406]
+fat=404
+name="Thin Client"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\410TC.bin""
+dir=".\whitebox\"
+[407]
+fat=21
+name="Windows CE.net 4.2"
+[408]
+fat=407
+name="Standard"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\420STD.bin""
+dir=".\whitebox\"
+[409]
+fat=407
+name="Thin Client"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\420TC.bin""
+dir=".\whitebox\"
+[410]
+fat=21
+name="Windows Mobile 2003"
+[411]
+fat=410
+name="Pocket PC"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:240x320x16 ..\..\I486\420PPC.bin""
+dir=".\whitebox\"
+[412]
+fat=410
+name="Smart Phone"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:240x320x16 ..\..\I486\420SP.bin""
+dir=".\whitebox\"
+[413]
+fat=22
+name="Windows Mobile 2003 SE"
+[414]
+fat=413
+name="Pocket PC"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:240x320x16 ..\..\I486\421PPC.bin""
+dir=".\whitebox\"
+[415]
+fat=413
+name="Smart Phone"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:240x320x16 ..\..\I486\421SP.bin""
+dir=".\whitebox\"
+
+[501]
+fat=23
+name="Windows CE.net 5.0"
+[502]
+fat=501
+name="Standard"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\500STD.bin""
+dir=".\whitebox\"
+[503]
+fat=501
+name="Thin Client"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\500TC.bin""
+dir=".\whitebox\"
+[504]
+fat=501
+name="IP Phone"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\500IPP.bin""
+dir=".\whitebox\"
+[505]
+fat=23
+name="Networked Media Device 5.0"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\500NMD.bin""
+dir=".\whitebox\"
+[506]
+fat=24
+name="Windows Mobile 5.0"
+[507]
+fat=506
+name="Pocket PC"
+cmd="DeviceEmulator.exe"
+para="..\ARMV4\510PPC.bin /memsize 256"
+[508]
+fat=506
+name="Smart Phone"
+cmd="DeviceEmulator.exe"
+para="..\ARMV4\510SP.bin /memsize 256"
+[509]
+fat=24
+name="Windows Mobile 5.2"
+[510]
+fat=509
+name="Pocket PC"
+cmd="DeviceEmulator.exe"
+para="..\ARMV4\510PPC2.bin /memsize 256"
+[511]
+fat=509
+name="Smart Phone"
+cmd="DeviceEmulator.exe"
+para="..\ARMV4\510SP2.bin /memsize 256"
+[512]
+fat=25
+name="Windows Mobile 6.0"
+[513]
+fat=512
+name="Pocket PC"
+cmd="DeviceEmulator.exe"
+para="..\ARMV4\520PPC.bin /memsize 256"
+[514]
+fat=512
+name="Smart Phone"
+cmd="DeviceEmulator.exe"
+para="..\ARMV4\520SP.bin /memsize 256"
+[515]
+fat=25
+name="Windows Mobile 6.0.2"
+[516]
+fat=515
+name="Pocket PC"
+cmd="DeviceEmulator.exe"
+para="..\ARMV4\520PPC02.bin /memsize 256"
+[517]
+fat=515
+name="Smart Phone"
+cmd="DeviceEmulator.exe"
+para="..\ARMV4\520SP02.bin /memsize 256"
+[518]
+fat=25
+name="Windows Mobile 6.1"
+[519]
+fat=518
+name="Pocket PC"
+cmd="DeviceEmulator.exe"
+para="..\ARMV4\520PPC1.bin /memsize 256"
+[520]
+fat=518
+name="Smart Phone"
+cmd="DeviceEmulator.exe"
+para="..\ARMV4\520SP1.bin /memsize 256"
+[521]
+fat=25
+name="Windows Mobile 6.1.4"
+[522]
+fat=521
+name="Pocket PC"
+cmd="DeviceEmulator.exe"
+para="..\ARMV4\520PPC14.bin /memsize 256"
+[523]
+fat=521
+name="Smart Phone"
+cmd="DeviceEmulator.exe"
+para="..\ARMV4\520SP14.bin /memsize 256"
+[524]
+fat=25
+name="Windows Mobile 6.5"
+[525]
+fat=524
+name="Pocket PC"
+cmd="DeviceEmulator.exe"
+para="..\ARMV4\520PPC5.bin /memsize 256"
+[526]
+fat=524
+name="Smart Phone"
+cmd="DeviceEmulator.exe"
+para="..\ARMV4\520SP5.bin /memsize 256"
+[527]
+fat=25
+name="Windows Mobile 6.5.3"
+[528]
+fat=527
+name="Pocket PC"
+cmd="DeviceEmulator.exe"
+para="..\ARMV4\520PPC53.bin /memsize 256"
+[529]
+fat=527
+name="Smart Phone"
+cmd="DeviceEmulator.exe"
+para="..\ARMV4\520SP53.bin /memsize 256"
+
+[601]
+fat=26
+name="Windows Embedded CE 6.0"
+[602]
+fat=601
+name="Standard"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\60xSTD.bin""
+dir=".\whitebox\"
+[603]
+fat=601
+name="Thin Client"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\60xTC.bin""
+dir=".\whitebox\"
+[604]
+fat=601
+name="IP Phone"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\60xIPP.bin""
+dir=".\whitebox\"
+[605]
+fat=601
+name="NMD UI(5.0)"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\60xNMD.bin""
+dir=".\whitebox\"
+
+[701]
+fat=30
+name="Windows Embedded Compact 7.0"
+[702]
+fat=701
+name="Standard"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\700STD.bin""
+dir=".\whitebox\"
+[703]
+fat=701
+name="Thin Client"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\700TC.bin""
+dir=".\whitebox\"
+[704]
+fat=701
+name="Silverlight"
+[705]
+fat=704
+name="Theme A"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\700SL1.bin""
+dir=".\whitebox\"
+[706]
+fat=704
+name="Theme B"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\700SL2.bin""
+dir=".\whitebox\"
+[707]
+fat=704
+name="Theme C"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\700SL3.bin""
+dir=".\whitebox\"
+[708]
+fat=704
+name="Theme D"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\700SL4.bin""
+dir=".\whitebox\"
+[709]
+fat=30
+name="Automotive Embedded 7"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\700APC.bin""
+dir=".\whitebox\"
+[710]
+fat=30
+name="Windows Phone 7"
+cmd="hiderun.vbs"
+para="".\xdemgr 0 ..\..\ARMV40\700WP.bin""
+[711]
+fat=30
+name="Windows Phone 7 NoDo"
+cmd="hiderun.vbs"
+para="".\xdemgr 0 ..\..\ARMV40\700WPN.bin""
+[712]
+fat=31
+name="Windows Phone 7.5"
+cmd="hiderun.vbs"
+para="".\xdemgr 2 ..\..\ARMV40\710WP5.bin""
+[713]
+fat=31
+name="Windows Phone 7.5 Refresh"
+cmd="hiderun.vbs"
+para="".\xdemgr 2 ..\..\ARMV40\710WP5R.bin""
+[714]
+fat=31
+name="Windows Phone 7.8"
+cmd="hiderun.vbs"
+para="".\xdemgr 2 ..\..\ARMV40\710WP8.bin""
+
+[801]
+fat=32
+name="Windows Embedded Compact 2013"
+[802]
+fat=801
+name="Standard"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\800STD.bin""
+dir=".\whitebox\"
+[803]
+fat=801
+name="Silverlight"
+[804]
+fat=803
+name="Theme A"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\800SL1.bin""
+dir=".\whitebox\"
+[805]
+fat=803
+name="Theme B"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\800SL2.bin""
+dir=".\whitebox\"
+[806]
+fat=803
+name="Theme C"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\800SL3.bin""
+dir=".\whitebox\"
+[807]
+fat=803
+name="Theme D"
+cmd="hiderun.vbs"
+para=""whitebox.exe /L:800x600x16 ..\..\I486\800SL4.bin""
+dir=".\whitebox\"
