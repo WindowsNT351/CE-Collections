@@ -1,14 +1,18 @@
+//Build on VS 2005
+//For NT4.0-Win11
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <afxwin.h>
-//#include <psapi.h>
+#include <psapi.h>
 #include <tlhelp32.h>
 #include <conio.h>
+#include <vector>
 #include <iostream>
-//#include <VersionHelpers.h>
-//#pragma comment(lib, "psapi.lib")
+#include <io.h>
+#include <string>
+#pragma comment(lib, "psapi.lib")
 using namespace std;
-//#pragma comment( linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"" )
 
 BOOL LoadNTDriver(char* lpszDriverName, char* lpszDriverPath) {
 	char szDriverImagePath[256];
@@ -150,93 +154,124 @@ bool DeleteDirectory(CString DirName)
 	{
 		return false;
 	}
+
 	return true;
-
 }
 
-int fileCopy(char *in, char *out)
+bool NormalDirectory(CString DirName)
 {
-	if (!CopyFile(in, out, FALSE))
-		return 0;
-	SetFileAttributes(out, FILE_ATTRIBUTE_NORMAL); //去掉文件属性
-	return 1;
-}
-
-int CopyDir(TCHAR* srcFolder, TCHAR* dstFolder)
-{
-	SHFILEOPSTRUCT fop = { 0 };
-	fop.fFlags = FOF_SILENT | FOF_NOCONFIRMATION | FOF_NOERRORUI | FOF_NOCONFIRMMKDIR;
-	fop.wFunc = FO_COPY;//选择执行类型，FO_COPY,FO_DELETE,FO_RENAME,FO_MOVE四种
-
-	fop.pFrom = srcFolder;//如：D:\\*.txt
-	fop.pTo = dstFolder;//D:\\test
-
-	if (SHFileOperation(&fop) != 0)
-		return 0;
-	return 1;
-}
-
-
-bool KillProcessByName(char *processName) {
-	// 创建进程快照
-	HANDLE hSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-	PROCESSENTRY32 pe;
-
-	if (hSnapShot == INVALID_HANDLE_VALUE) {
-		return false;
+	CString PUBPATH;
+	PUBPATH = DirName;
+	CFileFind tempFind;
+	DirName += "\\*.*";
+	BOOL IsFinded = (BOOL)tempFind.FindFile(DirName);
+	//cout << IsFinded <<endl;
+	while (IsFinded)
+	{
+		IsFinded = (BOOL)tempFind.FindNextFile();
+		if (!tempFind.IsDots())
+		{
+			CString strDirName;
+			strDirName += PUBPATH;
+			strDirName += "\\";
+			strDirName += tempFind.GetFileName();
+			if (tempFind.IsDirectory())
+			{
+				NormalDirectory(strDirName);
+			}
+			else
+			{
+				SetFileAttributes(strDirName, FILE_ATTRIBUTE_NORMAL); //去掉文件的系统和隐藏属性
+			}
+		}
+		if (IsFinded == 0)
+			break;
 	}
+	tempFind.Close();
+	/*if (!NormalDirectory(PUBPATH))
+	{
+		return false;
+	}*/
+	return true;
+}
 
-	pe.dwSize = sizeof(PROCESSENTRY32);
+BOOL CopyDir(const char* srcDir, const char* destDir) {
+	char cmd[255]={0};
+	sprintf_s(cmd,"xcopy %s %s /E /I >> nul",srcDir,destDir);
+	system(cmd);
+	/*sprintf_s(cmd,"xcopy %s %s /Y /E /I >> nul",srcDir,destDir);
+	system(cmd);*/
+    return TRUE;
+}
 
-	// 遍历进程列表
-	if (Process32First(hSnapShot, &pe)) {
-		do {
-			// 检查进程名称
-			if (_stricmp(pe.szExeFile, processName) == 0) {
-				// 找到目标进程，尝试关闭
-				HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, pe.th32ProcessID);
+inline char* stristr(char *str1, char *str2)
+{
+	char str1A[255] = { 0 };
+	char str2A[255] = { 0 };
+	for (int i = 0; i < strlen(str1); i++) 
+		str1A[i] = tolower(str1[i]);
+	for (int i = 0; i < strlen(str2); i++)
+		str2A[i] = tolower(str2[i]);
+	
+	return strstr(str1A, str2A);
+}
 
-				if (hProcess != NULL) {
+int KillProcessByName(char *processName) {
+	DWORD dwProcessID[0x500] = { 0 };  //开始的预先分配较大的缓冲区，用来存放进程ID
+	DWORD dwNeeded = 0;
+	BOOL bEnumRes = EnumProcesses(dwProcessID, sizeof(dwProcessID), &dwNeeded);
+	UINT uCount = dwNeeded / sizeof(DWORD);//获得枚举到进程的数量
+	for (UINT i = 0; i < uCount; i++)
+	{
+		//只对进程进程枚举，所以申请QUERY权限，具体还得根据应用申请权限
+		HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwProcessID[i]);
+		if (NULL != hProcess)
+		{
+			CHAR szProcessName[255] = { 0 };
+			DWORD dwNameLen = 255;
+			//int bRet = GetProcessImageFileName(hProcess, szProcessName, dwNameLen);
+			int bRet = GetModuleFileNameEx(hProcess, NULL, szProcessName, dwNameLen);
+			if (bRet != 0)
+			{
+				if (stristr(szProcessName, processName) != 0)
+				{
 					TerminateProcess(hProcess, 0);
 					CloseHandle(hProcess);
-					CloseHandle(hSnapShot);
 					return true;
 				}
 			}
-		} while (Process32Next(hSnapShot, &pe));
+		}
 	}
-
-	CloseHandle(hSnapShot);
 	return false;
 }
 
 int findProcessByName(char *processName) {
-	// 创建进程快照
-	HANDLE hSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-	PROCESSENTRY32 pe;
 	int flag = 0;
-
-	if (hSnapShot == INVALID_HANDLE_VALUE) {
-		return false;
-	}
-
-	pe.dwSize = sizeof(PROCESSENTRY32);
-
-	// 遍历进程列表
-	if (Process32First(hSnapShot, &pe)) {
-		do {
-			// 检查进程名称
-			if (_stricmp(pe.szExeFile, processName) == 0) {
-				HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, pe.th32ProcessID);
-
-				if (hProcess != NULL) {
+	DWORD dwProcessID[0x500] = { 0 };  //开始的预先分配较大的缓冲区，用来存放进程ID
+	DWORD dwNeeded = 0;
+	BOOL bEnumRes = EnumProcesses(dwProcessID, sizeof(dwProcessID), &dwNeeded);
+	UINT uCount = dwNeeded / sizeof(DWORD);//获得枚举到进程的数量
+	for (UINT i = 0; i < uCount; i++)
+	{
+		//只对进程进程枚举，所以申请QUERY权限，具体还得根据应用申请权限
+		HANDLE hProcess = OpenProcess(/*PROCESS_QUERY_INFORMATION*/PROCESS_ALL_ACCESS, FALSE, dwProcessID[i]);
+		if (NULL != hProcess)
+		{
+			CHAR szProcessName[255] = { 0 };
+			DWORD dwNameLen = 255;
+			//int bRet = GetProcessImageFileName(hProcess, szProcessName, dwNameLen);
+			int bRet = GetModuleFileNameEx(hProcess, NULL, szProcessName, dwNameLen);
+			if (bRet != 0)
+			{
+				if (stristr(szProcessName, processName) != 0)
+				{
 					flag++;
 				}
+				//printf("ID:%4d\tprocessName(%s)\n", dwProcessID[i], szProcessName);
 			}
-		} while (Process32Next(hSnapShot, &pe));
+			//printf("ID:%4d\tprocessName(%s)\n", dwProcessID[i], szProcessName);
+		}
 	}
-
-	CloseHandle(hSnapShot);
 	return flag;
 }
 
@@ -349,6 +384,9 @@ void afterworks(char *outDir)
 	if (!KillProcessByName("DEVICE.EXE"))
 		puts("Warning - Can't stop DEVICE.exe");
 	Sleep(100);
+	if (!KillProcessByName("AADESK.EXE"))
+		puts("Warning - Can't stop AADESK.exe");
+	Sleep(100);
 	if (!DeleteDirectory(outDir))
 		puts("Warning - Can't delete CESHLTMP");
 	Sleep(100);
@@ -359,14 +397,15 @@ void afterworks(char *outDir)
 
 int IsWindowsVistaOrGreater()
 {
-	std::string vname;
-	typedef void(__stdcall*NTPROC)(DWORD*, DWORD*, DWORD*);
-	HINSTANCE hinst = LoadLibrary("ntdll.dll");
-	DWORD dwMajor, dwMinor, dwBuildNumber;
-	NTPROC proc = (NTPROC)GetProcAddress(hinst, "RtlGetNtVersionNumbers");
-	proc(&dwMajor, &dwMinor, &dwBuildNumber);
-	if (dwMajor >= 6)
-		return 1;
+	SYSTEM_INFO info;                                   //用SYSTEM_INFO结构判断64位AMD处理器
+    GetSystemInfo(&info);                               //调用GetSystemInfo函数填充结构
+    OSVERSIONINFOEX os;
+    os.dwOSVersionInfoSize=sizeof(OSVERSIONINFOEX); 
+    if(GetVersionEx((OSVERSIONINFO *)&os))                  
+    {
+		if (os.dwMajorVersion >= 6)
+			return 1;
+	}
 	return 0;
 }
 
@@ -413,6 +452,7 @@ int main(int argc, char **argv)
 			{
 				return 1;
 			}
+			Sleep(10);
 		}
 		TerminateThread(hDispWindCantStart, 0);
 	}
@@ -438,7 +478,8 @@ int main(int argc, char **argv)
 		puts("Error - Can't get TEMP path");
 		return 1;
 	}
-	sprintf_s(outDir, "%sCESHLTMP", outDir);
+	//sprintf_s(outDir, "%sCESHLTMP", outDir);
+	strcat_s(outDir, "CESHLTMP");
 
 	printf("====================Prep TEMP files=====================\n");
 	printf("srcDir......................:%s\n", srcDir);
@@ -459,7 +500,7 @@ int main(int argc, char **argv)
 		char shellEnv[255] = { 0 };
 		sprintf_s(shellEnv, "PegEmulDir=%s", outDir);
 		sprintf_s(execPath, "%s\\Bin\\%s", outDir, execName);
-		printf("==============WCE1.0 Mode - Startring Emul==============\n");
+		printf("==============WCE1.0 Mode - Starting Emul===============\n");
 		printf("shellEnv....................:%s\n", shellEnv);
 		printf("outDir......................:%s\n", outDir);
 		printf("execName....................:%s\n", execName);
@@ -498,10 +539,10 @@ int main(int argc, char **argv)
 		char regKeyPathE64[255] = { 0 };
 		char regCmd[255] = { 0 };
 		sprintf_s(execPath, "%s\\Windows\\%s", outDir, execName);
-		sprintf_s(regPath, "%s\\cei.reg", outDir);
+		sprintf_s(regPath, "%s\\cei.reg\0", outDir);
 		sprintf_s(regCmd, "regedit.exe /s %s\\cei.reg", outDir);
-		GetPrivateProfileString("shellmgr", "regKeyPath", NULL, regKeyPath, 255, regPath);
-		GetPrivateProfileString("shellmgr", "regKeyPath64", NULL, regKeyPath64, 255, regPath);
+		GetPrivateProfileString("shellmgr", "regKeyPath", "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows CE Platform SDK\\Emulation\\CESHLTMP", regKeyPath, 255, regPath);
+		GetPrivateProfileString("shellmgr", "regKeyPath64", "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows CE Platform SDK\\Emulation\\CESHLTMP", regKeyPath64, 255, regPath);
 		sprintf_s(regKeyPathE, "%s\\Environment", regKeyPath);
 		sprintf_s(regKeyPathE64, "%s\\Environment", regKeyPath64);
 
@@ -518,7 +559,7 @@ int main(int argc, char **argv)
 		}
 		outDirReg += "\"";
 
-		printf("==============WCE2.0 Mode - Startring Emul==============\n");
+		printf("==============WCE2.0 Mode - Starting Emul===============\n");
 		printf("regPath.....................:%s\n", regPath);
 		printf("outDir......................:%s\n", outDir);
 		printf("execName....................:%s\n", execName);
@@ -618,11 +659,12 @@ int main(int argc, char **argv)
 				{
 					afterworks(outDir);
 				}
+				Sleep(10);
 			}
 			TerminateThread(hDispWindCantStart, 0);
 		}
 
-		printf("==============Palm2K Mode - Startring Emul==============\n");
+		printf("==============Auto10 Mode - Starting Emul===============\n");
 		printf("regPath.....................:%s\n", regPath);
 		printf("outDir......................:%s\n", outDir);
 		printf("emulDir.....................:%s\n", emulDir);
@@ -718,6 +760,7 @@ int main(int argc, char **argv)
 				{
 					afterworks(outDir);
 				}
+				Sleep(10);
 			}
 			TerminateThread(hDispWindCantStart, 0);
 		}
