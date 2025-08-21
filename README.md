@@ -67,82 +67,32 @@ A: 请看项目名称——答案自明。
 
 ## ℹ 关于
 ### 开发团队 / 贡献者
-<table align="center">
-  <tr>
-    <td align="center">
-      <a href="https://space.bilibili.com/484165196">
-        <br /><b>主开发者</b></sub><br />
-        <img src="https://github.com/Inter1006/Extensions/blob/main/1720663857759dcbe7c89c6455282b29bc8695211ad7924a0.jpg" height="100" width="100" alt=""/>
-        <br /><sub><b>351<br />351Workshop@Bilibili</b></sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://space.bilibili.com/432808178">
-        <br /><b>赞助 / 镜像提供</b></sub><br />
-        <img src="https://i0.hdslb.com/bfs/face/0f0581b0c6602e91b078f5093cee8f4cd7a910cb.jpg@128w_128h_1c_1s.webp" height="100" width="100" alt=""/>
-        <br /><sub><b>IBM_LPY<br />IBM_Official@Bilibili</b></sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://www.zhihu.com/people/peng-an-dr-quest/posts">
-        <br /><b>赞助 / 镜像提供</b></sub><br />
-        <img src="https://picx.zhimg.com/v2-2e223688c09af6bf6bcd97be1ba29b7c_xl.jpg" height="100" width="100" alt=""/>
-        <br /><sub><b>Dr.Quest<br />蓬岸@知乎</b></sub>
-      </a>
-    </td>
-        <td align="center">
-      <a href="https://alexisgaming95.neocities.org/">
-        <br /><b>镜像提供</b></sub><br />
-        <img src="https://avatars.githubusercontent.com/u/76678069" height="100" width="100" alt=""/>
-        <br /><sub><b>lucss21a<br />lucss21a@Discord</b></sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://space.bilibili.com/648710692">
-        <br /><b>美工</b></sub><br />
-        <img src="https://github.com/Inter1006/Extensions/blob/main/1720663907859cac6209da2520c4e1c83c6a99fb65ae1bcb4.jpg" height="100" width="100" alt=""/>
-        <br /><sub><b>WinPad(御坂)<br />とある科学の手机副屏@Bilibili</b></sub>
-      </a>
-    </td>
-  </tr>
-</table>
-<table align="center">
-    <tr>
-    <td align="center">
-      <a href="https://space.bilibili.com/1756824708">
-        <br /><b>协助开发</b></sub><br />
-        <img src="https://github.com/Inter1006/PenPointOS_Vbox/blob/Readme_Files/b_fa517952f054ca8c99a234cc1b50b50b.jpg" height="100" width="100" alt=""/>
-        <br /><sub><b>Inter1006<br />-INTER_INIT-@Bilibili</b></sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://space.bilibili.com/410046866">
-        <br /><b>协助开发</b></sub><br />
-        <img src="https://github.com/Inter1006/Extensions/blob/main/1720663903084330ee6855a3795b453f2ab6ded4863c9b08a.jpg" height="100" width="100" alt=""/>
-        <br /><sub><b>GoldApple<br />不务正业的金苹果@Bilibili</b></sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://space.bilibili.com/2057331843">
-        <br /><b>协助开发</b></sub><br />
-        <img src="https://github.com/Inter1006/Extensions/blob/main/17206639278647b179c13f807cbc2bf27b899725d34fc5c79.jpg" height="100" width="100" alt=""/>
-        <br /><sub><b>DZY<br />DZY20070614@Bilibili</b></sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://space.bilibili.com/437201853">
-        <br /><b>协助开发</b></sub><br />
-        <img src="https://github.com/Inter1006/Extensions/blob/main/1720663947047a3c221d7c72c685e35b27b3fe6d41b6f8f93.jpg" height="100" width="100" alt=""/>
-        <br /><sub><b>Zesa<br />Zesa_IO1i0lO@Bilibili</b></sub>
-      </a>
-    </td>
-  </tr>
-</table>
-<p align="center">
-  ONEW Studio QQ 群：981893945 —— 欢迎加入！
-</p>
+
+ONEW Studio QQ 群：981893945 —— 欢迎加入！
+
+#### 主开发者
+<a href="https://www.351workshop.top/">351 - 351Workshop@Bilibili</a><br />
+
+#### 赞助
+<a href="https://space.bilibili.com/432808178">IBM_Official@Bilibili</a><br />
+<a href="https://www.zhihu.com/people/peng-an-dr-quest/posts">蓬岸@知乎</a><br />
+
+#### 镜像 / 开发工具提供
+<a href="https://space.bilibili.com/432808178">IBM_Official@Bilibili</a><br />
+<a href="https://www.zhihu.com/people/peng-an-dr-quest/posts">蓬岸@知乎</a><br />
+<a href="https://alexisgaming95.neocities.org/">lucss21a@Discord</a><br />
+
+#### 美工
+<a href="https://space.bilibili.com/1756824708">WinPad - とある科学の手机副屏@Bilibili</a><br />
+
+#### 协助开发
+<a href="https://space.bilibili.com/648710692">Inter - -INTER_INIT-@Bilibili</a><br />
+<a href="https://space.bilibili.com/437201853">Zesa - Zesa_IO1i0lO@Bilibili</a><br />
+<a href="https://space.bilibili.com/410046866">不务正业的金苹果@Bilibili</a><br />
+<a href="https://space.bilibili.com/2057331843">DZY20070614@Bilibili</a><br />
 
 ### 特别感谢
+ - ONEW Studio<br />
  - <a href="http://panretro.com">厦门市远东在线技术研究院</a><br />
  - <a href="https://www.compumuseum.com/">网页里的电脑博物馆</a><br />
 
