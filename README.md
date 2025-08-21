@@ -33,6 +33,7 @@ CE Collections 集合了几乎所有基于 CE 内核的官方Windows版本（例
 2. 打开虚拟机，引导光盘。
 3. 选择想要启动的 Windows CE 版本。
 4. 若提示需要选择分辨率，请依照您使用的模拟器、虚拟机或实体硬件选择。
+
 注意：
 - 在引导较早版本的 CE 时，菜单可能会询问是否使用高分辨率模式。这是因为现代虚拟机无法正常模拟当时的显卡，导致早期 CE 系统只能以低分辨率模式运行。若希望使用高分辨率模式，请使用 PCEM 或 86Box 等能够模拟当时硬件的模拟器（推荐使用 86Box 中的 S3 ViRGE）。
 
@@ -73,25 +74,25 @@ A: 请看项目名称——答案自明。
 ONEW Studio QQ 群：981893945 —— 欢迎加入！
 
 #### 主开发者
-<a href="https://www.351workshop.top/">351 - 351Workshop@Bilibili</a><br />
+- <a href="https://www.351workshop.top/">351 - 351Workshop@Bilibili</a><br />
 
 #### 赞助
-<a href="https://space.bilibili.com/432808178">IBM_Official@Bilibili</a><br />
-<a href="https://www.zhihu.com/people/peng-an-dr-quest/posts">蓬岸@知乎</a><br />
+- <a href="https://space.bilibili.com/432808178">IBM_Official@Bilibili</a><br />
+- <a href="https://www.zhihu.com/people/peng-an-dr-quest/posts">蓬岸@知乎</a><br />
 
 #### 镜像 / 开发工具提供
-<a href="https://space.bilibili.com/432808178">IBM_Official@Bilibili</a><br />
-<a href="https://www.zhihu.com/people/peng-an-dr-quest/posts">蓬岸@知乎</a><br />
-<a href="https://alexisgaming95.neocities.org/">lucss21a@Discord</a><br />
+- <a href="https://space.bilibili.com/432808178">IBM_Official@Bilibili</a><br />
+- <a href="https://www.zhihu.com/people/peng-an-dr-quest/posts">蓬岸@知乎</a><br />
+- <a href="https://alexisgaming95.neocities.org/">lucss21a@Discord</a><br />
 
 #### 美工
-<a href="https://space.bilibili.com/1756824708">WinPad - とある科学の手机副屏@Bilibili</a><br />
+- <a href="https://space.bilibili.com/1756824708">WinPad - とある科学の手机副屏@Bilibili</a><br />
 
 #### 协助开发
-<a href="https://space.bilibili.com/648710692">Inter - -INTER_INIT-@Bilibili</a><br />
-<a href="https://space.bilibili.com/437201853">Zesa - Zesa_IO1i0lO@Bilibili</a><br />
-<a href="https://space.bilibili.com/410046866">不务正业的金苹果@Bilibili</a><br />
-<a href="https://space.bilibili.com/2057331843">DZY20070614@Bilibili</a><br />
+- <a href="https://space.bilibili.com/648710692">Inter - -INTER_INIT-@Bilibili</a><br />
+- <a href="https://space.bilibili.com/437201853">Zesa - Zesa_IO1i0lO@Bilibili</a><br />
+- <a href="https://space.bilibili.com/410046866">不务正业的金苹果@Bilibili</a><br />
+- <a href="https://space.bilibili.com/2057331843">DZY20070614@Bilibili</a><br />
 
 ### 特别感谢
  - ONEW Studio<br />
@@ -99,7 +100,6 @@ ONEW Studio QQ 群：981893945 —— 欢迎加入！
  - <a href="https://www.compumuseum.com/">网页里的电脑博物馆</a><br />
 
 ### 使用到的其他开源项目
-本项目采用了以下项目的代码/资源：
 - DOS-LOGO: http://retro.timb.us/Documents/Software/DOS-LOGO.html
 - Whitebox: https://github.com/WindowsNT351/Whitebox
 
