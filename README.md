@@ -62,7 +62,7 @@ A: 请看项目名称——答案自明。
 - 🟡黄色：有资源，可集成，但尚未集成
 - 🔴红色：无资源
 
-<img src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections/main/cetl.png"/>
+<img src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections/main/cetl202.png"/>
 
 
 ## ℹ 关于
