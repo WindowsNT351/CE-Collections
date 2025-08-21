@@ -1,6 +1,3 @@
-//Build on VS 2005
-//For NT4.0-Win11
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <afxwin.h>
@@ -13,6 +10,11 @@
 #include <string>
 #pragma comment(lib, "psapi.lib")
 using namespace std;
+
+/*
+Windows CE Shell Emulator(Simulator) Starter for Windows NT4.0 - Windows 11
+Built on Visual Studio 2005
+*/
 
 BOOL LoadNTDriver(char* lpszDriverName, char* lpszDriverPath) {
 	char szDriverImagePath[256];
@@ -128,7 +130,6 @@ bool DeleteDirectory(CString DirName)
 	CFileFind tempFind;
 	DirName += "\\*.*";
 	BOOL IsFinded = (BOOL)tempFind.FindFile(DirName);
-	//cout << IsFinded <<endl;
 	while (IsFinded)
 	{
 		IsFinded = (BOOL)tempFind.FindNextFile();
@@ -195,13 +196,55 @@ bool NormalDirectory(CString DirName)
 	return true;
 }
 
-BOOL CopyDir(const char* srcDir, const char* destDir) {
+/*BOOL CopyDir(const char* srcDir, const char* destDir) {
 	char cmd[255]={0};
 	sprintf_s(cmd,"xcopy %s %s /E /I >> nul",srcDir,destDir);
 	system(cmd);
-	/*sprintf_s(cmd,"xcopy %s %s /Y /E /I >> nul",srcDir,destDir);
-	system(cmd);*/
     return TRUE;
+}*/
+
+bool CopyDirectory(CString srcPath, CString tgrPath)
+{
+	CString PUBPATH;//原始Dir
+	PUBPATH = srcPath;
+	srcPath += "\\*.*";
+	CFileFind tempFind;
+	BOOL IsFinded = (BOOL)tempFind.FindFile(srcPath);
+	//printf("Makeing Dir: %s\n", tgrPath);
+	CreateDirectory(tgrPath, NULL);
+	while (IsFinded)
+	{
+		IsFinded = (BOOL)tempFind.FindNextFile();
+		if (!tempFind.IsDots())
+		{
+			CString strSrcPath;
+			strSrcPath += PUBPATH;
+			strSrcPath += "\\";
+			strSrcPath += tempFind.GetFileName();
+
+			CString strTgrPath;
+			strTgrPath += tgrPath;
+			strTgrPath += "\\";
+			strTgrPath += tempFind.GetFileName();
+			if (tempFind.IsDirectory())
+			{
+				if (!CopyDirectory(strSrcPath, strTgrPath))
+					return 0;
+			}
+			else
+			{
+				//SetFileAttributes(strDirName, FILE_ATTRIBUTE_NORMAL);
+				//printf("%s														%s\n", strSrcPath, strTgrPath);
+				CopyFile(strSrcPath, strTgrPath, FALSE);
+				SetFileAttributes(strTgrPath, FILE_ATTRIBUTE_NORMAL); //去掉文件的系统和隐藏属性
+			}
+		}
+		if (IsFinded == 0)
+			break;
+	}
+	tempFind.Close();
+
+	return 1;
 }
 
 inline char* stristr(char *str1, char *str2)
@@ -488,7 +531,7 @@ int main(int argc, char **argv)
 	if (!DeleteDirectory(outDir))
 		puts("Warning - Can't delete CESHLTMP");
 	Sleep(50);
-	if (CopyDir(srcDir, outDir) == 0)
+	if (CopyDirectory(srcDir, outDir) == 0)
 	{
 		puts("ERROR - Can't copy files into CESHLTMP");
 		return 1;
