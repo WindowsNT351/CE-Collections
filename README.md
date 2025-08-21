@@ -12,9 +12,11 @@
 
 ## ❓ 什么是 CE Collections
 CE Collections 集合了几乎所有基于 CE 内核的官方Windows版本（例如 Windows CE Core,Windows Mobile,Windows Phone等）的镜像和模拟器。
+
 镜像包括：
 - 使用 Loadcepc 引导的 x86Bin 镜像
 - 使用 DeviceEmulator 引导的 ArmBin 镜像
+
 模拟器包括：
 - 适用于 Windows 7-11 的 <a href="https://github.com/WindowsNT351/Whitebox">Whitebox</a> 模拟器
 - 适用于 Windows XP-11 的 Arm DeviceEmulator 模拟器
