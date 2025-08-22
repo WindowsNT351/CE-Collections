@@ -146,7 +146,7 @@ A: 请看项目名称——答案自明。
 
 ## ℹ 关于
 ### 开发团队 / 贡献者
-<div class="center">
+<div class="center" >
   <table>
    <td>
       主开发者<br />
@@ -154,14 +154,16 @@ A: 请看项目名称——答案自明。
       赞助<br />
        - <a href="https://space.bilibili.com/432808178">IBM_Official@Bilibili</a><br />
        - <a href="https://www.zhihu.com/people/peng-an-dr-quest/posts">蓬岸@知乎</a><br />
+    </td>
+    <td>
       镜像 / 开发工具提供<br />
        - <a href="https://space.bilibili.com/432808178">IBM_Official@Bilibili</a><br />
        - <a href="https://www.zhihu.com/people/peng-an-dr-quest/posts">蓬岸@知乎</a><br />
        - <a href="https://alexisgaming95.neocities.org/">lucss21a@Discord</a><br />
-    </td>
-    <td>
       美工<br />
        - <a href="https://space.bilibili.com/1756824708">WinPad - とある科学の手机副屏@Bilibili</a><br />
+    </td>
+    <td>
       协助开发<br />
        - <a href="https://space.bilibili.com/648710692">Inter - -INTER_INIT-@Bilibili</a><br />
        - <a href="https://space.bilibili.com/437201853">Zesa - Zesa_IO1i0lO@Bilibili</a><br />
