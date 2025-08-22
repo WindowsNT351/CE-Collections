@@ -140,9 +140,9 @@ A: 请看项目名称——答案自明。
 |                           |         |              | Automotive Embedded 7             | -----                | CEPC                 |
 |                           |         |              | Windows Phone 7                   | -----                | XDE 1.0              |
 |                           |         |              | Windows Phone 7 NoDo              | -----                | XDE 1.0              |
-|                           |         | 7.10         | Windows Phone 7.5                 | -----                | XDE ""1.2""          |
-|                           |         |              | Windows Phone 7.5 Refresh         | -----                | XDE ""1.2""          |
-|                           |         |              | Windows Phone 7.8                 | -----                | XDE ""1.2""          |
+|                           |         | 7.10         | Windows Phone 7.5                 | -----                | XDE "1.2"            |
+|                           |         |              | Windows Phone 7.5 Refresh         | -----                | XDE "1.2"            |
+|                           |         |              | Windows Phone 7.8                 | -----                | XDE "1.2"            |
 |                           | 8.x     | 8.00         | Windows Embedded <br>Compact 2013 | Mini Shell           | CEPC                 |
 |                           |         |              |                                   | Silverlight   ThemeA | CEPC                 |
 |                           |         |              |                                   | Silverlight   ThemeB | CEPC                 |
