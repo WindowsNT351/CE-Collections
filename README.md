@@ -133,10 +133,10 @@ A: 请看项目名称——答案自明。
 |                           |         |              |                                   | NMD UI(5.0)          | CEPC                 |
 |                           | 7.x     | 7.00         | Windows Embedded <br>Compact 7.0  | Standard Shell       | CEPC                 |
 |                           |         |              |                                   | Thin Client          | CEPC                 |
-|                           |         |              |                                   | Silverlight | ThemeA | CEPC                 |
-|                           |         |              |                                   | Silverlight | ThemeB | CEPC                 |
-|                           |         |              |                                   | Silverlight | ThemeC | CEPC                 |
-|                           |         |              |                                   | Silverlight | ThemeD | CEPC                 |
+|                           |         |              |                                   | Silverlight   ThemeA | CEPC                 |
+|                           |         |              |                                   | Silverlight   ThemeB | CEPC                 |
+|                           |         |              |                                   | Silverlight   ThemeC | CEPC                 |
+|                           |         |              |                                   | Silverlight   ThemeD | CEPC                 |
 |                           |         |              | Automotive Embedded 7             | -----                | CEPC                 |
 |                           |         |              | Windows Phone 7                   | -----                | XDE 1.0              |
 |                           |         |              | Windows Phone 7 NoDo              | -----                | XDE 1.0              |
@@ -144,10 +144,10 @@ A: 请看项目名称——答案自明。
 |                           |         |              | Windows Phone 7.5 Refresh         | -----                | XDE ""1.2""          |
 |                           |         |              | Windows Phone 7.8                 | -----                | XDE ""1.2""          |
 |                           | 8.x     | 8.00         | Windows Embedded <br>Compact 2013 | Mini Shell           | CEPC                 |
-|                           |         |              |                                   | Silverlight | ThemeA | CEPC                 |
-|                           |         |              |                                   | Silverlight | ThemeB | CEPC                 |
-|                           |         |              |                                   | Silverlight | ThemeC | CEPC                 |
-|                           |         |              |                                   | Silverlight | ThemeD | CEPC                 |
+|                           |         |              |                                   | Silverlight   ThemeA | CEPC                 |
+|                           |         |              |                                   | Silverlight   ThemeB | CEPC                 |
+|                           |         |              |                                   | Silverlight   ThemeC | CEPC                 |
+|                           |         |              |                                   | Silverlight   ThemeD | CEPC                 |
 
 
 ## ℹ 关于
