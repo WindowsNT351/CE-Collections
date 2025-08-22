@@ -71,13 +71,7 @@ A: 请看项目名称——答案自明。
 
 ## ❗ 本项目集成的 CE 镜像和模拟器
 
-以下颜色标识对应不同状态：
-- 🟢绿色：已集成
-- 🔵蓝色：已集成（但存在一些问题）
-- 🟡黄色：有资源，可集成，但尚未集成
-- 🔴红色：无资源
-
-|                           |         |              |   CE-Collections Supporting       |                      |                      |
+|                           |         |              |     CE-Collections Supporting     |                      |                      |
 |---------------------------|---------|--------------|-----------------------------------|----------------------|----------------------|
 |                           | Version | Core Version | Name                              | Shell                | Emulator             |
 |                           | 1.x     | 1.00         | Windows CE 1.00                   | -----                | Shell Emulator       |
@@ -88,7 +82,7 @@ A: 请看项目名称——答案自明。
 |                           |         |              | Palm-size PC 1.0                  | -----                | Shell Emulator       |
 |                           |         | 2.10         | Windows CE 2.10                   | -----                | CEPC                 |
 |                           |         | 2.11         | Windows CE 2.11                   | -----                | CEPC                 |
-|                           |         |              | Palm-size PC 1.1                  | -----                | Shell Emulator       |
+|                           |         |              | Palm-size PC 1.1<br>(Simplified Chinese) | -----                | Shell Emulator       |
 |                           |         |              | Palm-size PC 1.2                  | -----                | Shell Emulator       |
 |                           |         |              | Handheld PC 3.0                   | -----                | Shell Emulator       |
 |                           |         | 2.12         | Windows CE 2.12                   | -----                | CEPC                 |
