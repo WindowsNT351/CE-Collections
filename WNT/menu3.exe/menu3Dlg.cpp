@@ -371,19 +371,22 @@ BOOL CAboutDlg::OnInitDialog()
 
 	GetDlgItem(IDC_STATIC1)->SetWindowText(AsciiToUnicode(buffer));
 
-	GetDlgItem(IDC_EDIT1)->SetWindowText( L"Developer\r\n"
+	GetDlgItem(IDC_EDIT1)->SetWindowText( 
+							L"Developer\r\n"
 							L"	351			351Workshop@Bilibili\r\n"
 							L"Sponsor\r\n"
 							L"	IBM			IBM_Official@Bilibili\r\n"
 							L"	Dr.Quest		蓬岸@知乎\r\n"
 							L"Image Providing\r\n"
 							L"	Alexis			lucss21a@Discord\r\n"
+							L"	IBM			IBM_Official@Bilibili\r\n"
+							L"	Dr.Quest		蓬岸@知乎\r\n"
 							L"Artworks\r\n"
 							L"	WinPad			とある科学の手机副屏@Bilibili\r\n"
 							L"Guidance and Testing\r\n"
 							L"	Inter			-INTER_INIT-@Bilibili\r\n"
 							L"	GoldApple		不务正业的金苹果@Bilibili\r\n"
-							L"	Zesa			LinuxMEMZ@Bilibili\r\n"
+							L"	Zesa			Zesa_IO1i0lO@Bilibili\r\n"
 							L"	DZY			DZY20070614@Bilibili\r\n");
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 异常: OCX 属性页应返回 FALSE
