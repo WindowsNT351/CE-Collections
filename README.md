@@ -146,29 +146,30 @@ A: 请看项目名称——答案自明。
 
 ## ℹ 关于
 ### 开发团队 / 贡献者
-
-<table>
-  <td>
-    主开发者<br />
-     - <a href="https://www.351workshop.top/">351 - 351Workshop@Bilibili</a><br />
-    赞助<br />
-     - <a href="https://space.bilibili.com/432808178">IBM_Official@Bilibili</a><br />
-     - <a href="https://www.zhihu.com/people/peng-an-dr-quest/posts">蓬岸@知乎</a><br />
-    镜像 / 开发工具提供<br />
-     - <a href="https://space.bilibili.com/432808178">IBM_Official@Bilibili</a><br />
-     - <a href="https://www.zhihu.com/people/peng-an-dr-quest/posts">蓬岸@知乎</a><br />
-     - <a href="https://alexisgaming95.neocities.org/">lucss21a@Discord</a><br />
-  </td>
-  <td>
-    美工<br />
-     - <a href="https://space.bilibili.com/1756824708">WinPad - とある科学の手机副屏@Bilibili</a><br />
-    协助开发<br />
-     - <a href="https://space.bilibili.com/648710692">Inter - -INTER_INIT-@Bilibili</a><br />
-     - <a href="https://space.bilibili.com/437201853">Zesa - Zesa_IO1i0lO@Bilibili</a><br />
-     - <a href="https://space.bilibili.com/410046866">不务正业的金苹果@Bilibili</a><br />
-     - <a href="https://space.bilibili.com/2057331843">DZY20070614@Bilibili</a><br />
-  </td>
-</table>
+<div class="center">
+  <table>
+   <td>
+      主开发者<br />
+       - <a href="https://www.351workshop.top/">351 - 351Workshop@Bilibili</a><br />
+      赞助<br />
+       - <a href="https://space.bilibili.com/432808178">IBM_Official@Bilibili</a><br />
+       - <a href="https://www.zhihu.com/people/peng-an-dr-quest/posts">蓬岸@知乎</a><br />
+      镜像 / 开发工具提供<br />
+       - <a href="https://space.bilibili.com/432808178">IBM_Official@Bilibili</a><br />
+       - <a href="https://www.zhihu.com/people/peng-an-dr-quest/posts">蓬岸@知乎</a><br />
+       - <a href="https://alexisgaming95.neocities.org/">lucss21a@Discord</a><br />
+    </td>
+    <td>
+      美工<br />
+       - <a href="https://space.bilibili.com/1756824708">WinPad - とある科学の手机副屏@Bilibili</a><br />
+      协助开发<br />
+       - <a href="https://space.bilibili.com/648710692">Inter - -INTER_INIT-@Bilibili</a><br />
+       - <a href="https://space.bilibili.com/437201853">Zesa - Zesa_IO1i0lO@Bilibili</a><br />
+       - <a href="https://space.bilibili.com/410046866">不务正业的金苹果@Bilibili</a><br />
+       - <a href="https://space.bilibili.com/2057331843">DZY20070614@Bilibili</a><br />
+    </td>
+  </table>
+</div>
 
 <p align="center">
   ONEW Studio QQ 群：981893945 —— 欢迎加入！
