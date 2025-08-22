@@ -1,16 +1,16 @@
 <div align="center">
-  <img alt="LOGO" src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections/main/WNT/menu3.exe/res/about.bmp" /><br />
+  <img alt="LOGO" src="./WNT/menu3.exe/res/about.bmp" /><br />
   <h1>CE Collections -2.02 RC 1-</h1>
   <p>不止一个合集</p>
   <p>
-    2.01版本: <a href="https://github.com/WindowsNT351/CE-Collections/blob/main/README201.md">https://github.com/WindowsNT351/CE-Collections/blob/main/README201.md</a><br />
-    English 2.01 version: <a href="https://github.com/WindowsNT351/CE-Collections/blob/main/README_EN.md">https://github.com/WindowsNT351/CE-Collections/blob/main/README_EN.md</a><br />
+    2.01版本: <a href="./README201.md">https://github.com/WindowsNT351/CE-Collections/blob/main/README201.md</a><br />
+    English 2.01 version: <a href="./README_EN.md">https://github.com/WindowsNT351/CE-Collections/blob/main/README_EN.md</a><br />
   </p>
 </div>
 
 ---
 
-## ❓ 什么是 CE Collections
+# ❓ 什么是 CE Collections
 CE Collections 集合了几乎所有基于 CE 内核的官方Windows版本（例如 Windows CE Core,Windows Mobile,Windows Phone等）的镜像和模拟器。
 
 镜像包括：
@@ -22,34 +22,41 @@ CE Collections 集合了几乎所有基于 CE 内核的官方Windows版本（例
 - 适用于 Windows XP-11 的 Arm DeviceEmulator 模拟器
 - 适用于 Windows NT(4.0-11,部分版本不支持新的Windows版本) 的独立 Shell 模拟器
 
-## 📥 如何使用
-### WinNT平台模拟器使用方法
+# 📥 如何使用
+## WinNT平台模拟器使用方法
 1. 在插入光盘之前，启动宿主操作系统（NT4.0-Win11）。
 2. 插入光盘并等待弹出菜单，如果没有，运行[CD(DVD)ROM]：\WNT\Menu3.exe。
 3. 选择要启动的操作系统（模拟器）。注意，当使用不同的主机操作系统时，会有一些不同的限制。
+  <img src="./menuwnt.png" width="900px;" alt=""/>
  - Windows NT 4.0 可用Shell Emulator，这是Shell Emulator的最佳宿主操作系统。
  - Windows 2000 - XP 可以Shell Emulator（x64宿主系统上不能运行Auto PC 1.0）和ARM DeviceEmulator。
  - Windows 7 - 8.1 可用Shell Emulator（Pocket PC 2000和x64宿主系统上的Auto PC 1.0除外）ARM DeviceEmulator、XDE Emulator和Whitebox Emulator。
  - Windows 10 - 11 可用Shell Emulator（Pocket PC 2000和x64宿主系统上的Auto PC 1.0除外）ARM DeviceEmulator和Whitebox Emulator。
 4. 完成！
 
-### CEPC平台使用方法
+## CEPC平台使用方法
 
 **注意！CEPC平台并不能启动全部镜像或模拟器。**
 1. 插入光盘（或启动软盘）并从中启动。
-2. 选择要启动的操作系统，[下一页]和[上一页]按键位于右下角和左下角。注意，启动镜像时存在一些限制：
+2. 选择要启动的操作系统，[下一页]和[上一页]按键位于右下角和左下角。注意，启动镜像时存在一些限制。
+  <img src="./menudos.png" width="800px;" alt=""/>
  - 全部镜像
    - 请使用大于64MB以上的内存，否则有些过大的镜像不能装载进内存或可用运行用内存过小，推荐使用128MB。
  - Windows CE 2.0-2.10
    - 对于PCem、VMware、VBox、Qemu现代实体机或其他现代虚拟机，这些镜像无法正常启动。
    - 对于86Box，请使用WinChip CPU，并关闭动态重编译器。
    - 对于实体机，请使用486或Pentium（586）CPU。
-3. 选择想使用的分辨率。请注意，使用VGA8BPP显示驱动程序启动的2.0-3.0映像时存在一些限制：
- - 对于VMware、VBox、Qemu或其他现代虚拟机，只能使用低分辨率模式。
- - 对于86Box PCem或实体机，务必使用S3视频卡（WinCE2.0使用S3Trio64，其他版本使用S3Virge），这样能开启高分辨率，否则只能使用低分辨率。
+3. 选择想使用的分辨率或确认启动。请注意，启动镜像有时存在一些限制。
+ - VGA8BPP显示驱动：
+  <img src="./menudos2.png" width="800px;" alt=""/>
+   - 对于VMware、VBox、Qemu或其他现代虚拟机，只能使用低分辨率模式。
+   - 对于86Box PCem或实体机，务必使用S3视频卡（WinCE2.0使用S3Trio64，其他版本使用S3Virge），这样能开启高分辨率，否则只能使用低分辨率。
+ - Windows Mobile 的VESA显示驱动：
+   <img src="./menudos3.png" width="800px;" alt=""/>
+   - 由于Windows Mobile显示为竖向，有些显卡在遇到此分辨率时会显示错误，发生这种情况时请尝试使用另一个分辨率。
 4. 完成！
 
-## ❓ QA
+# ❓ QA
 Q: 在 86Box 或 PCem 中无法引导光盘  
 A: 请使用 7Zip 等压缩软件打开 ISO 文件，解压 [boot] 文件夹中的 img 文件，然后从软盘引导。
 
@@ -69,7 +76,7 @@ Q: 你能把其他 Windows 系统集成进来吗？
 A: 请看项目名称——答案自明。
 
 
-## ❗ 本项目集成的 CE 镜像和模拟器
+# ❗ 本项目集成的 CE 镜像和模拟器
 
 |                           |         |              |     CE-Collections Supporting     |                      |                      |
 |---------------------------|---------|--------------|-----------------------------------|----------------------|----------------------|
@@ -144,8 +151,8 @@ A: 请看项目名称——答案自明。
 |                           |         |              |                                   | Silverlight   ThemeD | CEPC                 |
 
 
-## ℹ 关于
-### 开发团队 / 贡献者
+# ℹ 关于
+## 开发团队 / 贡献者
 <div class="center" >
   <table>
    <td>
@@ -177,16 +184,16 @@ A: 请看项目名称——答案自明。
   ONEW Studio QQ 群：981893945 —— 欢迎加入！
 </p>
 
-### 特别感谢
+## 特别感谢
  - ONEW Studio<br />
  - <a href="http://panretro.com">厦门市远东在线技术研究院</a><br />
  - <a href="https://www.compumuseum.com/">网页里的电脑博物馆</a><br />
 
-### 使用到的其他开源项目
+## 使用到的其他开源项目
 - DOS-LOGO: http://retro.timb.us/Documents/Software/DOS-LOGO.html
 - Whitebox: https://github.com/WindowsNT351/Whitebox
 
-## 📥 SDK及其他相关工具下载
+# 📥 SDK及其他相关工具下载
 ### Windows CE 1.x
 #### Windows CE 1.0x
 [Microsoft Visual C++ For Windows CE Version 1.0](https://archive.org/details/msvcceu.100)<br />
