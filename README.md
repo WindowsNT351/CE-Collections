@@ -1,6 +1,6 @@
 <div align="center">
   <img alt="LOGO" src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections/main/WNT/menu3.exe/res/about.bmp" /><br />
-  <h1>CE Collections -2.02 Beta 1-</h1>
+  <h1>CE Collections -2.02 RC 1-</h1>
   <p>不止一个合集</p>
   <p>
     2.01版本: <a href="https://github.com/WindowsNT351/CE-Collections/blob/main/README201.md">https://github.com/WindowsNT351/CE-Collections/blob/main/README201.md</a><br />
@@ -24,18 +24,30 @@ CE Collections 集合了几乎所有基于 CE 内核的官方Windows版本（例
 
 ## 📥 如何使用
 ### WinNT平台模拟器使用方法
-1. 将 ISO 文件加载至虚拟光驱或虚拟机中（推荐使用 Windows XP SP3，因为 Windows PPC 2000 模拟器无法在 NT6.x 上运行）。
-2. 打开 ISO 根目录下的 WNT\MENU3.exe。
-3. 选择想要启动的 Windows CE 版本，并点击 Run 打开对应的模拟器。
+1. 在插入光盘之前，启动宿主操作系统（NT4.0-Win11）。
+2. 插入光盘并等待弹出菜单，如果没有，运行[CD(DVD)ROM]：\WNT\Menu3.exe。
+3. 选择要启动的操作系统（模拟器）。注意，当使用不同的主机操作系统时，会有一些不同的限制。
+ - Windows NT 4.0 可用Shell Emulator，这是Shell Emulator的最佳宿主操作系统。
+ - Windows 2000 - XP 可以Shell Emulator（x64宿主系统上不能运行Auto PC 1.0）和ARM DeviceEmulator。
+ - Windows 7 - 8.1 可用Shell Emulator（Pocket PC 2000和x64宿主系统上的Auto PC 1.0除外）ARM DeviceEmulator、XDE Emulator和Whitebox Emulator。
+ - Windows 10 - 11 可用Shell Emulator（Pocket PC 2000和x64宿主系统上的Auto PC 1.0除外）ARM DeviceEmulator和Whitebox Emulator。
+4. 完成！
 
 ### CEPC平台使用方法
-1. 将ISO文件加载至虚拟机或模拟器中。
-2. 打开虚拟机，引导光盘。
-3. 选择想要启动的 Windows CE 版本。
-4. 若提示需要选择分辨率，请依照您使用的模拟器、虚拟机或实体硬件选择。
 
-注意：
-- 在引导较早版本的 CE 时，菜单可能会询问是否使用高分辨率模式。这是因为现代虚拟机无法正常模拟当时的显卡，导致早期 CE 系统只能以低分辨率模式运行。若希望使用高分辨率模式，请使用 PCEM 或 86Box 等能够模拟当时硬件的模拟器（推荐使用 86Box 中的 S3 ViRGE）。
+**注意！CEPC平台并不能启动全部镜像或模拟器。**
+1. 插入光盘（或启动软盘）并从中启动。
+2. 选择要启动的操作系统，[下一页]和[上一页]按键位于右下角和左下角。注意，启动镜像时存在一些限制：
+ - 全部镜像
+   - 请使用大于64MB以上的内存，否则有些过大的镜像不能装载进内存或可用运行用内存过小，推荐使用128MB。
+ - Windows CE 2.0-2.10
+   - 对于PCem、VMware、VBox、Qemu现代实体机或其他现代虚拟机，这些镜像无法正常启动。
+   - 对于86Box，请使用WinChip CPU，并关闭动态重编译器。
+   - 对于实体机，请使用486或Pentium（586）CPU。
+3. 选择想使用的分辨率。请注意，使用VGA8BPP显示驱动程序启动的2.0-3.0映像时存在一些限制：
+ - 对于VMware、VBox、Qemu或其他现代虚拟机，只能使用低分辨率模式。
+ - 对于86Box PCem或实体机，务必使用S3视频卡（WinCE2.0使用S3Trio64，其他版本使用S3Virge），这样能开启高分辨率，否则只能使用低分辨率。
+4. 完成！
 
 ## ❓ QA
 Q: 在 86Box 或 PCem 中无法引导光盘  
@@ -65,7 +77,77 @@ A: 请看项目名称——答案自明。
 - 🟡黄色：有资源，可集成，但尚未集成
 - 🔴红色：无资源
 
-<img src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections/main/cetl202.png"/>
+|                           |         |              |   CE-Collections Supporting       |                      |                      |
+|---------------------------|---------|--------------|-----------------------------------|----------------------|----------------------|
+|                           | Version | Core Version | Name                              | Shell                | Emulator             |
+|                           | 1.x     | 1.00         | Windows CE 1.00                   | -----                | Shell Emulator       |
+|                           |         | 1.01         | Windows CE 1.01                   | -----                | Shell Emulator       |
+|                           | 2.x     | 2.00         | Windows CE 2.0(or 2.01?)          | -----                | CEPC                 |
+|                           |         |              | Handheld PC 2.0                   | -----                | Shell Emulator       |
+|                           |         | 2.01         | Auto PC 1.0                       | -----                | Shell Emulator       |
+|                           |         |              | Palm-size PC 1.0                  | -----                | Shell Emulator       |
+|                           |         | 2.10         | Windows CE 2.10                   | -----                | CEPC                 |
+|                           |         | 2.11         | Windows CE 2.11                   | -----                | CEPC                 |
+|                           |         |              | Palm-size PC 1.1                  | -----                | Shell Emulator       |
+|                           |         |              | Palm-size PC 1.2                  | -----                | Shell Emulator       |
+|                           |         |              | Handheld PC 3.0                   | -----                | Shell Emulator       |
+|                           |         | 2.12         | Windows CE 2.12                   | -----                | CEPC                 |
+|                           | 3.x     | 3.00         | Windows CE 3.0                    | -----                | CEPC                 |
+|                           |         |              | Pocket PC 2000                    | -----                | Shell Emulator       |
+|                           |         |              | Handheld PC 2000                  | -----                | CEPC                 |
+|                           |         |              | Windows Mobile 2002               | Pocket PC            | CEPC                 |
+|                           |         |              |                                   | Smart Phone          | CEPC                 |
+|                           | 4.x     | 4.00         | Windows CE 4.0                    | Standard Shell       | CEPC                 |
+|                           |         |              |                                   | Thin Client          | CEPC                 |
+|                           |         | 4.10         | Windows CE 4.1                    | Standard Shell       | CEPC                 |
+|                           |         |              |                                   | Thin Client          | CEPC                 |
+|                           |         | 4.20         | Windows CE 4.2                    | Standard Shell       | CEPC                 |
+|                           |         |              |                                   | Thin Client          | CEPC                 |
+|                           |         |              | Windows Mobile 2003               | Pocket PC            | CEPC                 |
+|                           |         |              |                                   | Smart Phone          | CEPC                 |
+|                           |         | 4.21         | Windows Mobile 2003 SE            | Pocket PC            | CEPC                 |
+|                           |         |              |                                   | Smart Phone          | CEPC                 |
+|                           | 5.x     | 5.00         | Windows CE 5.0                    | Standard Shell       | CEPC                 |
+|                           |         |              |                                   | IP Phone             | CEPC                 |
+|                           |         |              |                                   | Thin Client          | CEPC                 |
+|                           |         |              | Networked Media Device 5.0        | -----                | CEPC                 |
+|                           |         | 5.10         | Windows Mobile 5.0                | Pocket PC            | Device Emulator      |
+|                           |         |              |                                   | Smart Phone          | Device Emulator      |
+|    Windows <br>CE Famliy  |         |              | Windows Mobile 5.2                | Pocket PC            | Device Emulator      |
+|                           |         |              |                                   | Smart Phone          | Device Emulator      |
+|                           |         | 5.20         | Windows Mobile 6.0                | Pocket PC            | Device Emulator      |
+|                           |         |              |                                   | Smart Phone          | Device Emulator      |
+|                           |         |              | Windows Mobile 6.0.2              | Pocket PC            | Device Emulator      |
+|                           |         |              |                                   | Smart Phone          | Device Emulator      |
+|                           |         |              | Windows Mobile 6.1                | Pocket PC            | Device Emulator      |
+|                           |         |              |                                   | Smart Phone          | Device Emulator      |
+|                           |         |              | Windows Mobile 6.1.4              | Pocket PC            | Device Emulator      |
+|                           |         |              |                                   | Smart Phone          | Device Emulator      |
+|                           |         |              | Windows Mobile 6.5                | Pocket PC            | Device Emulator      |
+|                           |         |              |                                   | Smart Phone          | Device Emulator      |
+|                           |         |              | Windows Mobile 6.5.3              | Pocket PC            | Device Emulator      |
+|                           |         |              |                                   | Smart Phone          | Device Emulator      |
+|                           | 6.x     | 6.00         | Windows CE 6.0<br>(RTM&R2&R3)     | Standard Shell       | CEPC                 |
+|                           |         |              |                                   | IP Phone             | CEPC                 |
+|                           |         |              |                                   | Thin Client          | CEPC                 |
+|                           |         |              |                                   | NMD UI(5.0)          | CEPC                 |
+|                           | 7.x     | 7.00         | Windows Embedded <br>Compact 7.0  | Standard Shell       | CEPC                 |
+|                           |         |              |                                   | Thin Client          | CEPC                 |
+|                           |         |              |                                   | Silverlight | ThemeA | CEPC                 |
+|                           |         |              |                                   | Silverlight | ThemeB | CEPC                 |
+|                           |         |              |                                   | Silverlight | ThemeC | CEPC                 |
+|                           |         |              |                                   | Silverlight | ThemeD | CEPC                 |
+|                           |         |              | Automotive Embedded 7             | -----                | CEPC                 |
+|                           |         |              | Windows Phone 7                   | -----                | XDE 1.0              |
+|                           |         |              | Windows Phone 7 NoDo              | -----                | XDE 1.0              |
+|                           |         | 7.10         | Windows Phone 7.5                 | -----                | XDE ""1.2""          |
+|                           |         |              | Windows Phone 7.5 Refresh         | -----                | XDE ""1.2""          |
+|                           |         |              | Windows Phone 7.8                 | -----                | XDE ""1.2""          |
+|                           | 8.x     | 8.00         | Windows Embedded <br>Compact 2013 | Mini Shell           | CEPC                 |
+|                           |         |              |                                   | Silverlight | ThemeA | CEPC                 |
+|                           |         |              |                                   | Silverlight | ThemeB | CEPC                 |
+|                           |         |              |                                   | Silverlight | ThemeC | CEPC                 |
+|                           |         |              |                                   | Silverlight | ThemeD | CEPC                 |
 
 
 ## ℹ 关于
