@@ -16,10 +16,12 @@ CE Collections 集合了几乎所有基于 CE 内核的官方Windows版本（例
 镜像包括：
 - 使用 Loadcepc 引导的 x86Bin 镜像
 - 使用 DeviceEmulator 引导的 ArmBin 镜像
+- 使用 XDE Emulator 引导的 ArmBin 镜像
 
 模拟器包括：
 - 适用于 Windows 7-11 的 <a href="https://github.com/WindowsNT351/Whitebox">Whitebox</a> 模拟器
 - 适用于 Windows XP-11 的 Arm DeviceEmulator 模拟器
+- 适用于 Windows 7 - 8.1 的 XDE Emulator 模拟器
 - 适用于 Windows NT(4.0-11,部分版本不支持新的Windows版本) 的独立 Shell 模拟器
 
 # 📥 如何使用
