@@ -10,7 +10,7 @@
 
 ---
 
-# ❓ 什么是 CE Collections
+# ✏️ 什么是 CE Collections
 CE Collections 集合了几乎所有基于 CE 内核的官方Windows版本（例如 Windows CE Core,Windows Mobile,Windows Phone等）的镜像和模拟器。
 
 镜像包括：
@@ -58,6 +58,60 @@ CE Collections 集合了几乎所有基于 CE 内核的官方Windows版本（例
    <img src="./menudos3.png" width="800px;" alt=""/>
 4. 完成！
 
+# 🔧 CE-Collections 各部分是如何工作的
+## WinNT Platform
+1. 插入光盘，自动打开[CD(DVD)ROM]:\WNT\Menu3.exe
+2. Menu3.exe加载显示[CD(DVD)ROM]:\WNT\menu.enus配置文件，加载[CD(DVD)ROM]:\CECV20.D0版本配置文件。
+3. 选择要启动的模拟器/镜像
+  - Shell Emulator类
+    1. 使用shellmgr [模拟器种类] [路径] [主程序名称]。
+    2. shellmgr将模拟器复制到系统（用户）TEMP文件夹。
+    3. shellmgr检测宿主系统是否符合当前模拟器。
+    4. shellmgr对于不同模拟器做准备工作。
+      - WinCE 1.0： 设置需要的环境变量
+      - HPC/PPC 2.x： 替换模板注册表内模拟器镜像，合并注册表
+      - PPC 2000： 替换模板注册表内模拟器镜像，合并注册表（不同的目录结构）
+      - APC 1.0： 替换模板注册表内模拟器镜像，合并注册表，加载WCEFS.sys驱动，如果是Windows Vista以上系统，循环终止ApcHook.sys(如果不终止会导致系统蓝屏)。
+    5. shellmgr启动对应的主程序。
+    6. shellmgr等待主程序关闭。
+    7. shellmgr卸载装载的驱动，删除临时文件。
+  - ARM DeviceEmulator类
+    1. 直接使用DeviceEmulator /video [适用于本镜像的分辨率] /memsize 256
+  - CEPC WhiteboxEmulator类
+    1. 直接使用Whitebox [分辨率选择，见CEPC，相比于DOSCEPC，此处区分更详细] /M:[对应的86Box配置文件]
+  - XDE Emulator类
+    1. 使用xdemgr [XDE版本] [NK.bin]。
+    2. xdemgr检测宿主系统是否符合当前模拟器。
+    3. xdemgr复制XDE的VMM.sys(系统为32位)或VMM64.sys(系统为64位)到TEMP文件夹并加载。
+    4. xdemgr复制XDE的配置文件到TEMP文件夹。
+    5. xdemgr启动XDE模拟器。
+    6. xdemgr等待XDE关闭。
+    7. xdemgr卸载驱动，删除临时文件。
+## CEPC Platform
+1. 插入光盘/启动软盘，并从中引导至MS-DOS 7.1。
+2. 加载LOGO.sys显示启动logo。加载光驱驱动（IDE）。
+3. 检测D:是否为CE-Collections光盘，若不是，遍历寻找。
+4. 打开[CD(DVD)ROM]:\DOS\Menu.bat，加载[CD(DVD)ROM]:\CECV20.D0版本配置文件。
+5. 用户选择启动的镜像。
+6. 自动检测选择的镜像为何种镜像（2.0-2.10/2.11-2.12 HPC2000/3.0-2013/WinMobile）。
+  - 2.0-2.10
+    1. 显示警告提示框。
+    2. 使用Loadcepc /D:3 [NK.bin]
+  - 2.11-2.12 HPC2000
+    1. 显示分辨率选择提示框。
+    2. 高分辨率使用Loadcepc /D:3 [NK.bin]
+       低分辨率使用Loadcepc /D:0 [NK.bin]（此分辨率几乎不可用）
+  - 3.0-2013
+    1. 显示确认启动提示框。
+    2. 使用Loadcepc /L:800x600x16 [NK.bin]
+  - WinMobile
+    1. 显示分辨率选择提示框。
+    2. 修复分辨率使用Loadcepc /L:175x240x16 [NK.bin]
+       原始分辨率使用Loadcepc /L:320x400x16 [NK.bin]
+### Loadcepc是什么？
+Loadcepc是Windows CE x86镜像的引导器（Bootloader），起到将NK.bin加载至内存，设置显示分辨率，跳转到指定地址的作用。
+DOS只是CE启动的跳板，CE启动后，DOS提供的中断例程和驻留在内存的程序将不可用，x86CE不是基于DOS的。
+
 # ❓ QA
 Q: 在 86Box 或 PCem 中无法引导光盘  
 A: 请使用 7Zip 等压缩软件打开 ISO 文件，解压 [boot] 文件夹中的 img 文件，然后从软盘引导。
@@ -81,7 +135,7 @@ Q: 你能把其他 Windows 系统集成进来吗？
 A: 请看项目名称——答案自明。
 
 
-# ❗ 本项目集成的 CE 镜像和模拟器
+# 🔨 本项目集成的 CE 镜像和模拟器
 
 |                           |         |              |     CE-Collections Supporting     |                      |                      |
 |---------------------------|---------|--------------|-----------------------------------|----------------------|----------------------|
@@ -198,7 +252,7 @@ A: 请看项目名称——答案自明。
 - DOS-LOGO: http://retro.timb.us/Documents/Software/DOS-LOGO.html
 - Whitebox: https://github.com/WindowsNT351/Whitebox
 
-# 📥 SDK及其他相关工具下载
+# ⚒️ SDK及其他相关工具下载
 ### Windows CE 1.x
 #### Windows CE 1.0x
 [Microsoft Visual C++ For Windows CE Version 1.0](https://archive.org/details/msvcceu.100)<br />
