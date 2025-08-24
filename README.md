@@ -50,12 +50,12 @@ CE Collections 集合了几乎所有基于 CE 内核的官方Windows版本（例
    <img src="./menudos.png" width="800px;" alt=""/>
 3. 选择想使用的分辨率或确认启动。请注意，启动镜像有时存在一些限制。
  - VGA8BPP显示驱动：
-  <img src="./menudos2.png" width="800px;" alt=""/>
    - 对于VMware、VBox、Qemu或其他现代虚拟机，只能使用低分辨率模式。
    - 对于86Box PCem或实体机，务必使用S3视频卡（WinCE2.0使用S3Trio64，其他版本使用S3Virge），这样能开启高分辨率，否则只能使用低分辨率。
  - Windows Mobile 的VESA显示驱动：
-   <img src="./menudos3.png" width="800px;" alt=""/>
    - 由于Windows Mobile显示为竖向，有些显卡在遇到此分辨率时会显示错误，发生这种情况时请尝试使用另一个分辨率。
+   <img src="./menudos2.png" width="800px;" alt=""/>
+   <img src="./menudos3.png" width="800px;" alt=""/>
 4. 完成！
 
 # ❓ QA
