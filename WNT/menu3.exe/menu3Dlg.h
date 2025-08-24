@@ -41,4 +41,5 @@ public:
 	CRect m_rectbtn2;
 	CRect m_rectbtn3;
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
 };

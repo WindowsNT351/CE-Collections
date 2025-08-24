@@ -135,7 +135,7 @@ BOOL Cmenu3Dlg::OnInitDialog()
 	GetDlgItem(IDC_STATICBTN3)->GetWindowRect(&m_rectbtn3);
 	ScreenToClient(&m_rectbtn3);
 
-	SetWindowLong(m_hWnd, GWL_STYLE, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
+	//SetWindowLong(m_hWnd, GWL_STYLE, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
 
 	int iNodeNum = GetPrivateProfileInt(L"0", L"nodeNum", 255, lpPath);
 	treeStr = new HTREEITEM[iNodeNum]();
@@ -306,7 +306,10 @@ void Cmenu3Dlg::OnMouseMove(UINT nFlags, CPoint point)
 	{
 		HCURSOR hCursor;
 		hCursor = ::LoadCursor ( NULL, IDC_HAND );
+		if(hCursor == NULL)
+			hCursor = LoadCursor ( AfxGetApp()->m_hInstance, MAKEINTRESOURCE(IDC_CURSOR1) );
 		::SetCursor ( hCursor );
+		Sleep(10);
 	}
 	CDialog::OnMouseMove(nFlags, point);
 }

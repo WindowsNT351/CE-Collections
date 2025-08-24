@@ -254,6 +254,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\hand.cur"
+				>
+			</File>
+			<File
 				RelativePath=".\res\menu3.ico"
 				>
 			</File>
