@@ -29,11 +29,11 @@ CE Collections 集合了几乎所有基于 CE 内核的官方Windows版本（例
 1. 在插入光盘之前，启动宿主操作系统（NT4.0-Win11）。
 2. 插入光盘并等待弹出菜单，如果没有，运行[CD(DVD)ROM]：\WNT\Menu3.exe。
 3. 选择要启动的操作系统（模拟器）。注意，当使用不同的主机操作系统时，会有一些不同的限制。
-  <img src="./menuwnt.png" width="900px;" alt=""/>
  - Windows NT 4.0 可用Shell Emulator，这是Shell Emulator的最佳宿主操作系统。
  - Windows 2000 - XP 可以Shell Emulator（x64宿主系统上不能运行Auto PC 1.0）和ARM DeviceEmulator。
  - Windows 7 - 8.1 可用Shell Emulator（Pocket PC 2000和x64宿主系统上的Auto PC 1.0除外）ARM DeviceEmulator、XDE Emulator和Whitebox Emulator。
  - Windows 10 - 11 可用Shell Emulator（Pocket PC 2000和x64宿主系统上的Auto PC 1.0除外）ARM DeviceEmulator和Whitebox Emulator。
+<img src="./menuwnt.png" width="900px;" alt=""/>
 4. 完成！
 
 ## CEPC平台使用方法
