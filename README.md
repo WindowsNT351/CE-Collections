@@ -1,9 +1,8 @@
 <div align="center">
   <img alt="LOGO" src="./WNT/menu3.exe/res/about.bmp" /><br />
-  <h1>CE Collections -2.02 RC 1-</h1>
+  <h1>CE Collections -2.02-</h1>
   <p>不止一个合集</p>
   <p>
-    2.01版本: <a href="./README201.md">https://github.com/WindowsNT351/CE-Collections/blob/main/README201.md</a><br />
     English 2.01 version: <a href="./README_EN.md">https://github.com/WindowsNT351/CE-Collections/blob/main/README_EN.md</a><br />
   </p>
 </div>
@@ -69,16 +68,16 @@ CE Collections 集合了几乎所有基于 CE 内核的官方Windows版本（例
     3. shellmgr检测宿主系统是否符合当前模拟器。
     4. shellmgr对于不同模拟器做准备工作。
       - WinCE 1.0： 设置需要的环境变量
-      - HPC/PPC 2.x： 替换模板注册表内模拟器镜像，合并注册表
-      - PPC 2000： 替换模板注册表内模拟器镜像，合并注册表（不同的目录结构）
-      - APC 1.0： 替换模板注册表内模拟器镜像，合并注册表，加载WCEFS.sys驱动，如果是Windows Vista以上系统，循环终止ApcHook.sys(如果不终止会导致系统蓝屏)。
+      - HPC/PPC 2.x： 替换模板注册表内模拟器路径，合并注册表
+      - PPC 2000： 替换模板注册表内模拟器路径，合并注册表（不同的目录结构）
+      - APC 1.0： 替换模板注册表内模拟器路径，合并注册表，加载WCEFS.sys驱动，如果是Windows Vista以上系统，循环终止ApcHook.sys(如果不终止会导致系统蓝屏)。
     5. shellmgr启动对应的主程序。
     6. shellmgr等待主程序关闭。
     7. shellmgr卸载装载的驱动，删除临时文件。
   - ARM DeviceEmulator类
     1. 直接使用DeviceEmulator /video [适用于本镜像的分辨率] /memsize 256
   - CEPC WhiteboxEmulator类
-    1. 直接使用Whitebox [分辨率选择，见CEPC，相比于DOSCEPC，此处区分更详细] /M:[对应的86Box配置文件]
+    1. 直接使用Whitebox [分辨率选择，见CEPC，相比于DOSCEPC，此处区分更详细] /M:[对应的86Box配置文件] [NK.bin]
   - XDE Emulator类
     1. 使用xdemgr [XDE版本] [NK.bin]。
     2. xdemgr检测宿主系统是否符合当前模拟器。

@@ -1,153 +1,249 @@
 <div align="center">
-  <img alt="LOGO" src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections-2.0/main/WNT/menu2.exe/res/about.bmp" /><br />
-  <h1>CE Collections -2.01-</h1>
-  <p>Not just a single collection</p>
-  <p>
-    English version: <a href="https://github.com/WindowsNT351/CE-Collections/blob/main/README_EN.md">https://github.com/WindowsNT351/CE-Collections/blob/main/README_EN.md</a>
-  </p>
+  <img alt="LOGO" src="./WNT/menu3.exe/res/about.bmp" /><br />
+  <h1>CE Collections -2.02-</h1>
+  <p>Not just a simple collection.</p>
 </div>
 
 ---
 
-### ONEW CE Collections
+# ✏️ What is CE Collections?
+CE Collections gathers almost all the official images and emulators based on the CE kernel (such as Windows CE Core Windows Mobile and Windows Phone).
 
-## ❓ What is CE Collections?
-CE Collections gathers almost all the official images and emulators based on the CE kernel (such as Windows CE Core and Windows Mobile). The content includes:
+The image includes:
 - x86Bin images booted via Loadcepc.
 - ArmBin images booted via DeviceEmulator.
-- Shell emulators for Windows NT.
+- ArmBin images booted via XDE Emulator.
 
-## 📥 How to Use
-**This image can not only be booted in a virtual machine using the CEPC x86 image, but you can also run MENU2.EXE directly in Windows to launch other formats of images/emulators. Note that the supported Windows CE versions differ between these two platforms (direct boot and running from Windows)!**
+The emulator includes:
+- <a href="https://github.com/WindowsNT351/Whitebox">Whitebox</a> Emulator compatible with Windows 7 - 11.
+- Arm DeviceEmulator Emulator compatible with Windows XP - 11.
+- XDE Emulator Emulator compatible with Windows 7 - 8.1.
+- Standalone Shell Emulator Emulator compatible with Windows NT(4.0 - 11, some of them don't support newer Windows).
 
-How to use WinNT-Platform-Loader:
-1. Load the ISO file into a virtual optical drive or virtual machine (Windows XP SP3 is recommended, because the Windows PPC 2000 emulator will not run on NT6.x).
-2. Open MENU2.EXE located in the WNT folder at the root of the ISO.
-3. Choose the desired Windows CE version and click Run to launch the corresponding emulator.
+# 📥 How to use?
+## WinNT Platform Emulator usage
+  1. Boot the host OS(NT4.0 - Win11) before you Insert the disc.
+  2. Insert the disc and wait the Menu pop out, if not, please run [CD(DVD)ROM]:\WNT\Menu3.exe.
+  3. Select the OS(emulator) you want to start up. Please notice that there is some diffrent limitations when you're using diffrent host OS.
+    - for Windows NT 4.0, you can use emulators based on Shell Emulator, this is the best host OS to use Shell Emulator.
+    - for Windows 2000 - XP, you can use emulators based on Shell Emulator(except Auto PC 1.0 on x64 OS) and ARM Device Emulator.
+    - for Windows 7 - 8.1, you can use emulator based on Shell Emulator(except Pocket PC 2000, and Auto PC 1.0 on x64 OS) ARM Device Emulator XDE Emulator and Whitebox Emulator.
+    - for Windows 10 - 11, you can use emulator based on Shell Emulator(except Pocket PC 2000, and Auto PC 1.0 on x64 OS) ARM Device Emulator and Whitebox Emulator.
+  4. Done! Enjoy your Windows CE.
+<img src="./menuwnt.png" width="900px;" alt=""/>
 
-How to use CEPC Loader:
-1. Load the ISO file to a virtual machine or emulator(such as 86Box,here is recommend settings).
-<img src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections-2.0/main/cepcr1.png"/>
-<img src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections-2.0/main/cepcr2.png"/>
-<img src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections-2.0/main/cepcr3.png"/>
+## CEPC Platform Emulator usage
+**Attention! CEPC Platform cannot boot all the images!**
+  0. Make sure you have more than 64MB memory, lower than 64MB may cause the image can't be loaded into the memory. We suggest to use 128MB memory to use CEPC.
+  1. Insert the disc(or boot floppy) and boot from it.
+  2. Select the OS you want to boot, the [Next Page] and the [Previous Page] are in the bottom right and bottom left corner.Please notice that there is some limitations when you're booting 2.0-2.10 images.
+    - for PCem VMware VBox Qemu modern real machine or other modern VMs, these image won't boot properly.
+    - for 86Box, please use WinChip CPU without Dynamic Recompiler.
+    - for old real machine, please use 486 or Pentium(586) CPU.
+    <img src="./menudos.png" width="800px;" alt=""/>
+  3. Select the resolution you want. Please notice that there is some limitations when you're booting 2.0-3.0 images which using VGA8BPP display driver.
+    - for VMware VBox Qemu or other modern VMs, you can only use the Low Resolution mode.
+    - for 86Box PCem or real machine, please use S3 video card(particular S3Trio64 for WinCE2.0 or S3Virge for higher version) as much as possible to use the High Resolution, if not, you can only use the Low Resolution.
+      <img src="./menudos2.png" width="800px;" alt=""/>
+      <img src="./menudos3.png" width="800px;" alt=""/>
+  4. Done! Enjoy your Windows CE.
 
-2. Turn the virtual machine on and boot the CD.
-3. Choose the OS you want to boot.
-4. If it ask you to choose a resolution,please choose that on-demand.
+# 🔧 How does CE-Collections works?
+## WinNT Platform
+1. Insert the disc, Autorun will start [CD(DVD)ROM]:\WNT\Menu3.exe.
+2. Menu3.exe load and display [CD(DVD)ROM]:\WNT\menu.enus configuration file, and load [CD(DVD)ROM]:\CECV20.D0 version config file.
+3. Choose the emulator / image you want to boot(start).
+  - Shell Emulator Family
+    1. Run shellmgr [Type of emulator] [Path to emulator] [Main executable file path].
+    2. Shellmgr copy the whole emulator files into TEMP(User or System) folder。
+    3. Shellmgr check does the host OS is the required OS.
+    4. Shellmgr doing preparation works.
+      - for WinCE 1.0: Set the required environment variable.
+      - for HPC/PPC 2.x: Replace the path to emulator in the REG file, Merge the REG file.
+      - for PPC 2000: Replace the path to emulator in the REG file, Merge the REG file.(diffrent file structure)
+      - for APC 1.0：Replace the path to emulator in the REG file, Merge the REG file, load WCEFS.sys driver. If the host is vista or higher, kill ApcHook.sys driver(if doen't do that will cause BSOD)。
+    5. Shellmgr start the main executable file.
+    6. Shellmgr wait for the main progrom closed.
+    7. Shellmgr unload the driver and delete the TEMP files.
+  - ARM DeviceEmulator Fmaily
+    1. Run DeviceEmulator /video [resolution] /memsize 256
+  - CEPC WhiteboxEmulator Family
+    1. Run Whitebox [resolution, see CEPC. But much more detailed for each image here] /M:[86Box config file] [NK.bin]
+  - XDE Emulator Family
+    1. Run xdemgr [XDE Version] [NK.bin]。
+    2. Xdemgr check does the host OS is the required OS。
+    3. Xdemgr copy VMM.sys(if host OS is x86) or VMM64.sys(if host OS is AMD64) of XDE Emulator to TEMP folder and load it.
+    4. Xdemgr copy the config file of XDE Emulator into TEMP folder.
+    5. Xdemgr start XDE Emulator.
+    6. Xdemgr wait for the Emulator closed。
+    7. Xdemgr unload the driver and delete the TEMP files.
+## CEPC Platform
+1. Insert the disc / boot floppy disk, boot MS-DOS 7.1 from it。
+2. Load LOGO.sys display startup logo. Load CD(DVD)ROM driver(IDE)。
+3. Detect is D: drive a CE-Collections disc, if not, find the disc ergodic。
+4. Start [CD(DVD)ROM]:\DOS\Menu.bat, Load [CD(DVD)ROM]:\CECV20.D0 version config file.
+5. Choose the image to load.
+6. Auto detect which type is the image(2.0-2.10/2.11-2.12 HPC2000/3.0-2013/WinMobile)。
+  - 2.0-2.10
+    1. Display the Warning Dialog.
+    2. Run Loadcepc /D:3 [NK.bin]
+  - 2.11-2.12 HPC2000
+    1. Display the Resolution Choosing Dialog.
+    2. High Resolution use Loadcepc /D:3 [NK.bin]
+       Low Resolution use Loadcepc /D:0 [NK.bin] (this resolution almost unusable)
+  - 3.0-2013
+    1. Display the Confirm Dialog.
+    2. Run Loadcepc /L:800x600x16 [NK.bin]
+  - WinMobile
+    1. Display the Resolution Choosing Dialog.
+    2. Fixed Resolution use Loadcepc /L:175x240x16 [NK.bin]
+       Original Resolution use Loadcepc /L:320x400x16 [NK.bin]
+### What is Loadcepc?
+Loadcepc is Bootloader for Windows CE x86 images, it will load the NK.bin into memory, set the resolution, and jump to the boot address.
+DOS is just a springboard for CE, after CE booted, the interrupt of DOS won't work after that, x86CE does't based on DOS.
 
-Note:
-- When booting earlier versions of CE, the menu might ask whether to use high-resolution mode. This is because modern virtual machines cannot correctly emulate the graphics cards of that era, so early CE systems can only run in low resolution. If you wish to use high resolution, please use emulators like PCEM or 86Box that can emulate the period’s hardware (86Box with S3 ViRGE is recommended).
-
-## ❓ QA
-
-Q: After booting from the disc and selecting Windows CE 2.x through Windows 3.x, the screen goes black.  
-A: You might have chosen the wrong resolution. In virtual machines like VMware, you need to use low resolution mode; moreover, newer versions of VMware can be choppy when emulating older systems, which may also lead to a black screen.
-
-Q: I have already used 86Box, but still can’t use high resolution.  
-A: In PCEM, you need to select the S3 ViRGE graphics card and use a CPU with performance equal to or better than a 486/33 to enable high resolution.
-
-Q: I cannot boot the disc in 86Box.  
+# ❓ QA
+Q: I cannot boot the disc in 86Box or PCem.  
 A: Please use 7Zip or another compression tool to open the ISO file, extract the img file from the [boot] folder, and then boot from a floppy disk.
-
-Q: Why isn’t the shutdown function working properly?  
-A: It simply doesn’t work.
 
 Q: In the CEPC bootloader, after selecting a system, it shows “Error image section doesn't fit in allocated block”.  
 A: The memory might be set too low; please increase the memory allocation.
 
 Q: After booting Windows EC 2013, the screen is black.  
-A: When creating the virtual machine, do not use VMware’s DOS mode. Instead, use Windows XP.
+A: The memory might be set too low; please increase the memory allocation.
 
-Q: The resolution options for Windows Mobile seem strangely confusing.  
-A: Please try other resolution options.
-
-Q: The Shell Emulator cannot start multiple instances at the same time.  
-A: Please avoid launching multiple Shell Emulator instances simultaneously; if you accidentally do so, log off or restart, and then run “[CDROM]:\WNT\200HPC\ceu.reg”.
-
-Q: Windows PPC 2000 doesn’t work on Windows Vista and later systems.  
-A: Due to Windows API incompatibilities, the best platform for Shell Emulator is Windows XP.
+Q: Why there is no any activities after I choose a version in WinNT Menu?
+A: The emulator may display behind the Menu, or the host OS is not the required OS for the emulator.
 
 Q: My physical Windows CE/Mobile device doesn’t boot, can you help solve this? / Can you install this WinCE software for me?
 A: Well, I can't answer that.
 
-Q: Can you integrate other Windows systems?  
+Q: Can you integrate other Windows OS?  
 A: Just look at the project name – the answer is self-evident.
 
-## ❗ CE Images and Emulators Integrated in this Project
 
-The color codes below represent different statuses:
-- 🟢 Green: Integrated
-- 🔵 Blue: Integrated (but with some issues)
-- 🟡 Yellow: Resources available and could be integrated, but not yet integrated.
-- 🔴 Red: No resources available
+# 🔨 CE Images and Emulators Integrated in this Project
 
-<img src="https://raw.githubusercontent.com/WindowsNT351/CE-Collections-2.0/main/cetl.png"/>
+|                           |         |              |     CE-Collections Supporting     |                      |                      |
+|---------------------------|---------|--------------|-----------------------------------|----------------------|----------------------|
+|                           | Version | Core Version | Name                              | Shell                | Emulator             |
+|                           | 1.x     | 1.00         | Windows CE 1.00                   | -----                | Shell Emulator       |
+|                           |         | 1.01         | Windows CE 1.01                   | -----                | Shell Emulator       |
+|                           | 2.x     | 2.00         | Windows CE 2.0(or 2.01?)          | -----                | CEPC                 |
+|                           |         |              | Handheld PC 2.0                   | -----                | Shell Emulator       |
+|                           |         | 2.01         | Auto PC 1.0                       | -----                | Shell Emulator       |
+|                           |         |              | Palm-size PC 1.0                  | -----                | Shell Emulator       |
+|                           |         | 2.10         | Windows CE 2.10                   | -----                | CEPC                 |
+|                           |         | 2.11         | Windows CE 2.11                   | -----                | CEPC                 |
+|                           |         |              | Palm-size PC 1.1<br>(Simplified Chinese) | -----                | Shell Emulator       |
+|                           |         |              | Palm-size PC 1.2                  | -----                | Shell Emulator       |
+|                           |         |              | Handheld PC 3.0                   | -----                | Shell Emulator       |
+|                           |         | 2.12         | Windows CE 2.12                   | -----                | CEPC                 |
+|                           | 3.x     | 3.00         | Windows CE 3.0                    | -----                | CEPC                 |
+|                           |         |              | Pocket PC 2000                    | -----                | Shell Emulator       |
+|                           |         |              | Handheld PC 2000                  | -----                | CEPC                 |
+|                           |         |              | Windows Mobile 2002               | Pocket PC            | CEPC                 |
+|                           |         |              |                                   | Smart Phone          | CEPC                 |
+|                           | 4.x     | 4.00         | Windows CE 4.0                    | Standard Shell       | CEPC                 |
+|                           |         |              |                                   | Thin Client          | CEPC                 |
+|                           |         | 4.10         | Windows CE 4.1                    | Standard Shell       | CEPC                 |
+|                           |         |              |                                   | Thin Client          | CEPC                 |
+|                           |         | 4.20         | Windows CE 4.2                    | Standard Shell       | CEPC                 |
+|                           |         |              |                                   | Thin Client          | CEPC                 |
+|                           |         |              | Windows Mobile 2003               | Pocket PC            | CEPC                 |
+|                           |         |              |                                   | Smart Phone          | CEPC                 |
+|                           |         | 4.21         | Windows Mobile 2003 SE            | Pocket PC            | CEPC                 |
+|                           |         |              |                                   | Smart Phone          | CEPC                 |
+|                           | 5.x     | 5.00         | Windows CE 5.0                    | Standard Shell       | CEPC                 |
+|                           |         |              |                                   | IP Phone             | CEPC                 |
+|                           |         |              |                                   | Thin Client          | CEPC                 |
+|                           |         |              | Networked Media Device 5.0        | -----                | CEPC                 |
+|                           |         | 5.10         | Windows Mobile 5.0                | Pocket PC            | Device Emulator      |
+|                           |         |              |                                   | Smart Phone          | Device Emulator      |
+|    Windows <br>CE Famliy  |         |              | Windows Mobile 5.2                | Pocket PC            | Device Emulator      |
+|                           |         |              |                                   | Smart Phone          | Device Emulator      |
+|                           |         | 5.20         | Windows Mobile 6.0                | Pocket PC            | Device Emulator      |
+|                           |         |              |                                   | Smart Phone          | Device Emulator      |
+|                           |         |              | Windows Mobile 6.0.2              | Pocket PC            | Device Emulator      |
+|                           |         |              |                                   | Smart Phone          | Device Emulator      |
+|                           |         |              | Windows Mobile 6.1                | Pocket PC            | Device Emulator      |
+|                           |         |              |                                   | Smart Phone          | Device Emulator      |
+|                           |         |              | Windows Mobile 6.1.4              | Pocket PC            | Device Emulator      |
+|                           |         |              |                                   | Smart Phone          | Device Emulator      |
+|                           |         |              | Windows Mobile 6.5                | Pocket PC            | Device Emulator      |
+|                           |         |              |                                   | Smart Phone          | Device Emulator      |
+|                           |         |              | Windows Mobile 6.5.3              | Pocket PC            | Device Emulator      |
+|                           |         |              |                                   | Smart Phone          | Device Emulator      |
+|                           | 6.x     | 6.00         | Windows CE 6.0<br>(RTM&R2&R3)     | Standard Shell       | CEPC                 |
+|                           |         |              |                                   | IP Phone             | CEPC                 |
+|                           |         |              |                                   | Thin Client          | CEPC                 |
+|                           |         |              |                                   | NMD UI(5.0)          | CEPC                 |
+|                           | 7.x     | 7.00         | Windows Embedded <br>Compact 7.0  | Standard Shell       | CEPC                 |
+|                           |         |              |                                   | Thin Client          | CEPC                 |
+|                           |         |              |                                   | Silverlight   ThemeA | CEPC                 |
+|                           |         |              |                                   | Silverlight   ThemeB | CEPC                 |
+|                           |         |              |                                   | Silverlight   ThemeC | CEPC                 |
+|                           |         |              |                                   | Silverlight   ThemeD | CEPC                 |
+|                           |         |              | Automotive Embedded 7             | -----                | CEPC                 |
+|                           |         |              | Windows Phone 7                   | -----                | XDE 1.0              |
+|                           |         |              | Windows Phone 7 NoDo              | -----                | XDE 1.0              |
+|                           |         | 7.10         | Windows Phone 7.5                 | -----                | XDE "1.2"            |
+|                           |         |              | Windows Phone 7.5 Refresh         | -----                | XDE "1.2"            |
+|                           |         |              | Windows Phone 7.8                 | -----                | XDE "1.2"            |
+|                           | 8.x     | 8.00         | Windows Embedded <br>Compact 2013 | Mini Shell           | CEPC                 |
+|                           |         |              |                                   | Silverlight   ThemeA | CEPC                 |
+|                           |         |              |                                   | Silverlight   ThemeB | CEPC                 |
+|                           |         |              |                                   | Silverlight   ThemeC | CEPC                 |
+|                           |         |              |                                   | Silverlight   ThemeD | CEPC                 |
 
-## ℹ About
-This project is developed collaboratively by members of ONEW.
 
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://space.bilibili.com/484165196">
-        <img src="https://github.com/Inter1006/Extensions/blob/main/1720663857759dcbe7c89c6455282b29bc8695211ad7924a0.jpg" width="150px;" alt=""/>
-        <br /><sub><b>351<br />351Workshop</b></sub>
-      </a>
+# ℹ About
+## Develoment Team / Contributor
+<div class="center" >
+  <table>
+   <td>
+      Developer<br />
+       - <a href="https://www.351workshop.top/">351 - 351Workshop@Bilibili</a><br />
+      Sponsor<br />
+       - <a href="https://space.bilibili.com/432808178">IBM_Official@Bilibili</a><br />
+       - <a href="https://www.zhihu.com/people/peng-an-dr-quest/posts">蓬岸@知乎</a><br />
     </td>
-    <td align="center">
-      <a href="https://space.bilibili.com/1756824708">
-        <img src="https://github.com/Inter1006/PenPointOS_Vbox/blob/Readme_Files/b_fa517952f054ca8c99a234cc1b50b50b.jpg" width="150px;" alt=""/>
-        <br /><sub><b>Inter1006<br />INTER_INIT</b></sub>
-      </a>
+    <td>
+      Image / Develoment Tools Providing<br />
+       - <a href="https://space.bilibili.com/432808178">IBM_Official@Bilibili</a><br />
+       - <a href="https://www.zhihu.com/people/peng-an-dr-quest/posts">蓬岸@知乎</a><br />
+       - <a href="https://alexisgaming95.neocities.org/">lucss21a@Discord</a><br />
+      Artworks<br />
+       - <a href="https://space.bilibili.com/1756824708">WinPad - とある科学の手机副屏@Bilibili</a><br />
     </td>
-    <td align="center">
-      <a href="https://space.bilibili.com/410046866">
-        <img src="https://github.com/Inter1006/Extensions/blob/main/1720663903084330ee6855a3795b453f2ab6ded4863c9b08a.jpg" width="150px;" alt=""/>
-        <br /><sub><b>GoldApple<br />The Idle Golden Apple</b></sub>
-      </a>
+    <td>
+      Development Helper<br />
+       - <a href="https://space.bilibili.com/648710692">Inter - -INTER_INIT-@Bilibili</a><br />
+       - <a href="https://space.bilibili.com/437201853">Zesa - Zesa_IO1i0lO@Bilibili</a><br />
+       - <a href="https://space.bilibili.com/410046866">不务正业的金苹果@Bilibili</a><br />
+       - <a href="https://space.bilibili.com/2057331843">DZY20070614@Bilibili</a><br />
     </td>
-    <td align="center">
-      <a href="https://space.bilibili.com/648710692">
-        <img src="https://github.com/Inter1006/Extensions/blob/main/1720663907859cac6209da2520c4e1c83c6a99fb65ae1bcb4.jpg" width="150px;" alt=""/>
-        <br /><sub><b>WinPad (Misaka)<br />A Secondary Screen for Toaru Kagaku no Mobile</b></sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://space.bilibili.com/2057331843">
-        <img src="https://github.com/Inter1006/Extensions/blob/main/17206639278647b179c13f807cbc2bf27b899725d34fc5c79.jpg" width="150px;" alt=""/>
-        <br /><sub><b>DZY<br />DZY20070614</b></sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://space.bilibili.com/437201853">
-        <img src="https://github.com/Inter1006/Extensions/blob/main/1720663947047a3c221d7c72c685e35b27b3fe6d41b6f8f93.jpg" width="150px;" alt=""/>
-        <br /><sub><b>Zesa<br />Zesa_IO1i0lO</b></sub>
-      </a>
-    </td>
-  </tr>
-</table>
+  </table>
+</div>
 
-<p align="center">
-  ONEW Studio QQ Group: 981893945 — Welcome to join!
-</p>
+## Thanks to
+ - ONEW Studio<br />
+ - <a href="http://panretro.com">Fareast Online Research</a><br />
+ - <a href="https://www.compumuseum.com/">Compumuseum</a><br />
 
-This project has incorporated code/resources from the following projects:
-
-CE:
-- Most images have been compiled by us using Platform Builder.
-- Some emulators/images are sample versions or directly extracted from the Microsoft SDK.
-- The x86CEPC Bootloader (LOADCEPC) and tools are modified versions of the official Microsoft 6.0 edition.
-
-Others:
+## Other opensource project used in the project 
 - DOS-LOGO: http://retro.timb.us/Documents/Software/DOS-LOGO.html
+- Whitebox: https://github.com/WindowsNT351/Whitebox
 
-## ❗ SDKs and Other Related Tools Download
+# ⚒️ SDK and other toolkits download
 ### Windows CE 1.x
 #### Windows CE 1.0x
 [Microsoft Visual C++ For Windows CE Version 1.0](https://archive.org/details/msvcceu.100)<br />
 <br />
+
 ### Windows CE 2.x
 #### Windows CE 2.00
+Microsoft Windows CE Embedded Toolkit<br />
 [Microsoft Handheld PC 2.0 Platform SDK](https://archive.org/details/wincesdk)<br />
 #### Windows CE 2.01
 Microsoft Palm-size PC 1.0 Platform SDK: [Programming Windows CE Disc](https://archive.org/details/mspress_programmingwindowsce_0970002166)<br />
@@ -162,18 +258,20 @@ Microsoft Handheld PC 3.0(HPC Pro) Platform SDK: [Windows CE Developers Conferen
 #### Windows CE 2.12
 [Microsoft Windows CE 2.12 Platform Builder](https://www.betaarchive.com/database/view_release.php?uuid=e73feaeb-c4dc-4915-9b16-1692c269d3b5)<br />
 <br />
+
 ### Windows CE 3.x
 #### Windows CE 3.00
 [Microsoft Windows CE 3.0 Platform Builder(Part 1)](https://archive.org/details/ms-wince-pb30)<br />
 [Microsoft Windows CE 3.0 Platform Builder(Part 2)](https://archive.org/details/ms-wince-pb30_5-11)<br />
-[Microsoft Pocket PC 2000(Palm-size PC 3.0) Platform SDK(Backup)](https://pan.baidu.com/s/14ykCvhJfTmiYzloPs6ApRg) Key:6zjx<br />
+[Microsoft Pocket PC 2000(Palm-size PC 3.0) Platform SDK(Backup)](https://pan.baidu.com/s/14ykCvhJfTmiYzloPs6ApRg) Key 6zjx<br />
 [Microsoft Handheld PC 2000 SDK](https://archive.org/details/hpc2ksdkusa)<br />
 [Microsoft Smart Phone 2002 SDK](https://archive.org/download/windows-mobile-sdks-2023/smartphone_2002_sdk.exe)<br />
 [Microsoft Pocket PC 2002 SDK](https://archive.org/download/windows-mobile-sdks-2023/ppc2002_sdk.exe)<br />
 <br />
+
 ### Windows CE 4.x
 #### Windows CE 4.00
-[Microsoft Windows CE.net 4.0 Platform Builder Emulation Edition(Backup)](https://www.123pan.com/s/KDyhTd-zTPN3) Key:eGCt<br />
+[Microsoft Windows CE.net 4.0 Platform Builder Emulation Edition(Backup)](https://www.123pan.com/s/KDyhTd-zTPN3) Key eGCt<br />
 [Microsoft Windows CE.net 4.0 Platform Builder](https://www.betaarchive.com/database/view_release.php?uuid=51000b20-9a15-4403-8b56-c3759aa682b7)<br />
 #### Windows CE 4.10
 [Microsoft Windows CE.net 4.1 Platform Builder Emulation Edition](https://archive.org/details/winceemul41)<br />
@@ -185,14 +283,19 @@ Microsoft Handheld PC 3.0(HPC Pro) Platform SDK: [Windows CE Developers Conferen
 #### Windows CE 4.21
 [Microsoft Windows Mobile 2003 SE Images](https://archive.org/download/WMSDK/WM2003SEimages.msi)<br />
 <br />
+
 ### Windows CE 5.x
 #### Windows CE 5.00
 [Microsoft Windows CE.net 5.0 Platform Builder](https://archive.org/details/en_win_ce_net_cd1)<br />
+[Microsoft Windows CE.net 5.0 Networked Media Device Feature Pack](https://www.hpcfactor.com/downloads/2011/Windows_CE_5.0_Networked_Media_Device_Feature_Pack/version_1.0)<br />
 #### Windows CE 5.10
 [Microsoft Windows Mobile 5.0 SDK](https://archive.org/download/WMSDK/Windows%20Mobile%205.0%20Pocket%20PC%20SDK.msi)<br />
+[Microsoft Windows Mobile 5.2 Images](https://web.archive.org/web/20130219020835/http://download.microsoft.com/download/c/b/b/cbb8bc58-07b9-46bb-86ba-d12bb0d9b1d9/efp.msi)<br />
 #### Windows CE 5.20
-[Microsoft Windows Mobile 6 Professional SDK](https://archive.org/download/WMSDK/Windows%20Mobile%206%20Professional%20SDK%20Refresh.msi)<br />
-[Microsoft Windows Mobile 6 Standard SDK](https://archive.org/download/WMSDK/Windows%20Mobile%206%20Standard%20SDK%20Refresh.msi)<br />
+[Microsoft Windows Mobile 6 Professional SDK](https://web.archive.org/web/20200108141243*/http://download.microsoft.com/download/f/2/3/f232f773-7edc-4300-be07-d3b76a5b3a91/Windows%20Mobile%206%20Professional%20SDK.msi)<br />
+[Microsoft Windows Mobile 6 Standard SDK](https://web.archive.org/web/20200108142416*/http://download.microsoft.com/download/f/2/3/f232f773-7edc-4300-be07-d3b76a5b3a91/Windows%20Mobile%206%20Standard%20SDK.msi)<br />
+[Microsoft Windows Mobile 6.0.2 Professional SDK](https://web.archive.org/web/20231105012934*/http://download.microsoft.com/download/f/2/3/f232f773-7edc-4300-be07-d3b76a5b3a91/Windows%20Mobile%206%20Professional%20SDK%20Refresh.msi)<br />
+[Microsoft Windows Mobile 6.0.2 Standard SDK](https://web.archive.org/web/20220707014038*/http://download.microsoft.com/download/f/2/3/f232f773-7edc-4300-be07-d3b76a5b3a91/Windows%20Mobile%206%20Standard%20SDK%20Refresh.msi)<br />
 [Microsoft Windows Mobile 6.1 Standard Images](https://web.archive.org/web/20130330025109/http://download.microsoft.com/download/d/c/7/dc73c8e7-f9c3-49de-821f-5588eeefcac4/Windows%20Mobile%206.1%20Standard%20Images%20(USA).msi)<br />
 [Microsoft Windows Mobile 6.1 Professional Images](https://web.archive.org/web/20130330025531/http://download.microsoft.com/download/d/c/7/dc73c8e7-f9c3-49de-821f-5588eeefcac4/Windows%20Mobile%206.1%20Professional%20Images%20(USA).msi)<br />
 [Microsoft Windows Mobile 6.1.4 Professional Images](https://archive.org/download/WMSDK/Windows%20Mobile%206.1.4%20Professional%20Images%20%28USA%29.msi)<br />
@@ -202,20 +305,29 @@ Microsoft Handheld PC 3.0(HPC Pro) Platform SDK: [Windows CE Developers Conferen
 [Microsoft Windows Mobile 6.5.3 Professional DKT](https://archive.org/download/WMSDK/Windows%20Mobile%206.5.3%20Professional%20DTK.msi)<br />
 [Microsoft Windows Mobile 6.5.3 Standard DKT](https://archive.org/download/WMSDK/Windows%20Mobile%206.5.3%20Standard%20DTK.msi)<br />
 <br />
+
 ### Windows CE 6.x
 #### Windows CE 6.00
 [Microsoft Windows Embedded CE 6.0 Platform Builder](https://archive.org/details/en_windows_embedded_ce_6.0_dvd)<br />
 [Microsoft Windows Embedded CE 6.0 Platform Builder R2](https://archive.org/details/windows-embedded-ce-6.0-r2)<br />
 [Microsoft Windows Embedded CE 6.0 Platform Builder R3](https://archive.org/details/en_windows_embedded_ce_6.0_r3_dvd__x16-28730)<br />
 <br />
+
 ### Windows CE 7.x
 #### Windows CE 7.00
 [Microsoft Windows Embedded Compact 7.0 Platform Builder](https://archive.org/details/WindowsEmbeddedCompact7)<br />
 [Microsoft Windows Embedded Automotive 7.0 Platform Builder](https://archive.org/details/windows-embedded-automotive-7)<br />
+[Microsoft Windows Phone 7 SDK](https://archive.org/download/wpdt-rtm-en-1/WPDT_RTM_en1.iso)<br />
+#### Windows CE 7.10
+[Microsoft Windows Phone 7.1 SDK](https://archive.org/download/wpsdkv-71-en-1_202303/WPSDKv71_en1.iso)<br />
 <br />
+
 ### Windows CE 8.x
 #### Windows CE 8.00
 [Microsoft Windows Embedded Compact 2013 Platform Builder](https://archive.org/details/en_windows_embedded_compact_2013_x86_x64_dvd_2247108)
 
+
 <br /><br /><br /><br />
 Copyright 351Workshop 2022-2025
+
+
