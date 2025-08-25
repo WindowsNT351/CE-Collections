@@ -3,7 +3,7 @@
   <h1>CE Collections -2.02-</h1>
   <p>不止一个合集</p>
   <p>
-    English 2.01 version: <a href="./README_EN.md">https://github.com/WindowsNT351/CE-Collections/blob/main/README_EN.md</a><br />
+    English version: <a href="./README_EN.md">https://github.com/WindowsNT351/CE-Collections/blob/main/README_EN.md</a><br />
   </p>
 </div>
 
